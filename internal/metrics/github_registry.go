@@ -11,27 +11,29 @@ type GitHubRegistry struct {
 	*promexporter_metrics.Registry
 
 	// GitHub repository metrics
-	GitHubReposTotal        *prometheus.GaugeVec
-	GitHubReposStars        *prometheus.GaugeVec
-	GitHubReposForks        *prometheus.GaugeVec
-	GitHubReposWatchers     *prometheus.GaugeVec
-	GitHubReposOpenIssues   *prometheus.GaugeVec
-	GitHubReposSize         *prometheus.GaugeVec
-	GitHubReposLastUpdated  *prometheus.GaugeVec
-	GitHubReposCreatedAt    *prometheus.GaugeVec
+	GitHubReposTotal       *prometheus.GaugeVec
+	GitHubReposInfo        *prometheus.GaugeVec
+	GitHubReposStars       *prometheus.GaugeVec
+	GitHubReposForks       *prometheus.GaugeVec
+	GitHubReposWatchers    *prometheus.GaugeVec
+	GitHubReposOpenIssues  *prometheus.GaugeVec
+	GitHubReposOpenPRs     *prometheus.GaugeVec
+	GitHubReposSize        *prometheus.GaugeVec
+	GitHubReposLastUpdated *prometheus.GaugeVec
+	GitHubReposCreatedAt   *prometheus.GaugeVec
 
 	// GitHub organization metrics
-	GitHubOrgsTotal         *prometheus.GaugeVec
-	GitHubOrgsPublicRepos   *prometheus.GaugeVec
-	GitHubOrgsFollowers     *prometheus.GaugeVec
-	GitHubOrgsFollowing     *prometheus.GaugeVec
+	GitHubOrgsTotal       *prometheus.GaugeVec
+	GitHubOrgsPublicRepos *prometheus.GaugeVec
+	GitHubOrgsFollowers   *prometheus.GaugeVec
+	GitHubOrgsFollowing   *prometheus.GaugeVec
 
 	// GitHub API metrics
-	GitHubAPICallsTotal     *prometheus.CounterVec
-	GitHubAPIErrorsTotal    *prometheus.CounterVec
-	GitHubRateLimitTotal    *prometheus.GaugeVec
+	GitHubAPICallsTotal      *prometheus.CounterVec
+	GitHubAPIErrorsTotal     *prometheus.CounterVec
+	GitHubRateLimitTotal     *prometheus.GaugeVec
 	GitHubRateLimitRemaining *prometheus.GaugeVec
-	GitHubRateLimitReset    *prometheus.GaugeVec
+	GitHubRateLimitReset     *prometheus.GaugeVec
 }
 
 // NewGitHubRegistry creates a new GitHub metrics registry
@@ -53,6 +55,15 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		[]string{"org", "visibility"},
 	)
 	baseRegistry.AddMetricInfo("github_repos_total", "Total number of GitHub repositories", []string{"org", "visibility"})
+
+	github.GitHubReposInfo = factory.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "github_repo_info",
+			Help: "Information about GitHub repositories",
+		},
+		[]string{"org", "repo", "visibility", "archived", "fork", "language"},
+	)
+	baseRegistry.AddMetricInfo("github_repo_info", "Information about GitHub repositories", []string{"org", "repo", "visibility", "archived", "fork", "language"})
 
 	github.GitHubReposStars = factory.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -89,6 +100,15 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		[]string{"org", "repo", "visibility"},
 	)
 	baseRegistry.AddMetricInfo("github_repo_open_issues", "Number of open issues for a GitHub repository", []string{"org", "repo", "visibility"})
+
+	github.GitHubReposOpenPRs = factory.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "github_repo_open_prs",
+			Help: "Number of open pull requests for a GitHub repository",
+		},
+		[]string{"org", "repo", "visibility"},
+	)
+	baseRegistry.AddMetricInfo("github_repo_open_prs", "Number of open pull requests for a GitHub repository", []string{"org", "repo", "visibility"})
 
 	github.GitHubReposSize = factory.NewGaugeVec(
 		prometheus.GaugeOpts{

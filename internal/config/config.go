@@ -135,7 +135,6 @@ func loadFromEnv() (*Config, error) {
 		config.GitHub.Timeout = Duration{Duration: time.Second * 30}
 	}
 
-
 	if refreshIntervalStr := os.Getenv("GITHUB_EXPORTER_GITHUB_REFRESH_INTERVAL"); refreshIntervalStr != "" {
 		if refreshInterval, err := time.ParseDuration(refreshIntervalStr); err != nil {
 			return nil, fmt.Errorf("invalid GitHub refresh interval: %w", err)
@@ -193,7 +192,6 @@ func setDefaults(config *Config) {
 	if config.GitHub.Timeout.Duration == 0 {
 		config.GitHub.Timeout = Duration{Duration: time.Second * 30}
 	}
-
 
 	if config.GitHub.RefreshInterval.Duration == 0 {
 		// Will be calculated dynamically based on rate limits
@@ -284,7 +282,6 @@ func (c *Config) validateGitHubConfig() error {
 	if c.GitHub.Timeout.Seconds() < 1 {
 		return fmt.Errorf("github timeout must be at least 1 second, got %d", c.GitHub.Timeout.Seconds())
 	}
-
 
 	if c.GitHub.RateLimitBuffer <= 0 || c.GitHub.RateLimitBuffer > 1 {
 		return fmt.Errorf("github rate limit buffer must be between 0 and 1, got %f", c.GitHub.RateLimitBuffer)

@@ -20,7 +20,7 @@ type GitHubCollector struct {
 	client  *github.Client
 	limiter *rate.Limiter
 	mu      sync.RWMutex
-	
+
 	// Rate limiting state
 	rateLimitTotal     int
 	rateLimitRemaining int
@@ -54,7 +54,7 @@ func (gc *GitHubCollector) run(ctx context.Context) {
 
 	// Calculate initial refresh interval
 	refreshInterval := gc.calculateRefreshInterval()
-	
+
 	ticker := time.NewTicker(refreshInterval)
 	defer ticker.Stop()
 
@@ -65,7 +65,7 @@ func (gc *GitHubCollector) run(ctx context.Context) {
 			return
 		case <-ticker.C:
 			gc.collectMetrics(ctx)
-			
+
 			// Recalculate refresh interval based on current rate limits
 			newInterval := gc.calculateRefreshInterval()
 			if newInterval != refreshInterval {
@@ -127,14 +127,14 @@ func (gc *GitHubCollector) calculateRefreshInterval() time.Duration {
 	// Each org requires: 1 call for org info + 1 call for repos
 	// Each specific repo requires: 1 call
 	totalCallsPerCycle := len(gc.config.GitHub.Orgs)*2 + len(gc.config.GitHub.Repos)
-	
+
 	// Add 1 for rate limit check
 	totalCallsPerCycle++
 
 	// Calculate how many cycles we can do with remaining rate limit
 	// Apply buffer to stay under limit
 	availableCalls := int(float64(gc.rateLimitRemaining) * gc.config.GitHub.RateLimitBuffer)
-	
+
 	if availableCalls <= 0 {
 		// If no calls available, wait until rate limit resets
 		timeUntilReset := time.Until(gc.rateLimitReset)
@@ -157,7 +157,7 @@ func (gc *GitHubCollector) calculateRefreshInterval() time.Duration {
 	}
 
 	interval := timeUntilReset / time.Duration(cyclesPossible)
-	
+
 	// Ensure minimum interval of 30 seconds
 	if interval < 30*time.Second {
 		interval = 30 * time.Second
@@ -168,7 +168,7 @@ func (gc *GitHubCollector) calculateRefreshInterval() time.Duration {
 		interval = time.Hour
 	}
 
-	slog.Debug("Calculated refresh interval", 
+	slog.Debug("Calculated refresh interval",
 		"interval", interval,
 		"rate_limit_remaining", gc.rateLimitRemaining,
 		"calls_per_cycle", totalCallsPerCycle,
@@ -260,9 +260,9 @@ func (gc *GitHubCollector) updateRateLimiter() {
 	gc.limiter = newLimiter
 	gc.mu.Unlock()
 
-	slog.Debug("Updated rate limiter", 
-		"rate_per_second", ratePerSecond, 
-		"remaining", remaining, 
+	slog.Debug("Updated rate limiter",
+		"rate_per_second", ratePerSecond,
+		"remaining", remaining,
 		"time_until_reset", timeUntilReset,
 		"effective_remaining", effectiveRemaining)
 }
@@ -346,7 +346,7 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 		}
 
 		// Set repository metrics
-		gc.setRepoMetrics(org, *repo.Name, visibility, repo)
+		gc.setRepoMetrics(ctx, org, *repo.Name, visibility, repo)
 	}
 
 	// Set repository counts
@@ -390,13 +390,32 @@ func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
 			visibility = "private"
 		}
 
-		gc.setRepoMetrics(owner, repo, visibility, repoInfo)
+		gc.setRepoMetrics(ctx, owner, repo, visibility, repoInfo)
 	}
 
 	return nil
 }
 
-func (gc *GitHubCollector) setRepoMetrics(owner, repo, visibility string, repoInfo *github.Repository) {
+func (gc *GitHubCollector) setRepoMetrics(ctx context.Context, owner, repo, visibility string, repoInfo *github.Repository) {
+	// Repository info metric with labels
+	archived := "false"
+	if repoInfo.Archived != nil && *repoInfo.Archived {
+		archived = "true"
+	}
+	
+	fork := "false"
+	if repoInfo.Fork != nil && *repoInfo.Fork {
+		fork = "true"
+	}
+	
+	language := ""
+	if repoInfo.Language != nil {
+		language = *repoInfo.Language
+	}
+	
+	// Set info metric (always 1 for info metrics)
+	gc.metrics.GitHubReposInfo.WithLabelValues(owner, repo, visibility, archived, fork, language).Set(1)
+
 	// Stars
 	if repoInfo.StargazersCount != nil {
 		gc.metrics.GitHubReposStars.WithLabelValues(owner, repo, visibility).Set(float64(*repoInfo.StargazersCount))
@@ -417,6 +436,9 @@ func (gc *GitHubCollector) setRepoMetrics(owner, repo, visibility string, repoIn
 		gc.metrics.GitHubReposOpenIssues.WithLabelValues(owner, repo, visibility).Set(float64(*repoInfo.OpenIssuesCount))
 	}
 
+	// Open PRs - we need to fetch this separately as it's not in the basic repo info
+	gc.setOpenPRsMetric(ctx, owner, repo, visibility)
+
 	// Size
 	if repoInfo.Size != nil {
 		gc.metrics.GitHubReposSize.WithLabelValues(owner, repo, visibility).Set(float64(*repoInfo.Size))
@@ -433,6 +455,46 @@ func (gc *GitHubCollector) setRepoMetrics(owner, repo, visibility string, repoIn
 	}
 }
 
+// setOpenPRsMetric fetches and sets the open PRs count for a repository
+func (gc *GitHubCollector) setOpenPRsMetric(ctx context.Context, owner, repo, visibility string) {
+	// Wait for rate limiter
+	if err := gc.limiter.Wait(ctx); err != nil {
+		slog.Error("Rate limiter error while fetching PRs", "owner", owner, "repo", repo, "error", err)
+		return
+	}
+
+	// Get open pull requests count
+	prs, resp, err := gc.client.PullRequests.List(ctx, owner, repo, &github.PullRequestListOptions{
+		State: "open",
+		ListOptions: github.ListOptions{
+			PerPage: 1, // We only need the count, not the actual PRs
+		},
+	})
+	if err != nil {
+		slog.Error("Failed to get open PRs", "owner", owner, "repo", repo, "error", err)
+		gc.metrics.GitHubAPIErrorsTotal.WithLabelValues("pull_requests", "api_error").Inc()
+		return
+	}
+
+	// Update API call metrics
+	if resp != nil {
+		gc.metrics.GitHubAPICallsTotal.WithLabelValues("pull_requests", fmt.Sprintf("%d", resp.StatusCode)).Inc()
+	}
+
+	// Set the open PRs count
+	// Note: GitHub API doesn't provide a direct count, so we use the total count from the response
+	// For a more accurate count, we'd need to paginate through all results, but that would use more API calls
+	openPRsCount := 0
+	if resp != nil && resp.LastPage > 0 {
+		// Estimate based on pagination info
+		openPRsCount = resp.LastPage * 30 // GitHub default per_page is 30
+	} else if len(prs) > 0 {
+		// If we got results, we know there are at least some PRs
+		openPRsCount = len(prs)
+	}
+	
+	gc.metrics.GitHubReposOpenPRs.WithLabelValues(owner, repo, visibility).Set(float64(openPRsCount))
+}
 
 // Stop stops the collector
 func (gc *GitHubCollector) Stop() {

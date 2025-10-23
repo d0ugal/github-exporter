@@ -1,0 +1,38 @@
+# GitHub Exporter Configuration
+
+# Server configuration
+server:
+  host: "0.0.0.0"
+  port: 8080
+
+# Logging configuration
+logging:
+  level: "info"
+  format: "json"
+
+# Metrics configuration
+metrics:
+  collection:
+    default_interval: 30s
+
+# GitHub configuration
+github:
+  # GitHub personal access token (required)
+  token: "ghp_your_token_here"
+  
+  # Organizations to monitor (optional)
+  orgs:
+    - "d0ugal"
+    - "prometheus"
+  
+  # Specific repositories to monitor (optional)
+  repos:
+    - "d0ugal/mqtt-exporter"
+    - "d0ugal/filesystem-exporter"
+  
+  # API timeout
+  timeout: 30s
+  
+  # Rate limiting configuration
+  refresh_interval: 0s  # 0 = auto-calculate based on actual API rate limits
+  rate_limit_buffer: 0.8  # Use 80% of available rate limit (fetched from API)

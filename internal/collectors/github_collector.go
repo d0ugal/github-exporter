@@ -514,7 +514,7 @@ func (gc *GitHubCollector) hasWildcardRepos() bool {
 // collectAllRepos collects metrics for all repositories the user has access to
 func (gc *GitHubCollector) collectAllRepos(ctx context.Context) error {
 	slog.Info("Wildcard repos specified, collecting all accessible repositories")
-	
+
 	// Wait for rate limiter
 	if err := gc.limiter.Wait(ctx); err != nil {
 		return fmt.Errorf("rate limiter error: %w", err)
@@ -546,7 +546,7 @@ func (gc *GitHubCollector) collectAllRepos(ctx context.Context) error {
 
 		owner := *repo.Owner.Login
 		repoName := *repo.Name
-		
+
 		// Determine visibility
 		visibility := "public"
 		if repo.Private != nil && *repo.Private {
@@ -563,9 +563,9 @@ func (gc *GitHubCollector) collectAllRepos(ctx context.Context) error {
 		// Estimate total based on pagination
 		totalRepos = resp.LastPage * 100
 	}
-	
+
 	slog.Info("Collected metrics for repositories", "count", len(repos), "estimated_total", totalRepos)
-	
+
 	return nil
 }
 

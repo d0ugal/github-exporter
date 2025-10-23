@@ -521,7 +521,7 @@ func (gc *GitHubCollector) collectAllRepos(ctx context.Context) error {
 	}
 
 	// Get all repositories the authenticated user has access to
-	repos, resp, err := gc.client.Repositories.List(ctx, "", &github.RepositoryListOptions{
+	repos, resp, err := gc.client.Repositories.ListByAuthenticatedUser(ctx, &github.RepositoryListByAuthenticatedUserOptions{
 		Type: "all",
 		ListOptions: github.ListOptions{
 			PerPage: 100, // Get more repos per page for efficiency

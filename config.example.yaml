@@ -26,9 +26,11 @@ github:
     - "prometheus"
   
   # Specific repositories to monitor (optional)
+  # Use "*" to monitor all repositories the user has access to
   repos:
     - "d0ugal/mqtt-exporter"
     - "d0ugal/filesystem-exporter"
+    # - "*"  # Uncomment to monitor ALL accessible repositories
   
   # API timeout
   timeout: 30s

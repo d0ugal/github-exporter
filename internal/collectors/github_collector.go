@@ -357,6 +357,11 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 }
 
 func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
+	// Check if wildcard is specified for repos
+	if gc.hasWildcardRepos() {
+		return gc.collectAllRepos(ctx)
+	}
+
 	// Collect metrics for specific repositories
 	for _, repoFullName := range gc.config.GitHub.Repos {
 		parts := strings.Split(repoFullName, "/")
@@ -402,17 +407,17 @@ func (gc *GitHubCollector) setRepoMetrics(ctx context.Context, owner, repo, visi
 	if repoInfo.Archived != nil && *repoInfo.Archived {
 		archived = "true"
 	}
-	
+
 	fork := "false"
 	if repoInfo.Fork != nil && *repoInfo.Fork {
 		fork = "true"
 	}
-	
+
 	language := ""
 	if repoInfo.Language != nil {
 		language = *repoInfo.Language
 	}
-	
+
 	// Set info metric (always 1 for info metrics)
 	gc.metrics.GitHubReposInfo.WithLabelValues(owner, repo, visibility, archived, fork, language).Set(1)
 
@@ -492,8 +497,76 @@ func (gc *GitHubCollector) setOpenPRsMetric(ctx context.Context, owner, repo, vi
 		// If we got results, we know there are at least some PRs
 		openPRsCount = len(prs)
 	}
-	
+
 	gc.metrics.GitHubReposOpenPRs.WithLabelValues(owner, repo, visibility).Set(float64(openPRsCount))
+}
+
+// hasWildcardRepos checks if "*" is specified in the repos list
+func (gc *GitHubCollector) hasWildcardRepos() bool {
+	for _, repo := range gc.config.GitHub.Repos {
+		if repo == "*" {
+			return true
+		}
+	}
+	return false
+}
+
+// collectAllRepos collects metrics for all repositories the user has access to
+func (gc *GitHubCollector) collectAllRepos(ctx context.Context) error {
+	slog.Info("Wildcard repos specified, collecting all accessible repositories")
+	
+	// Wait for rate limiter
+	if err := gc.limiter.Wait(ctx); err != nil {
+		return fmt.Errorf("rate limiter error: %w", err)
+	}
+
+	// Get all repositories the authenticated user has access to
+	repos, resp, err := gc.client.Repositories.List(ctx, "", &github.RepositoryListOptions{
+		Type: "all",
+		ListOptions: github.ListOptions{
+			PerPage: 100, // Get more repos per page for efficiency
+		},
+	})
+	if err != nil {
+		slog.Error("Failed to list all repositories", "error", err)
+		gc.metrics.GitHubAPIErrorsTotal.WithLabelValues("repos", "api_error").Inc()
+		return fmt.Errorf("failed to list all repositories: %w", err)
+	}
+
+	// Update API call metrics
+	if resp != nil {
+		gc.metrics.GitHubAPICallsTotal.WithLabelValues("repos", fmt.Sprintf("%d", resp.StatusCode)).Inc()
+	}
+
+	// Process each repository
+	for _, repo := range repos {
+		if repo.Name == nil || repo.Owner == nil || repo.Owner.Login == nil {
+			continue
+		}
+
+		owner := *repo.Owner.Login
+		repoName := *repo.Name
+		
+		// Determine visibility
+		visibility := "public"
+		if repo.Private != nil && *repo.Private {
+			visibility = "private"
+		}
+
+		// Set repository metrics
+		gc.setRepoMetrics(ctx, owner, repoName, visibility, repo)
+	}
+
+	// Set total repositories count (approximate)
+	totalRepos := len(repos)
+	if resp != nil && resp.LastPage > 0 {
+		// Estimate total based on pagination
+		totalRepos = resp.LastPage * 100
+	}
+	
+	slog.Info("Collected metrics for repositories", "count", len(repos), "estimated_total", totalRepos)
+	
+	return nil
 }
 
 // Stop stops the collector

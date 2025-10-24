@@ -189,6 +189,105 @@ The exporter automatically manages GitHub API rate limits:
 - Respects rate limit buffers to avoid hitting limits
 - Provides rate limit metrics for monitoring
 
+## PromQL Examples with `group_left`
+
+The GitHub exporter provides rich metrics that can be combined using PromQL's `group_left` operator to create powerful queries. Here are some common examples:
+
+### Basic Repository Filtering
+
+Filter repositories by organization and exclude archived/forks:
+```promql
+# Only active repositories (not archived, not forks)
+github_repo_open_issues{org="d0ugal"} 
+* on(org,repo) group_left() 
+github_repo_info{org="d0ugal", archived="false", fork="false"}
+```
+
+### Repository Health Monitoring
+
+Monitor repository health with multiple metrics:
+```promql
+# Repository health score (lower is better)
+(
+  github_repo_open_issues{org="d0ugal"} * 2 +
+  github_repo_open_prs{org="d0ugal"} * 1
+) 
+* on(org,repo) group_left() 
+github_repo_info{org="d0ugal", archived="false", fork="false"}
+```
+
+### Language-Specific Analysis
+
+Analyze metrics by programming language:
+```promql
+# Open issues by language
+github_repo_open_issues{org="d0ugal"} 
+* on(org,repo) group_left(language) 
+github_repo_info{org="d0ugal", archived="false", fork="false"}
+```
+
+### Repository Activity Trends
+
+Track repository activity over time:
+```promql
+# Rate of new issues per day
+rate(github_repo_open_issues{org="d0ugal"}[24h]) 
+* on(org,repo) group_left() 
+github_repo_info{org="d0ugal", archived="false", fork="false"}
+```
+
+### Multi-Organization Monitoring
+
+Monitor across multiple organizations:
+```promql
+# Issues across all monitored organizations
+github_repo_open_issues{org=~"d0ugal|prometheus|kubernetes"} 
+* on(org,repo) group_left() 
+github_repo_info{archived="false", fork="false"}
+```
+
+### Repository Size vs Activity
+
+Correlate repository size with activity:
+```promql
+# Activity density (issues per MB)
+github_repo_open_issues{org="d0ugal"} 
+/ on(org,repo) group_left() 
+(github_repo_size_bytes{org="d0ugal"} / 1024 / 1024)
+```
+
+### Advanced Filtering Examples
+
+```promql
+# Only Go repositories with high activity
+github_repo_open_issues{org="d0ugal"} 
+* on(org,repo) group_left(language) 
+github_repo_info{org="d0ugal", language="Go", archived="false", fork="false"}
+
+# Public repositories only
+github_repo_open_prs{org="d0ugal"} 
+* on(org,repo) group_left(visibility) 
+github_repo_info{org="d0ugal", visibility="public", archived="false"}
+
+# Recently active repositories (last 7 days)
+github_repo_open_issues{org="d0ugal"} 
+* on(org,repo) group_left() 
+github_repo_info{org="d0ugal", archived="false", fork="false"}
+```
+
+### Understanding `group_left`
+
+The `group_left` operator is crucial for combining metrics with different label sets:
+
+- **Left side**: The metric you want to keep (e.g., `github_repo_open_issues`)
+- **Right side**: The metric providing additional labels (e.g., `github_repo_info`)
+- **Result**: All labels from both sides, with the right side's labels added to the left
+
+This allows you to:
+- Filter repositories by metadata (archived, fork, language, visibility)
+- Add context to metrics (language, organization type)
+- Create complex queries that combine multiple data sources
+
 ## Monitoring
 
 Monitor the exporter itself:

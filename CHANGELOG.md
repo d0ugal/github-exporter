@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.1](https://github.com/d0ugal/github-exporter/compare/v0.1.0...v0.1.1) (2025-10-25)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.4.1 ([1e08dd6](https://github.com/d0ugal/github-exporter/commit/1e08dd6e13023e0348f595b478c189548262ada1))
+* update module github.com/d0ugal/promexporter to v1.4.1 ([e2e80bb](https://github.com/d0ugal/github-exporter/commit/e2e80bb4a44b4093d2ab630d0ecf7431152c7b99))
+* update module github.com/prometheus/procfs to v0.19.0 ([43396b0](https://github.com/d0ugal/github-exporter/commit/43396b0380f53083b86f392fe2e1b5504271dd58))
+* update module github.com/prometheus/procfs to v0.19.0 ([703e33f](https://github.com/d0ugal/github-exporter/commit/703e33faeacff6929dd0ee4c0c4caefc415a7ba6))
+
 ## [0.1.0](https://github.com/d0ugal/github-exporter/compare/v0.0.1...v0.1.0) (2025-10-25)
 
 

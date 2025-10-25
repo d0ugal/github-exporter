@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2](https://github.com/d0ugal/github-exporter/compare/v0.1.1...v0.1.2) (2025-10-25)
+
+
+### Bug Fixes
+
+* add internal version package and update version handling ([93edeb9](https://github.com/d0ugal/github-exporter/commit/93edeb9a91dfa7197da21756e08da14ccb01650d))
+* add internal version package and update version handling ([6cb40de](https://github.com/d0ugal/github-exporter/commit/6cb40deef7388120edb7afe10e0f41402e361914))
+
 ## [0.1.1](https://github.com/d0ugal/github-exporter/compare/v0.1.0...v0.1.1) (2025-10-25)
 
 

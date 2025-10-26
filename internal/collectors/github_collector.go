@@ -105,6 +105,14 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 		gc.metrics.GitHubAPIErrorsTotal.WithLabelValues("repos", "collection_error").Inc()
 	}
 
+	// Collect build status metrics if branches are configured
+	if len(gc.config.GitHub.Branches) > 0 {
+		if err := gc.collectBuildStatusMetrics(ctx); err != nil {
+			slog.Error("Failed to collect build status metrics", "error", err)
+			gc.metrics.GitHubAPIErrorsTotal.WithLabelValues("build_status", "collection_error").Inc()
+		}
+	}
+
 	slog.Debug("GitHub metrics collection completed")
 }
 
@@ -127,6 +135,12 @@ func (gc *GitHubCollector) calculateRefreshInterval() time.Duration {
 	// Each org requires: 1 call for org info + 1 call for repos
 	// Each specific repo requires: 1 call
 	totalCallsPerCycle := len(gc.config.GitHub.Orgs)*2 + len(gc.config.GitHub.Repos)
+
+	// Add calls for build status metrics if branches are configured
+	if len(gc.config.GitHub.Branches) > 0 {
+		// Each repo + branch combination requires: 1 call for workflow runs + 1 call for check runs
+		totalCallsPerCycle += len(gc.config.GitHub.Repos) * len(gc.config.GitHub.Branches) * 2
+	}
 
 	// Add 1 for rate limit check
 	totalCallsPerCycle++
@@ -567,6 +581,161 @@ func (gc *GitHubCollector) collectAllRepos(ctx context.Context) error {
 	slog.Info("Collected metrics for repositories", "count", len(repos), "estimated_total", totalRepos)
 
 	return nil
+}
+
+// collectBuildStatusMetrics collects build status metrics for configured branches
+func (gc *GitHubCollector) collectBuildStatusMetrics(ctx context.Context) error {
+	// Collect metrics for each repository
+	for _, repoFullName := range gc.config.GitHub.Repos {
+		parts := strings.Split(repoFullName, "/")
+		if len(parts) != 2 {
+			slog.Error("Invalid repository format", "repo", repoFullName)
+			continue
+		}
+
+		owner := parts[0]
+		repo := parts[1]
+
+		// Collect build status for each configured branch
+		for _, branchName := range gc.config.GitHub.Branches {
+			if err := gc.collectBranchBuildStatus(ctx, owner, repo, branchName); err != nil {
+				slog.Error("Failed to collect branch build status", "owner", owner, "repo", repo, "branch", branchName, "error", err)
+				gc.metrics.GitHubAPIErrorsTotal.WithLabelValues("build_status", "branch_error").Inc()
+			}
+		}
+	}
+
+	return nil
+}
+
+// collectBranchBuildStatus collects build status for a specific branch
+func (gc *GitHubCollector) collectBranchBuildStatus(ctx context.Context, owner, repo, branch string) error {
+	// Wait for rate limiter
+	if err := gc.limiter.Wait(ctx); err != nil {
+		return fmt.Errorf("rate limiter error: %w", err)
+	}
+
+	// Get workflow runs for the repository (we'll filter by branch in processing)
+	workflowRuns, resp, err := gc.client.Actions.ListRepositoryWorkflowRuns(ctx, owner, repo, &github.ListWorkflowRunsOptions{
+		ListOptions: github.ListOptions{
+			PerPage: 50, // Get more runs to filter by branch
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to get workflow runs for branch %s: %w", branch, err)
+	}
+
+	// Update API call metrics
+	if resp != nil {
+		gc.metrics.GitHubAPICallsTotal.WithLabelValues("workflow_runs", fmt.Sprintf("%d", resp.StatusCode)).Inc()
+	}
+
+	// Process workflow runs
+	branchStatus := 1.0 // Default to success
+	hasRuns := false
+
+	for _, run := range workflowRuns.WorkflowRuns {
+		if run.WorkflowID == nil || run.Name == nil || run.HeadBranch == nil {
+			continue
+		}
+
+		// Filter by the specific branch we're monitoring
+		if *run.HeadBranch != branch {
+			continue
+		}
+
+		hasRuns = true
+		workflowName := *run.Name
+		conclusion := "unknown"
+		if run.Conclusion != nil {
+			conclusion = *run.Conclusion
+		}
+
+		// Set workflow run status metric
+		statusValue := gc.getStatusValue(conclusion)
+		gc.metrics.GitHubWorkflowRunStatus.WithLabelValues(owner, repo, workflowName, branch, conclusion).Set(statusValue)
+
+		// Set workflow run duration metric
+		if run.RunStartedAt != nil && run.UpdatedAt != nil {
+			duration := run.UpdatedAt.Sub(run.RunStartedAt.Time).Seconds()
+			gc.metrics.GitHubWorkflowRunDuration.WithLabelValues(owner, repo, workflowName, branch, conclusion).Set(duration)
+		}
+
+		// Update branch status (worst status wins)
+		if statusValue < branchStatus {
+			branchStatus = statusValue
+		}
+	}
+
+	// Set branch build status metric
+	if hasRuns {
+		gc.metrics.GitHubBranchBuildStatus.WithLabelValues(owner, repo, branch).Set(branchStatus)
+	}
+
+	// Get check runs for the branch
+	if err := gc.collectCheckRuns(ctx, owner, repo, branch); err != nil {
+		slog.Error("Failed to collect check runs", "owner", owner, "repo", repo, "branch", branch, "error", err)
+	}
+
+	return nil
+}
+
+// collectCheckRuns collects check run status for a specific branch
+func (gc *GitHubCollector) collectCheckRuns(ctx context.Context, owner, repo, branch string) error {
+	// Wait for rate limiter
+	if err := gc.limiter.Wait(ctx); err != nil {
+		return fmt.Errorf("rate limiter error: %w", err)
+	}
+
+	// Get check runs for the branch
+	checkRuns, resp, err := gc.client.Checks.ListCheckRunsForRef(ctx, owner, repo, branch, &github.ListCheckRunsOptions{
+		ListOptions: github.ListOptions{
+			PerPage: 100,
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to get check runs for branch %s: %w", branch, err)
+	}
+
+	// Update API call metrics
+	if resp != nil {
+		gc.metrics.GitHubAPICallsTotal.WithLabelValues("check_runs", fmt.Sprintf("%d", resp.StatusCode)).Inc()
+	}
+
+	// Process check runs
+	for _, checkRun := range checkRuns.CheckRuns {
+		if checkRun.Name == nil {
+			continue
+		}
+
+		checkName := *checkRun.Name
+		conclusion := "unknown"
+		if checkRun.Conclusion != nil {
+			conclusion = *checkRun.Conclusion
+		}
+
+		// Set check run status metric
+		statusValue := gc.getStatusValue(conclusion)
+		gc.metrics.GitHubCheckRunStatus.WithLabelValues(owner, repo, checkName, branch, conclusion).Set(statusValue)
+	}
+
+	return nil
+}
+
+// getStatusValue converts GitHub status/conclusion to numeric value
+func (gc *GitHubCollector) getStatusValue(conclusion string) float64 {
+	switch conclusion {
+	case "success":
+		return 1.0
+	case "failure", "cancelled", "timed_out":
+		return 0.0
+	case "pending", "in_progress", "queued":
+		return 2.0
+	case "skipped", "neutral":
+		return 3.0
+	default:
+		return 2.0 // Default to pending for unknown statuses
+	}
 }
 
 // Stop stops the collector

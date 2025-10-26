@@ -24,6 +24,8 @@ type GitHubConfig struct {
 	Token           string   `yaml:"token"`
 	Orgs            []string `yaml:"orgs"`
 	Repos           []string `yaml:"repos"`
+	Branches        []string `yaml:"branches"`  // Branches to monitor for build status
+	Workflows       []string `yaml:"workflows"` // Specific workflows to monitor (empty = all)
 	Timeout         Duration `yaml:"timeout"`
 	RefreshInterval Duration `yaml:"refresh_interval"`
 	RateLimitBuffer float64  `yaml:"rate_limit_buffer"` // Percentage to stay under limit (0.8 = 80%)
@@ -123,6 +125,14 @@ func loadFromEnv() (*Config, error) {
 
 	if reposStr := os.Getenv("GITHUB_EXPORTER_GITHUB_REPOS"); reposStr != "" {
 		config.GitHub.Repos = strings.Split(reposStr, ",")
+	}
+
+	if branchesStr := os.Getenv("GITHUB_EXPORTER_GITHUB_BRANCHES"); branchesStr != "" {
+		config.GitHub.Branches = strings.Split(branchesStr, ",")
+	}
+
+	if workflowsStr := os.Getenv("GITHUB_EXPORTER_GITHUB_WORKFLOWS"); workflowsStr != "" {
+		config.GitHub.Workflows = strings.Split(workflowsStr, ",")
 	}
 
 	if timeoutStr := os.Getenv("GITHUB_EXPORTER_GITHUB_TIMEOUT"); timeoutStr != "" {
@@ -277,6 +287,20 @@ func (c *Config) validateGitHubConfig() error {
 
 	if len(c.GitHub.Orgs) == 0 && len(c.GitHub.Repos) == 0 {
 		return fmt.Errorf("at least one GitHub organization or repository must be specified")
+	}
+
+	// Validate branches configuration
+	for _, branch := range c.GitHub.Branches {
+		if strings.TrimSpace(branch) == "" {
+			return fmt.Errorf("branch names cannot be empty")
+		}
+	}
+
+	// Validate workflows configuration
+	for _, workflow := range c.GitHub.Workflows {
+		if strings.TrimSpace(workflow) == "" {
+			return fmt.Errorf("workflow names cannot be empty")
+		}
 	}
 
 	if c.GitHub.Timeout.Seconds() < 1 {

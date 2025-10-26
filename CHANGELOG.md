@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.3](https://github.com/d0ugal/github-exporter/compare/v0.1.2...v0.1.3) (2025-10-26)
+
+
+### Bug Fixes
+
+* **ci:** use Makefile for linting instead of golangci-lint-action ([6e49b7b](https://github.com/d0ugal/github-exporter/commit/6e49b7ba53c6bef53551f2525c9bfc1b3269a4f6))
+* **ci:** use Makefile for linting instead of golangci-lint-action ([b4fbf2e](https://github.com/d0ugal/github-exporter/commit/b4fbf2e1e23e1dde8f70ef85ca38d5bd28e0d750))
+
 ## [0.1.2](https://github.com/d0ugal/github-exporter/compare/v0.1.1...v0.1.2) (2025-10-26)
 
 

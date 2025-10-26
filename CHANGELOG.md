@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.2](https://github.com/d0ugal/github-exporter/compare/v0.1.1...v0.1.2) (2025-10-26)
+
+
+### Bug Fixes
+
+* add internal version package and update version handling ([93edeb9](https://github.com/d0ugal/github-exporter/commit/93edeb9a91dfa7197da21756e08da14ccb01650d))
+* add internal version package and update version handling ([6cb40de](https://github.com/d0ugal/github-exporter/commit/6cb40deef7388120edb7afe10e0f41402e361914))
+* update module github.com/d0ugal/promexporter to v1.5.0 ([a118ea7](https://github.com/d0ugal/github-exporter/commit/a118ea77b63b7ce15348914cfdc125a61234edb1))
+* update module github.com/d0ugal/promexporter to v1.5.0 ([938472b](https://github.com/d0ugal/github-exporter/commit/938472ba3089a1b62f413c3cc5e50516faf0e5ce))
+* update module github.com/prometheus/procfs to v0.19.1 ([404aa8e](https://github.com/d0ugal/github-exporter/commit/404aa8e3eca7da5847f2083bcf3922d5aa967cf9))
+* update module github.com/prometheus/procfs to v0.19.1 ([39005b4](https://github.com/d0ugal/github-exporter/commit/39005b4684b52ef68998a261255c7691dfe8a784))
+* use WithVersionInfo to pass version info to promexporter ([a6bc2db](https://github.com/d0ugal/github-exporter/commit/a6bc2dbcef936535d4bd04fc0e002fa9c93d29f8))
+
 ## [0.1.1](https://github.com/d0ugal/github-exporter/compare/v0.1.0...v0.1.1) (2025-10-25)
 
 

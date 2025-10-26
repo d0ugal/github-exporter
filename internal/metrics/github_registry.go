@@ -28,6 +28,12 @@ type GitHubRegistry struct {
 	GitHubOrgsFollowers   *prometheus.GaugeVec
 	GitHubOrgsFollowing   *prometheus.GaugeVec
 
+	// GitHub build status metrics
+	GitHubBranchBuildStatus   *prometheus.GaugeVec
+	GitHubWorkflowRunStatus   *prometheus.GaugeVec
+	GitHubCheckRunStatus      *prometheus.GaugeVec
+	GitHubWorkflowRunDuration *prometheus.GaugeVec
+
 	// GitHub API metrics
 	GitHubAPICallsTotal      *prometheus.CounterVec
 	GitHubAPIErrorsTotal     *prometheus.CounterVec
@@ -173,6 +179,43 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		[]string{"org"},
 	)
 	baseRegistry.AddMetricInfo("github_org_following", "Number of organizations that a GitHub organization is following", []string{"org"})
+
+	// GitHub build status metrics
+	github.GitHubBranchBuildStatus = factory.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "github_branch_build_status",
+			Help: "Build status for GitHub repository branches (0=failed, 1=success, 2=pending, 3=skipped)",
+		},
+		[]string{"org", "repo", "branch"},
+	)
+	baseRegistry.AddMetricInfo("github_branch_build_status", "Build status for GitHub repository branches (0=failed, 1=success, 2=pending, 3=skipped)", []string{"org", "repo", "branch"})
+
+	github.GitHubWorkflowRunStatus = factory.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "github_workflow_run_status",
+			Help: "Status of GitHub workflow runs (0=failed, 1=success, 2=pending, 3=skipped)",
+		},
+		[]string{"org", "repo", "workflow", "branch", "conclusion"},
+	)
+	baseRegistry.AddMetricInfo("github_workflow_run_status", "Status of GitHub workflow runs (0=failed, 1=success, 2=pending, 3=skipped)", []string{"org", "repo", "workflow", "branch", "conclusion"})
+
+	github.GitHubCheckRunStatus = factory.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "github_check_run_status",
+			Help: "Status of GitHub check runs (0=failed, 1=success, 2=pending, 3=skipped)",
+		},
+		[]string{"org", "repo", "check_name", "branch", "conclusion"},
+	)
+	baseRegistry.AddMetricInfo("github_check_run_status", "Status of GitHub check runs (0=failed, 1=success, 2=pending, 3=skipped)", []string{"org", "repo", "check_name", "branch", "conclusion"})
+
+	github.GitHubWorkflowRunDuration = factory.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "github_workflow_run_duration_seconds",
+			Help: "Duration of GitHub workflow runs in seconds",
+		},
+		[]string{"org", "repo", "workflow", "branch", "conclusion"},
+	)
+	baseRegistry.AddMetricInfo("github_workflow_run_duration_seconds", "Duration of GitHub workflow runs in seconds", []string{"org", "repo", "workflow", "branch", "conclusion"})
 
 	// GitHub API metrics
 	github.GitHubAPICallsTotal = factory.NewCounterVec(

@@ -6,6 +6,7 @@ A Prometheus exporter for GitHub metrics that collects repository statistics, or
 
 - **Repository Metrics**: Stars, forks, issues, pull requests, and more
 - **Organization Monitoring**: Track multiple organizations and their repositories
+- **Build Status Monitoring**: Track build status, workflow runs, and check runs for specific branches
 - **Rate Limit Management**: Intelligent rate limiting to respect GitHub API limits
 - **Flexible Configuration**: YAML config file or environment variables
 - **Docker Support**: Ready-to-use Docker container
@@ -90,6 +91,17 @@ github:
     - "d0ugal/filesystem-exporter"
     # - "*"  # Monitor ALL accessible repositories
   
+  # Branches to monitor for build status (optional)
+  branches:
+    - "main"
+    - "develop"
+    - "feature/new-feature"
+  
+  # Specific workflows to monitor (optional, empty = all workflows)
+  workflows:
+    - "CI"
+    - "CD"
+  
   # API settings
   timeout: 30s
   refresh_interval: 0s  # Auto-calculate based on rate limits
@@ -109,6 +121,8 @@ GITHUB_EXPORTER_METRICS_DEFAULT_INTERVAL=30s
 GITHUB_EXPORTER_GITHUB_TOKEN=ghp_your_token_here
 GITHUB_EXPORTER_GITHUB_ORGS=d0ugal,prometheus
 GITHUB_EXPORTER_GITHUB_REPOS=d0ugal/mqtt-exporter,d0ugal/filesystem-exporter
+GITHUB_EXPORTER_GITHUB_BRANCHES=main,develop
+GITHUB_EXPORTER_GITHUB_WORKFLOWS=CI,CD
 GITHUB_EXPORTER_GITHUB_TIMEOUT=30s
 GITHUB_EXPORTER_GITHUB_RATE_LIMIT=0.8
 ```
@@ -131,6 +145,12 @@ The exporter provides the following metrics:
 - `github_organization_public_repos` - Number of public repositories
 - `github_organization_total_repos` - Total number of repositories
 - `github_organization_members_total` - Number of organization members
+
+### Build Status Metrics
+- `github_branch_build_status` - Build status for repository branches (0=failed, 1=success, 2=pending, 3=skipped)
+- `github_workflow_run_status` - Status of workflow runs (0=failed, 1=success, 2=pending, 3=skipped)
+- `github_workflow_run_duration_seconds` - Duration of workflow runs in seconds
+- `github_check_run_status` - Status of check runs (0=failed, 1=success, 2=pending, 3=skipped)
 
 ### Rate Limiting Metrics
 - `github_rate_limit_remaining` - Remaining API calls
@@ -179,6 +199,50 @@ docker-compose up
 - `GET /metrics` - Prometheus metrics endpoint
 - `GET /health` - Health check endpoint
 - `GET /version` - Version information
+
+## Build Status Monitoring
+
+The exporter can monitor build status for specific branches by tracking:
+
+- **Workflow Runs**: GitHub Actions workflow execution status and duration
+- **Check Runs**: Status checks, CI/CD pipeline results, and external integrations
+- **Branch Status**: Overall build health per branch (worst status wins)
+
+### Configuration
+
+To enable build status monitoring, configure the `branches` option:
+
+```yaml
+github:
+  repos:
+    - "d0ugal/mqtt-exporter"
+  branches:
+    - "main"
+    - "develop"
+    - "feature/new-feature"
+```
+
+### Status Values
+
+Build status metrics use numeric values for easy alerting:
+
+- `0` = Failed (failure, cancelled, timed_out)
+- `1` = Success
+- `2` = Pending (pending, in_progress, queued)
+- `3` = Skipped (skipped, neutral)
+
+### Example Queries
+
+```promql
+# Alert on failed builds
+github_branch_build_status == 0
+
+# Monitor workflow run durations
+github_workflow_run_duration_seconds{conclusion="success"}
+
+# Track check run failures
+github_check_run_status == 0
+```
 
 ## Rate Limiting
 

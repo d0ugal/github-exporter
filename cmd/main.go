@@ -96,9 +96,6 @@ func main() {
 	// Initialize metrics registry using promexporter
 	metricsRegistry := promexporter_metrics.NewRegistry("github_exporter_info")
 
-	// Set version info metric with github-exporter version information
-	metricsRegistry.VersionInfo.WithLabelValues(version.Version, version.Commit, version.BuildDate).Set(1)
-
 	// Add custom metrics to the registry
 	githubRegistry := metrics.NewGitHubRegistry(metricsRegistry)
 
@@ -110,6 +107,7 @@ func main() {
 		WithConfig(&cfg.BaseConfig).
 		WithMetrics(metricsRegistry).
 		WithCollector(githubCollector).
+		WithVersionInfo(version.Version, version.Commit, version.BuildDate).
 		Build()
 
 	if err := application.Run(); err != nil {

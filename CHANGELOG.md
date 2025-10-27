@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.0](https://github.com/d0ugal/github-exporter/compare/v0.1.2...v0.2.0) (2025-10-27)
+
+
+### Features
+
+* add build status monitoring for branches ([65f8bf3](https://github.com/d0ugal/github-exporter/commit/65f8bf32bf63f63786a69769ecb6a8b1a17dcf3e))
+* add build status monitoring for branches ([a8a9242](https://github.com/d0ugal/github-exporter/commit/a8a9242d52c65dbe157526ee61d41f9e2b0d3f76))
+
+
+### Bug Fixes
+
+* **ci:** use Makefile for linting instead of golangci-lint-action ([6e49b7b](https://github.com/d0ugal/github-exporter/commit/6e49b7ba53c6bef53551f2525c9bfc1b3269a4f6))
+* **ci:** use Makefile for linting instead of golangci-lint-action ([b4fbf2e](https://github.com/d0ugal/github-exporter/commit/b4fbf2e1e23e1dde8f70ef85ca38d5bd28e0d750))
+
 ## [0.1.2](https://github.com/d0ugal/github-exporter/compare/v0.1.1...v0.1.2) (2025-10-26)
 
 

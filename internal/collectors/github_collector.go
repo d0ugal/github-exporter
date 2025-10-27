@@ -83,45 +83,45 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 
 	// Check and update rate limits first
 	if err := gc.updateRateLimits(ctx); err != nil {
-		slog.Error("Failed to update rate limits", "error", err)
+		slog.Error("Failed to update rate limits", "error_type", err)
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 			"endpoint": "rate_limit",
-			"error":    "update_error",
+			"error_type":    "update_error_type",
 		}).Inc()
 		return
 	}
 
 	// Wait for rate limiter
 	if err := gc.limiter.Wait(ctx); err != nil {
-		slog.Error("Rate limiter error", "error", err)
+		slog.Error("Rate limiter error_type", "error_type", err)
 		return
 	}
 
 	// Collect organization metrics
 	if err := gc.collectOrgMetrics(ctx); err != nil {
-		slog.Error("Failed to collect organization metrics", "error", err)
+		slog.Error("Failed to collect organization metrics", "error_type", err)
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 			"endpoint": "orgs",
-			"error":    "collection_error",
+			"error_type":    "collection_error_type",
 		}).Inc()
 	}
 
 	// Collect repository metrics
 	if err := gc.collectRepoMetrics(ctx); err != nil {
-		slog.Error("Failed to collect repository metrics", "error", err)
+		slog.Error("Failed to collect repository metrics", "error_type", err)
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 			"endpoint": "repos",
-			"error":    "collection_error",
+			"error_type":    "collection_error_type",
 		}).Inc()
 	}
 
 	// Collect build status metrics if branches are configured
 	if len(gc.config.GitHub.Branches) > 0 {
 		if err := gc.collectBuildStatusMetrics(ctx); err != nil {
-			slog.Error("Failed to collect build status metrics", "error", err)
+			slog.Error("Failed to collect build status metrics", "error_type", err)
 			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 				"endpoint": "build_status",
-				"error":    "collection_error",
+				"error_type":    "collection_error_type",
 			}).Inc()
 		}
 	}
@@ -219,7 +219,7 @@ func (gc *GitHubCollector) updateRateLimits(ctx context.Context) error {
 
 	// Wait for rate limiter
 	if err := gc.limiter.Wait(ctx); err != nil {
-		return fmt.Errorf("rate limiter error: %w", err)
+		return fmt.Errorf("rate limiter error_type: %w", err)
 	}
 
 	// Get rate limit information using the new API
@@ -302,16 +302,16 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 	for _, org := range gc.config.GitHub.Orgs {
 		// Wait for rate limiter
 		if err := gc.limiter.Wait(ctx); err != nil {
-			return fmt.Errorf("rate limiter error: %w", err)
+			return fmt.Errorf("rate limiter error_type: %w", err)
 		}
 
 		// Get organization information
 		orgInfo, resp, err := gc.client.Organizations.Get(ctx, org)
 		if err != nil {
-			slog.Error("Failed to get organization info", "org", org, "error", err)
+			slog.Error("Failed to get organization info", "org", org, "error_type", err)
 			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 				"endpoint": "orgs",
-				"error":    "api_error",
+				"error_type":    "api_error_type",
 			}).Inc()
 			continue
 		}
@@ -341,7 +341,7 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 
 		// Get repositories for the organization
 		if err := gc.collectOrgRepos(ctx, org); err != nil {
-			slog.Error("Failed to collect organization repositories", "org", org, "error", err)
+			slog.Error("Failed to collect organization repositories", "org", org, "error_type", err)
 		}
 	}
 
@@ -354,7 +354,7 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) error {
 	// Wait for rate limiter
 	if err := gc.limiter.Wait(ctx); err != nil {
-		return fmt.Errorf("rate limiter error: %w", err)
+		return fmt.Errorf("rate limiter error_type: %w", err)
 	}
 
 	// List repositories for the organization
@@ -426,16 +426,16 @@ func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
 
 		// Wait for rate limiter
 		if err := gc.limiter.Wait(ctx); err != nil {
-			return fmt.Errorf("rate limiter error: %w", err)
+			return fmt.Errorf("rate limiter error_type: %w", err)
 		}
 
 		// Get repository information
 		repoInfo, resp, err := gc.client.Repositories.Get(ctx, owner, repo)
 		if err != nil {
-			slog.Error("Failed to get repository info", "owner", owner, "repo", repo, "error", err)
+			slog.Error("Failed to get repository info", "owner", owner, "repo", repo, "error_type", err)
 			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 				"endpoint": "repos",
-				"error":    "api_error",
+				"error_type":    "api_error_type",
 			}).Inc()
 			continue
 		}
@@ -556,7 +556,7 @@ func (gc *GitHubCollector) setRepoMetrics(ctx context.Context, owner, repo, visi
 func (gc *GitHubCollector) setOpenPRsMetric(ctx context.Context, owner, repo, visibility string) {
 	// Wait for rate limiter
 	if err := gc.limiter.Wait(ctx); err != nil {
-		slog.Error("Rate limiter error while fetching PRs", "owner", owner, "repo", repo, "error", err)
+		slog.Error("Rate limiter error_type while fetching PRs", "owner", owner, "repo", repo, "error_type", err)
 		return
 	}
 
@@ -568,10 +568,10 @@ func (gc *GitHubCollector) setOpenPRsMetric(ctx context.Context, owner, repo, vi
 		},
 	})
 	if err != nil {
-		slog.Error("Failed to get open PRs", "owner", owner, "repo", repo, "error", err)
+		slog.Error("Failed to get open PRs", "owner", owner, "repo", repo, "error_type", err)
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 			"endpoint": "pull_requests",
-			"error":    "api_error",
+			"error_type":    "api_error_type",
 		}).Inc()
 		return
 	}
@@ -619,7 +619,7 @@ func (gc *GitHubCollector) collectAllRepos(ctx context.Context) error {
 
 	// Wait for rate limiter
 	if err := gc.limiter.Wait(ctx); err != nil {
-		return fmt.Errorf("rate limiter error: %w", err)
+		return fmt.Errorf("rate limiter error_type: %w", err)
 	}
 
 	// Get all repositories the authenticated user has access to
@@ -630,10 +630,10 @@ func (gc *GitHubCollector) collectAllRepos(ctx context.Context) error {
 		},
 	})
 	if err != nil {
-		slog.Error("Failed to list all repositories", "error", err)
+		slog.Error("Failed to list all repositories", "error_type", err)
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 			"endpoint": "repos",
-			"error":    "api_error",
+			"error_type":    "api_error_type",
 		}).Inc()
 		return fmt.Errorf("failed to list all repositories: %w", err)
 	}
@@ -693,10 +693,10 @@ func (gc *GitHubCollector) collectBuildStatusMetrics(ctx context.Context) error 
 		// Collect build status for each configured branch
 		for _, branchName := range gc.config.GitHub.Branches {
 			if err := gc.collectBranchBuildStatus(ctx, owner, repo, branchName); err != nil {
-				slog.Error("Failed to collect branch build status", "owner", owner, "repo", repo, "branch", branchName, "error", err)
+				slog.Error("Failed to collect branch build status", "owner", owner, "repo", repo, "branch", branchName, "error_type", err)
 				gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 					"endpoint": "build_status",
-					"error":    "branch_error",
+					"error_type":    "branch_error_type",
 				}).Inc()
 			}
 		}
@@ -709,7 +709,7 @@ func (gc *GitHubCollector) collectBuildStatusMetrics(ctx context.Context) error 
 func (gc *GitHubCollector) collectBranchBuildStatus(ctx context.Context, owner, repo, branch string) error {
 	// Wait for rate limiter
 	if err := gc.limiter.Wait(ctx); err != nil {
-		return fmt.Errorf("rate limiter error: %w", err)
+		return fmt.Errorf("rate limiter error_type: %w", err)
 	}
 
 	// Get workflow runs for the repository (we'll filter by branch in processing)
@@ -790,7 +790,7 @@ func (gc *GitHubCollector) collectBranchBuildStatus(ctx context.Context, owner, 
 
 	// Get check runs for the branch
 	if err := gc.collectCheckRuns(ctx, owner, repo, branch); err != nil {
-		slog.Error("Failed to collect check runs", "owner", owner, "repo", repo, "branch", branch, "error", err)
+		slog.Error("Failed to collect check runs", "owner", owner, "repo", repo, "branch", branch, "error_type", err)
 	}
 
 	return nil
@@ -800,7 +800,7 @@ func (gc *GitHubCollector) collectBranchBuildStatus(ctx context.Context, owner, 
 func (gc *GitHubCollector) collectCheckRuns(ctx context.Context, owner, repo, branch string) error {
 	// Wait for rate limiter
 	if err := gc.limiter.Wait(ctx); err != nil {
-		return fmt.Errorf("rate limiter error: %w", err)
+		return fmt.Errorf("rate limiter error_type: %w", err)
 	}
 
 	// Get check runs for the branch

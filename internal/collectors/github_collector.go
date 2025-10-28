@@ -310,8 +310,8 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 		if err != nil {
 			slog.Error("Failed to get organization info", "org", org, "error", err)
 			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
-				"endpoint": "orgs",
-				"error":    "api_error",
+				"endpoint":   "orgs",
+				"error_type": "api_error",
 			}).Inc()
 			continue
 		}

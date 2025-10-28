@@ -85,8 +85,8 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 	if err := gc.updateRateLimits(ctx); err != nil {
 		slog.Error("Failed to update rate limits", "error", err)
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
-			"endpoint": "rate_limit",
-			"error":    "update_error",
+			"endpoint":   "rate_limit",
+			"error_type": "update_error",
 		}).Inc()
 		return
 	}
@@ -101,8 +101,8 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 	if err := gc.collectOrgMetrics(ctx); err != nil {
 		slog.Error("Failed to collect organization metrics", "error", err)
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
-			"endpoint": "orgs",
-			"error":    "collection_error",
+			"endpoint":   "orgs",
+			"error_type": "collection_error",
 		}).Inc()
 	}
 
@@ -110,8 +110,8 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 	if err := gc.collectRepoMetrics(ctx); err != nil {
 		slog.Error("Failed to collect repository metrics", "error", err)
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
-			"endpoint": "repos",
-			"error":    "collection_error",
+			"endpoint":   "repos",
+			"error_type": "collection_error",
 		}).Inc()
 	}
 
@@ -120,8 +120,8 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 		if err := gc.collectBuildStatusMetrics(ctx); err != nil {
 			slog.Error("Failed to collect build status metrics", "error", err)
 			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
-				"endpoint": "build_status",
-				"error":    "collection_error",
+				"endpoint":   "build_status",
+				"error_type": "collection_error",
 			}).Inc()
 		}
 	}
@@ -434,8 +434,8 @@ func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
 		if err != nil {
 			slog.Error("Failed to get repository info", "owner", owner, "repo", repo, "error", err)
 			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
-				"endpoint": "repos",
-				"error":    "api_error",
+				"endpoint":   "repos",
+				"error_type": "api_error",
 			}).Inc()
 			continue
 		}
@@ -570,8 +570,8 @@ func (gc *GitHubCollector) setOpenPRsMetric(ctx context.Context, owner, repo, vi
 	if err != nil {
 		slog.Error("Failed to get open PRs", "owner", owner, "repo", repo, "error", err)
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
-			"endpoint": "pull_requests",
-			"error":    "api_error",
+			"endpoint":   "pull_requests",
+			"error_type": "api_error",
 		}).Inc()
 		return
 	}
@@ -632,8 +632,8 @@ func (gc *GitHubCollector) collectAllRepos(ctx context.Context) error {
 	if err != nil {
 		slog.Error("Failed to list all repositories", "error", err)
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
-			"endpoint": "repos",
-			"error":    "api_error",
+			"endpoint":   "repos",
+			"error_type": "api_error",
 		}).Inc()
 		return fmt.Errorf("failed to list all repositories: %w", err)
 	}
@@ -695,8 +695,8 @@ func (gc *GitHubCollector) collectBuildStatusMetrics(ctx context.Context) error 
 			if err := gc.collectBranchBuildStatus(ctx, owner, repo, branchName); err != nil {
 				slog.Error("Failed to collect branch build status", "owner", owner, "repo", repo, "branch", branchName, "error", err)
 				gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
-					"endpoint": "build_status",
-					"error":    "branch_error",
+					"endpoint":   "build_status",
+					"error_type": "branch_error",
 				}).Inc()
 			}
 		}

@@ -477,7 +477,7 @@ func (gc *GitHubCollector) setRepoMetrics(ctx context.Context, owner, repo, visi
 
 	// Set info metric (always 1 for info metrics)
 	gc.metrics.GitHubReposInfo.With(prometheus.Labels{
-		"owner":      owner,
+		"org":        owner,
 		"repo":       repo,
 		"visibility": visibility,
 		"archived":   archived,
@@ -488,7 +488,7 @@ func (gc *GitHubCollector) setRepoMetrics(ctx context.Context, owner, repo, visi
 	// Stars
 	if repoInfo.StargazersCount != nil {
 		gc.metrics.GitHubReposStars.With(prometheus.Labels{
-			"owner":      owner,
+			"org":      owner,
 			"repo":       repo,
 			"visibility": visibility,
 		}).Set(float64(*repoInfo.StargazersCount))
@@ -497,7 +497,7 @@ func (gc *GitHubCollector) setRepoMetrics(ctx context.Context, owner, repo, visi
 	// Forks
 	if repoInfo.ForksCount != nil {
 		gc.metrics.GitHubReposForks.With(prometheus.Labels{
-			"owner":      owner,
+			"org":      owner,
 			"repo":       repo,
 			"visibility": visibility,
 		}).Set(float64(*repoInfo.ForksCount))
@@ -506,7 +506,7 @@ func (gc *GitHubCollector) setRepoMetrics(ctx context.Context, owner, repo, visi
 	// Watchers
 	if repoInfo.WatchersCount != nil {
 		gc.metrics.GitHubReposWatchers.With(prometheus.Labels{
-			"owner":      owner,
+			"org":      owner,
 			"repo":       repo,
 			"visibility": visibility,
 		}).Set(float64(*repoInfo.WatchersCount))
@@ -515,7 +515,7 @@ func (gc *GitHubCollector) setRepoMetrics(ctx context.Context, owner, repo, visi
 	// Open issues
 	if repoInfo.OpenIssuesCount != nil {
 		gc.metrics.GitHubReposOpenIssues.With(prometheus.Labels{
-			"owner":      owner,
+			"org":      owner,
 			"repo":       repo,
 			"visibility": visibility,
 		}).Set(float64(*repoInfo.OpenIssuesCount))
@@ -527,7 +527,7 @@ func (gc *GitHubCollector) setRepoMetrics(ctx context.Context, owner, repo, visi
 	// Size
 	if repoInfo.Size != nil {
 		gc.metrics.GitHubReposSize.With(prometheus.Labels{
-			"owner":      owner,
+			"org":      owner,
 			"repo":       repo,
 			"visibility": visibility,
 		}).Set(float64(*repoInfo.Size))
@@ -536,7 +536,7 @@ func (gc *GitHubCollector) setRepoMetrics(ctx context.Context, owner, repo, visi
 	// Last updated
 	if repoInfo.UpdatedAt != nil {
 		gc.metrics.GitHubReposLastUpdated.With(prometheus.Labels{
-			"owner":      owner,
+			"org":      owner,
 			"repo":       repo,
 			"visibility": visibility,
 		}).Set(float64(repoInfo.UpdatedAt.Unix()))
@@ -545,7 +545,7 @@ func (gc *GitHubCollector) setRepoMetrics(ctx context.Context, owner, repo, visi
 	// Created at
 	if repoInfo.CreatedAt != nil {
 		gc.metrics.GitHubReposCreatedAt.With(prometheus.Labels{
-			"owner":      owner,
+			"org":      owner,
 			"repo":       repo,
 			"visibility": visibility,
 		}).Set(float64(repoInfo.CreatedAt.Unix()))
@@ -597,7 +597,7 @@ func (gc *GitHubCollector) setOpenPRsMetric(ctx context.Context, owner, repo, vi
 	}
 
 	gc.metrics.GitHubReposOpenPRs.With(prometheus.Labels{
-		"owner":      owner,
+		"org":      owner,
 		"repo":       repo,
 		"visibility": visibility,
 	}).Set(float64(openPRsCount))
@@ -754,7 +754,7 @@ func (gc *GitHubCollector) collectBranchBuildStatus(ctx context.Context, owner, 
 		// Set workflow run status metric
 		statusValue := gc.getStatusValue(conclusion)
 		gc.metrics.GitHubWorkflowRunStatus.With(prometheus.Labels{
-			"owner":      owner,
+			"org":      owner,
 			"repo":       repo,
 			"workflow":   workflowName,
 			"branch":     branch,
@@ -765,7 +765,7 @@ func (gc *GitHubCollector) collectBranchBuildStatus(ctx context.Context, owner, 
 		if run.RunStartedAt != nil && run.UpdatedAt != nil {
 			duration := run.UpdatedAt.Sub(run.RunStartedAt.Time).Seconds()
 			gc.metrics.GitHubWorkflowRunDuration.With(prometheus.Labels{
-				"owner":      owner,
+				"org":      owner,
 				"repo":       repo,
 				"workflow":   workflowName,
 				"branch":     branch,
@@ -782,7 +782,7 @@ func (gc *GitHubCollector) collectBranchBuildStatus(ctx context.Context, owner, 
 	// Set branch build status metric
 	if hasRuns {
 		gc.metrics.GitHubBranchBuildStatus.With(prometheus.Labels{
-			"owner":  owner,
+			"org":  owner,
 			"repo":   repo,
 			"branch": branch,
 		}).Set(branchStatus)
@@ -836,7 +836,7 @@ func (gc *GitHubCollector) collectCheckRuns(ctx context.Context, owner, repo, br
 		// Set check run status metric
 		statusValue := gc.getStatusValue(conclusion)
 		gc.metrics.GitHubCheckRunStatus.With(prometheus.Labels{
-			"owner":      owner,
+			"org":      owner,
 			"repo":       repo,
 			"check_name": checkName,
 			"branch":     branch,

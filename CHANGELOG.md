@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.2.0](https://github.com/d0ugal/github-exporter/compare/v0.1.2...v0.2.0) (2025-10-28)
+
+
+### Features
+
+* add build status monitoring for branches ([65f8bf3](https://github.com/d0ugal/github-exporter/commit/65f8bf32bf63f63786a69769ecb6a8b1a17dcf3e))
+* add build status monitoring for branches ([a8a9242](https://github.com/d0ugal/github-exporter/commit/a8a9242d52c65dbe157526ee61d41f9e2b0d3f76))
+* add dev-tag Makefile target ([4819fa7](https://github.com/d0ugal/github-exporter/commit/4819fa76f487e8fc9b3ce3e33c9344a02465d330))
+
+
+### Bug Fixes
+
+* add wildcard repository support for build status metrics ([c45dcf1](https://github.com/d0ugal/github-exporter/commit/c45dcf160f616a0e8a883825d0cf6b4e032a8859))
+* **ci:** use Makefile for linting instead of golangci-lint-action ([6e49b7b](https://github.com/d0ugal/github-exporter/commit/6e49b7ba53c6bef53551f2525c9bfc1b3269a4f6))
+* **ci:** use Makefile for linting instead of golangci-lint-action ([b4fbf2e](https://github.com/d0ugal/github-exporter/commit/b4fbf2e1e23e1dde8f70ef85ca38d5bd28e0d750))
+* correct all GitHubAPIErrorsTotal label mappings ([1ad41de](https://github.com/d0ugal/github-exporter/commit/1ad41de4bdddec7946aa9ac0f26f32a1585117f9))
+* correct GitHubAPIErrorsTotal label mapping ([395eb36](https://github.com/d0ugal/github-exporter/commit/395eb36a2c8dc7907ba0ee62c4819156686a4ef6))
+* correct GitHubReposInfo and related metrics label mapping ([d5b3758](https://github.com/d0ugal/github-exporter/commit/d5b3758fae227966d4bee608dc2a9d3dbad5c61e))
+* correct label mapping for GitHub API error metrics ([ab9b1b8](https://github.com/d0ugal/github-exporter/commit/ab9b1b803da2cff93752f6e67f09b07bdfa340e0))
+* correct label mapping for GitHub API error metrics ([ac5503b](https://github.com/d0ugal/github-exporter/commit/ac5503b16e247f0edb0e3834a90dc54801f1db2c))
+* lint ([fb7d70c](https://github.com/d0ugal/github-exporter/commit/fb7d70cb7019bafa739ba61bf56db4c48b1036c1))
+* missed one WithLabelValues call ([2f893c3](https://github.com/d0ugal/github-exporter/commit/2f893c32932b00d9301f91ff42f9b08a70d6576a))
+* update module github.com/bytedance/sonic to v1.14.2 ([#36](https://github.com/d0ugal/github-exporter/issues/36)) ([bdb72a5](https://github.com/d0ugal/github-exporter/commit/bdb72a5bf16172ca7b935bc80421ac1274fbe1c7))
+* update module github.com/bytedance/sonic/loader to v0.4.0 ([#32](https://github.com/d0ugal/github-exporter/issues/32)) ([0f411a5](https://github.com/d0ugal/github-exporter/commit/0f411a5c74aa515479ad6ebfd9f95c6fb7801056))
+* update module github.com/ugorji/go/codec to v1.3.1 ([#37](https://github.com/d0ugal/github-exporter/issues/37)) ([d5a4096](https://github.com/d0ugal/github-exporter/commit/d5a4096b1d970c8f40272e9e296a6dba18702b09))
+
 ## [0.1.2](https://github.com/d0ugal/github-exporter/compare/v0.1.1...v0.1.2) (2025-10-26)
 
 

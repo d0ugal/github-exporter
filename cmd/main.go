@@ -99,16 +99,16 @@ func main() {
 	// Add custom metrics to the registry
 	githubRegistry := metrics.NewGitHubRegistry(metricsRegistry)
 
-	// Create collector
-	githubCollector := collectors.NewGitHubCollector(cfg, githubRegistry)
-
-	// Create and run application using promexporter
+	// Create and build application using promexporter
 	application := app.New("github-exporter").
 		WithConfig(&cfg.BaseConfig).
 		WithMetrics(metricsRegistry).
-		WithCollector(githubCollector).
 		WithVersionInfo(version.Version, version.Commit, version.BuildDate).
 		Build()
+
+	// Create collector with app reference for tracing
+	githubCollector := collectors.NewGitHubCollector(cfg, githubRegistry, application)
+	application.WithCollector(githubCollector)
 
 	if err := application.Run(); err != nil {
 		slog.Error("Application failed", "error", err)

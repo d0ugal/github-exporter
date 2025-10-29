@@ -10,14 +10,18 @@ import (
 
 	"github.com/d0ugal/github-exporter/internal/config"
 	"github.com/d0ugal/github-exporter/internal/metrics"
+	"github.com/d0ugal/promexporter/app"
+	"github.com/d0ugal/promexporter/tracing"
 	"github.com/google/go-github/v76/github"
 	"github.com/prometheus/client_golang/prometheus"
+	"go.opentelemetry.io/otel/attribute"
 	"golang.org/x/time/rate"
 )
 
 type GitHubCollector struct {
 	config  *config.Config
 	metrics *metrics.GitHubRegistry
+	app     *app.App
 	client  *github.Client
 	limiter *rate.Limiter
 	mu      sync.RWMutex
@@ -29,7 +33,7 @@ type GitHubCollector struct {
 	lastRateLimitCheck time.Time
 }
 
-func NewGitHubCollector(cfg *config.Config, metricsRegistry *metrics.GitHubRegistry) *GitHubCollector {
+func NewGitHubCollector(cfg *config.Config, metricsRegistry *metrics.GitHubRegistry, app *app.App) *GitHubCollector {
 	// Create GitHub client
 	client := github.NewClient(nil).WithAuthToken(cfg.GitHub.Token)
 
@@ -40,6 +44,7 @@ func NewGitHubCollector(cfg *config.Config, metricsRegistry *metrics.GitHubRegis
 	return &GitHubCollector{
 		config:  cfg,
 		metrics: metricsRegistry,
+		app:     app,
 		client:  client,
 		limiter: limiter,
 	}
@@ -79,15 +84,37 @@ func (gc *GitHubCollector) run(ctx context.Context) {
 }
 
 func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
+	startTime := time.Now()
+
 	slog.Debug("Collecting GitHub metrics")
+
+	// Create span for collection cycle
+	tracer := gc.app.GetTracer()
+
+	var collectorSpan *tracing.CollectorSpan
+
+	if tracer != nil && tracer.IsEnabled() {
+		collectorSpan = tracer.NewCollectorSpan(ctx, "github-collector", "collect-metrics")
+		collectorSpan.SetAttributes(
+			attribute.Int("github.orgs_count", len(gc.config.GitHub.Orgs)),
+			attribute.Int("github.repos_count", len(gc.config.GitHub.Repos)),
+		)
+		defer collectorSpan.End()
+	}
 
 	// Check and update rate limits first
 	if err := gc.updateRateLimits(ctx); err != nil {
 		slog.Error("Failed to update rate limits", "error", err)
+
+		if collectorSpan != nil {
+			collectorSpan.RecordError(err)
+		}
+
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 			"endpoint":   "rate_limit",
 			"error_type": "update_error",
 		}).Inc()
+
 		return
 	}
 
@@ -124,6 +151,17 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 				"error_type": "collection_error",
 			}).Inc()
 		}
+	}
+
+	duration := time.Since(startTime).Seconds()
+
+	if collectorSpan != nil {
+		collectorSpan.SetAttributes(
+			attribute.Float64("collection.duration_seconds", duration),
+		)
+		collectorSpan.AddEvent("collection_completed",
+			attribute.Float64("duration_seconds", duration),
+		)
 	}
 
 	slog.Debug("GitHub metrics collection completed")

@@ -351,6 +351,7 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 				"endpoint":   "orgs",
 				"error_type": "api_error",
 			}).Inc()
+			// Skip this org entirely - don't collect repos for a non-existent org
 			continue
 		}
 
@@ -359,6 +360,12 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 			"endpoint": "orgs",
 			"status":   fmt.Sprintf("%d", resp.StatusCode),
 		}).Inc()
+
+		// Validate organization info before proceeding
+		if orgInfo == nil {
+			slog.Error("Organization info is nil", "org", org)
+			continue
+		}
 
 		// Set organization metrics
 		if orgInfo.PublicRepos != nil {
@@ -378,8 +385,11 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 		}
 
 		// Get repositories for the organization
+		// Only collect repos if org fetch was successful
 		if err := gc.collectOrgRepos(ctx, org); err != nil {
 			slog.Error("Failed to collect organization repositories", "org", org, "error", err)
+			// Continue to next org instead of failing completely
+			continue
 		}
 	}
 
@@ -406,10 +416,20 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 		return fmt.Errorf("failed to list repositories for org %s: %w", org, err)
 	}
 
+	// Skip if organization not found (404)
+	if resp != nil && resp.StatusCode == 404 {
+		slog.Warn("Organization not found, skipping repository collection", "org", org)
+		return nil
+	}
+
 	// Update API call metrics
+	statusCode := "unknown"
+	if resp != nil {
+		statusCode = fmt.Sprintf("%d", resp.StatusCode)
+	}
 	gc.metrics.GitHubAPICallsTotal.With(prometheus.Labels{
 		"endpoint": "repos",
-		"status":   fmt.Sprintf("%d", resp.StatusCode),
+		"status":   statusCode,
 	}).Inc()
 
 	// Count repositories by visibility
@@ -417,6 +437,12 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 	privateCount := 0
 
 	for _, repo := range repos {
+		// Skip repos with missing required fields
+		if repo == nil || repo.Name == nil {
+			slog.Warn("Skipping repository with missing name", "org", org)
+			continue
+		}
+
 		visibility := "public"
 		if repo.Private != nil && *repo.Private {
 			visibility = "private"

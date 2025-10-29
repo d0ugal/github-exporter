@@ -400,6 +400,11 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 }
 
 func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) error {
+	// Validate org parameter
+	if org == "" {
+		return fmt.Errorf("org parameter cannot be empty")
+	}
+
 	// Wait for rate limiter
 	if err := gc.limiter.Wait(ctx); err != nil {
 		return fmt.Errorf("rate limiter error: %w", err)
@@ -438,8 +443,8 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 
 	for _, repo := range repos {
 		// Skip repos with missing required fields
-		if repo == nil || repo.Name == nil {
-			slog.Warn("Skipping repository with missing name", "org", org)
+		if repo == nil || repo.Name == nil || *repo.Name == "" {
+			slog.Warn("Skipping repository with missing or empty name", "org", org)
 			continue
 		}
 
@@ -488,6 +493,12 @@ func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
 		owner := parts[0]
 		repo := parts[1]
 
+		// Skip if owner or repo is empty
+		if owner == "" || repo == "" {
+			slog.Error("Invalid repository format: owner or repo is empty", "repo", repoFullName)
+			continue
+		}
+
 		// Wait for rate limiter
 		if err := gc.limiter.Wait(ctx); err != nil {
 			return fmt.Errorf("rate limiter error: %w", err)
@@ -523,6 +534,19 @@ func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
 }
 
 func (gc *GitHubCollector) setRepoMetrics(ctx context.Context, owner, repo, visibility string, repoInfo *github.Repository) {
+	// Validate required parameters to prevent panic from missing labels
+	if owner == "" {
+		slog.Warn("Skipping setRepoMetrics: owner is empty", "repo", repo)
+		return
+	}
+	if repo == "" {
+		slog.Warn("Skipping setRepoMetrics: repo is empty", "owner", owner)
+		return
+	}
+	if visibility == "" {
+		visibility = "unknown"
+	}
+
 	// Repository info metric with labels
 	archived := "false"
 	if repoInfo.Archived != nil && *repoInfo.Archived {
@@ -718,6 +742,12 @@ func (gc *GitHubCollector) collectAllRepos(ctx context.Context) error {
 
 		owner := *repo.Owner.Login
 		repoName := *repo.Name
+
+		// Skip if owner or repo name is empty
+		if owner == "" || repoName == "" {
+			slog.Warn("Skipping repository with empty owner or name", "owner", owner, "repo", repoName)
+			continue
+		}
 
 		// Determine visibility
 		visibility := "public"

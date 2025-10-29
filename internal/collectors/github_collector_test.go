@@ -15,10 +15,10 @@ func createTestCollector() *GitHubCollector {
 			Repos: []string{},
 		},
 	}
-	
+
 	baseRegistry := promexporter_metrics.NewRegistry("github-exporter-test")
 	metricsRegistry := metrics.NewGitHubRegistry(baseRegistry)
-	
+
 	return &GitHubCollector{
 		config:  cfg,
 		metrics: metricsRegistry,
@@ -28,25 +28,25 @@ func createTestCollector() *GitHubCollector {
 // TestHasWildcardRepos tests the wildcard detection function
 func TestHasWildcardRepos(t *testing.T) {
 	collector := createTestCollector()
-	
+
 	// Test with wildcard
 	collector.config.GitHub.Repos = []string{"*"}
 	if !collector.hasWildcardRepos() {
 		t.Error("Expected wildcard repos to be detected")
 	}
-	
+
 	// Test without wildcard
 	collector.config.GitHub.Repos = []string{"d0ugal/test-repo"}
 	if collector.hasWildcardRepos() {
 		t.Error("Expected no wildcard repos to be detected")
 	}
-	
+
 	// Test with multiple repos including wildcard
 	collector.config.GitHub.Repos = []string{"d0ugal/test-repo", "*"}
 	if !collector.hasWildcardRepos() {
 		t.Error("Expected wildcard repos to be detected")
 	}
-	
+
 	// Test with empty repos
 	collector.config.GitHub.Repos = []string{}
 	if collector.hasWildcardRepos() {
@@ -58,19 +58,19 @@ func TestHasWildcardRepos(t *testing.T) {
 func TestCollectorInitialization(t *testing.T) {
 	cfg := &config.Config{
 		GitHub: config.GitHubConfig{
-			Orgs:    []string{"test-org"},
-			Repos:   []string{"test-org/test-repo"},
+			Orgs:     []string{"test-org"},
+			Repos:    []string{"test-org/test-repo"},
 			Branches: []string{"main"},
 		},
 	}
-	
+
 	baseRegistry := promexporter_metrics.NewRegistry("github-exporter-test")
 	metricsRegistry := metrics.NewGitHubRegistry(baseRegistry)
-	
+
 	collector := NewGitHubCollector(cfg, metricsRegistry, nil)
-	
+
 	if collector == nil {
-		t.Error("Expected collector to be initialized")
+		t.Fatal("Expected collector to be initialized")
 	}
 	
 	if collector.config == nil {
@@ -126,18 +126,18 @@ func TestConfigValidation(t *testing.T) {
 			expected: true,
 		},
 	}
-	
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cfg := &config.Config{
 				GitHub: tt.config,
 			}
-			
+
 			baseRegistry := promexporter_metrics.NewRegistry("github-exporter-test")
 			metricsRegistry := metrics.NewGitHubRegistry(baseRegistry)
-			
+
 			collector := NewGitHubCollector(cfg, metricsRegistry, nil)
-			
+
 			if collector == nil {
 				t.Error("Expected collector to be initialized")
 			}
@@ -152,17 +152,17 @@ func TestRateLimiterInitialization(t *testing.T) {
 			Repos: []string{},
 		},
 	}
-	
+
 	baseRegistry := promexporter_metrics.NewRegistry("github-exporter-test")
 	metricsRegistry := metrics.NewGitHubRegistry(baseRegistry)
-	
+
 	// Use NewGitHubCollector to ensure rate limiter is initialized
 	collector := NewGitHubCollector(cfg, metricsRegistry, nil)
-	
+
 	if collector.limiter == nil {
 		t.Error("Expected rate limiter to be initialized")
 	}
-	
+
 	// Test that limiter has reasonable initial values
 	// The exact values depend on the implementation, but it should not be nil
 }
@@ -170,20 +170,20 @@ func TestRateLimiterInitialization(t *testing.T) {
 // TestMetricsRegistry tests that metrics registry is properly set up
 func TestMetricsRegistry(t *testing.T) {
 	collector := createTestCollector()
-	
+
 	if collector.metrics == nil {
 		t.Error("Expected metrics registry to be initialized")
 	}
-	
+
 	// Test that key metrics are available
 	if collector.metrics.GitHubReposInfo == nil {
 		t.Error("Expected GitHubReposInfo metric to be available")
 	}
-	
+
 	if collector.metrics.GitHubReposStars == nil {
 		t.Error("Expected GitHubReposStars metric to be available")
 	}
-	
+
 	if collector.metrics.GitHubAPICallsTotal == nil {
 		t.Error("Expected GitHubAPICallsTotal metric to be available")
 	}

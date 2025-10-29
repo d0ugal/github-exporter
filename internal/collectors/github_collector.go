@@ -720,38 +720,56 @@ func (gc *GitHubCollector) hasWildcardRepos() bool {
 func (gc *GitHubCollector) collectAllRepos(ctx context.Context) error {
 	slog.Info("Wildcard repos specified, collecting all accessible repositories")
 
-	// Wait for rate limiter
-	if err := gc.limiter.Wait(ctx); err != nil {
-		return fmt.Errorf("rate limiter error: %w", err)
-	}
+	var allRepos []*github.Repository
+	page := 1
+	perPage := 100
 
-	// Get all repositories the authenticated user has access to
-	repos, resp, err := gc.client.Repositories.ListByAuthenticatedUser(ctx, &github.RepositoryListByAuthenticatedUserOptions{
-		Type: "all",
-		ListOptions: github.ListOptions{
-			PerPage: 100, // Get more repos per page for efficiency
-		},
-	})
-	if err != nil {
-		slog.Error("Failed to list all repositories", "error", err)
-		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
-			"endpoint":   "repos",
-			"error_type": "api_error",
-		}).Inc()
-		return fmt.Errorf("failed to list all repositories: %w", err)
-	}
+	for {
+		// Wait for rate limiter
+		if err := gc.limiter.Wait(ctx); err != nil {
+			return fmt.Errorf("rate limiter error: %w", err)
+		}
 
-	// Update API call metrics
-	if resp != nil {
-		gc.metrics.GitHubAPICallsTotal.With(prometheus.Labels{
-			"endpoint": "repos",
-			"status":   fmt.Sprintf("%d", resp.StatusCode),
-		}).Inc()
+		// Get repositories for current page
+		repos, resp, err := gc.client.Repositories.ListByAuthenticatedUser(ctx, &github.RepositoryListByAuthenticatedUserOptions{
+			Type: "all",
+			ListOptions: github.ListOptions{
+				Page:    page,
+				PerPage: perPage,
+			},
+		})
+		if err != nil {
+			slog.Error("Failed to list repositories", "page", page, "error", err)
+			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
+				"endpoint":   "repos",
+				"error_type": "api_error",
+			}).Inc()
+			return fmt.Errorf("failed to list repositories page %d: %w", page, err)
+		}
+
+		// Update API call metrics
+		if resp != nil {
+			gc.metrics.GitHubAPICallsTotal.With(prometheus.Labels{
+				"endpoint": "repos",
+				"status":   fmt.Sprintf("%d", resp.StatusCode),
+			}).Inc()
+		}
+
+		// Add repos to our collection
+		allRepos = append(allRepos, repos...)
+
+		// Check if we've reached the last page
+		if resp == nil || page >= resp.LastPage || len(repos) < perPage {
+			break
+		}
+
+		page++
 	}
 
 	// Process each repository
-	for _, repo := range repos {
-		if repo.Name == nil || repo.Owner == nil || repo.Owner.Login == nil {
+	for _, repo := range allRepos {
+		if repo == nil || repo.Name == nil || repo.Owner == nil || repo.Owner.Login == nil {
+			slog.Warn("Skipping repository with missing required fields", "repo", repo)
 			continue
 		}
 
@@ -774,14 +792,7 @@ func (gc *GitHubCollector) collectAllRepos(ctx context.Context) error {
 		gc.setRepoMetrics(ctx, owner, repoName, visibility, repo)
 	}
 
-	// Set total repositories count (approximate)
-	totalRepos := len(repos)
-	if resp != nil && resp.LastPage > 0 {
-		// Estimate total based on pagination
-		totalRepos = resp.LastPage * 100
-	}
-
-	slog.Info("Collected metrics for repositories", "count", len(repos), "estimated_total", totalRepos)
+	slog.Info("Collected metrics for repositories", "count", len(allRepos))
 
 	return nil
 }
@@ -823,38 +834,67 @@ func (gc *GitHubCollector) collectBuildStatusMetrics(ctx context.Context) error 
 func (gc *GitHubCollector) collectBuildStatusForAllRepos(ctx context.Context) error {
 	slog.Debug("Collecting build status metrics for all accessible repositories")
 
-	// Wait for rate limiter
-	if err := gc.limiter.Wait(ctx); err != nil {
-		return fmt.Errorf("rate limiter error: %w", err)
-	}
+	var allRepos []*github.Repository
+	page := 1
+	perPage := 100
 
-	// Get all repositories the authenticated user has access to
-	repos, resp, err := gc.client.Repositories.ListByAuthenticatedUser(ctx, &github.RepositoryListByAuthenticatedUserOptions{
-		Type: "all",
-		ListOptions: github.ListOptions{
-			PerPage: 100,
-		},
-	})
-	if err != nil {
-		return fmt.Errorf("failed to get repositories: %w", err)
-	}
+	for {
+		// Wait for rate limiter
+		if err := gc.limiter.Wait(ctx); err != nil {
+			return fmt.Errorf("rate limiter error: %w", err)
+		}
 
-	// Update API call metrics
-	if resp != nil {
-		gc.metrics.GitHubAPICallsTotal.With(prometheus.Labels{
-			"endpoint": "repos",
-			"status":   fmt.Sprintf("%d", resp.StatusCode),
-		}).Inc()
+		// Get repositories for current page
+		repos, resp, err := gc.client.Repositories.ListByAuthenticatedUser(ctx, &github.RepositoryListByAuthenticatedUserOptions{
+			Type: "all",
+			ListOptions: github.ListOptions{
+				Page:    page,
+				PerPage: perPage,
+			},
+		})
+		if err != nil {
+			slog.Error("Failed to list repositories", "page", page, "error", err)
+			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
+				"endpoint":   "repos",
+				"error_type": "api_error",
+			}).Inc()
+			return fmt.Errorf("failed to list repositories page %d: %w", page, err)
+		}
+
+		// Update API call metrics
+		if resp != nil {
+			gc.metrics.GitHubAPICallsTotal.With(prometheus.Labels{
+				"endpoint": "repos",
+				"status":   fmt.Sprintf("%d", resp.StatusCode),
+			}).Inc()
+		}
+
+		// Add repos to our collection
+		allRepos = append(allRepos, repos...)
+
+		// Check if we've reached the last page
+		if resp == nil || page >= resp.LastPage || len(repos) < perPage {
+			break
+		}
+
+		page++
 	}
 
 	// Collect build status for each repository and branch
-	for _, repo := range repos {
-		if repo.Owner == nil || repo.Name == nil {
+	for _, repo := range allRepos {
+		if repo == nil || repo.Owner == nil || repo.Name == nil {
+			slog.Warn("Skipping repository with missing required fields for build status", "repo", repo)
 			continue
 		}
 
 		owner := *repo.Owner.Login
 		repoName := *repo.Name
+
+		// Skip if owner or repo name is empty
+		if owner == "" || repoName == "" {
+			slog.Warn("Skipping repository with empty owner or name for build status", "owner", owner, "repo", repoName)
+			continue
+		}
 
 		// Collect build status for each configured branch
 		for _, branchName := range gc.config.GitHub.Branches {
@@ -868,7 +908,7 @@ func (gc *GitHubCollector) collectBuildStatusForAllRepos(ctx context.Context) er
 		}
 	}
 
-	slog.Debug("Build status metrics collection completed", "repos_processed", len(repos))
+	slog.Debug("Build status metrics collection completed", "repos_processed", len(allRepos))
 	return nil
 }
 

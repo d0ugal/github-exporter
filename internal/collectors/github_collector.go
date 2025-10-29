@@ -416,17 +416,21 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 		return fmt.Errorf("failed to list repositories for org %s: %w", org, err)
 	}
 
-	// Update API call metrics
-	gc.metrics.GitHubAPICallsTotal.With(prometheus.Labels{
-		"endpoint": "repos",
-		"status":   fmt.Sprintf("%d", resp.StatusCode),
-	}).Inc()
-
 	// Skip if organization not found (404)
 	if resp != nil && resp.StatusCode == 404 {
 		slog.Warn("Organization not found, skipping repository collection", "org", org)
 		return nil
 	}
+
+	// Update API call metrics
+	statusCode := "unknown"
+	if resp != nil {
+		statusCode = fmt.Sprintf("%d", resp.StatusCode)
+	}
+	gc.metrics.GitHubAPICallsTotal.With(prometheus.Labels{
+		"endpoint": "repos",
+		"status":   statusCode,
+	}).Inc()
 
 	// Count repositories by visibility
 	publicCount := 0

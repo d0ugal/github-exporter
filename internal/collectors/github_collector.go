@@ -356,10 +356,21 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 		}
 
 		// Update API call metrics
+		statusCode := "unknown"
+		if resp != nil {
+			statusCode = fmt.Sprintf("%d", resp.StatusCode)
+		}
 		gc.metrics.GitHubAPICallsTotal.With(prometheus.Labels{
 			"endpoint": "orgs",
-			"status":   fmt.Sprintf("%d", resp.StatusCode),
+			"status":   statusCode,
 		}).Inc()
+
+		// Check for 404 even if err is nil (some APIs return status without error)
+		if resp != nil && resp.StatusCode == 404 {
+			slog.Warn("Organization not found (404), skipping", "org", org)
+			// Skip this org entirely - don't collect repos for a non-existent org
+			continue
+		}
 
 		// Validate organization info before proceeding
 		if orgInfo == nil {
@@ -463,7 +474,11 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 		gc.setRepoMetrics(ctx, org, *repo.Name, visibility, repo)
 	}
 
-	// Set repository counts
+	// Set repository counts (double-check org is not empty before setting metrics)
+	if org == "" {
+		slog.Error("Cannot set GitHubReposTotal: org is empty")
+		return fmt.Errorf("org parameter is empty when setting repo counts")
+	}
 	gc.metrics.GitHubReposTotal.With(prometheus.Labels{
 		"org":        org,
 		"visibility": "public",

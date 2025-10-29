@@ -351,6 +351,7 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 				"endpoint":   "orgs",
 				"error_type": "api_error",
 			}).Inc()
+			// Skip this org entirely - don't collect repos for a non-existent org
 			continue
 		}
 
@@ -359,6 +360,12 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 			"endpoint": "orgs",
 			"status":   fmt.Sprintf("%d", resp.StatusCode),
 		}).Inc()
+
+		// Validate organization info before proceeding
+		if orgInfo == nil {
+			slog.Error("Organization info is nil", "org", org)
+			continue
+		}
 
 		// Set organization metrics
 		if orgInfo.PublicRepos != nil {
@@ -378,8 +385,11 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 		}
 
 		// Get repositories for the organization
+		// Only collect repos if org fetch was successful
 		if err := gc.collectOrgRepos(ctx, org); err != nil {
 			slog.Error("Failed to collect organization repositories", "org", org, "error", err)
+			// Continue to next org instead of failing completely
+			continue
 		}
 	}
 
@@ -412,11 +422,23 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 		"status":   fmt.Sprintf("%d", resp.StatusCode),
 	}).Inc()
 
+	// Skip if organization not found (404)
+	if resp != nil && resp.StatusCode == 404 {
+		slog.Warn("Organization not found, skipping repository collection", "org", org)
+		return nil
+	}
+
 	// Count repositories by visibility
 	publicCount := 0
 	privateCount := 0
 
 	for _, repo := range repos {
+		// Skip repos with missing required fields
+		if repo == nil || repo.Name == nil {
+			slog.Warn("Skipping repository with missing name", "org", org)
+			continue
+		}
+
 		visibility := "public"
 		if repo.Private != nil && *repo.Private {
 			visibility = "private"

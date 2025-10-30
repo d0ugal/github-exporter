@@ -664,12 +664,13 @@ func (gc *GitHubCollector) setOpenPRsMetric(ctx context.Context, owner, repo, vi
 	}
 
 	// Get open pull requests count
-	prs, resp, err := gc.client.PullRequests.List(ctx, owner, repo, &github.PullRequestListOptions{
+	listOptions := &github.PullRequestListOptions{
 		State: "open",
 		ListOptions: github.ListOptions{
 			PerPage: 1, // We only need the count, not the actual PRs
 		},
-	})
+	}
+	prs, resp, err := gc.client.PullRequests.List(ctx, owner, repo, listOptions)
 	if err != nil {
 		slog.Error("Failed to get open PRs", "owner", owner, "repo", repo, "error", err)
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
@@ -692,8 +693,12 @@ func (gc *GitHubCollector) setOpenPRsMetric(ctx context.Context, owner, repo, vi
 	// For a more accurate count, we'd need to paginate through all results, but that would use more API calls
 	openPRsCount := 0
 	if resp != nil && resp.LastPage > 0 {
-		// Estimate based on pagination info
-		openPRsCount = resp.LastPage * 30 // GitHub default per_page is 30
+		// Estimate based on pagination info using the actual per_page value
+		perPage := listOptions.PerPage
+		if perPage == 0 {
+			perPage = 30 // GitHub default per_page is 30
+		}
+		openPRsCount = resp.LastPage * perPage
 	} else if len(prs) > 0 {
 		// If we got results, we know there are at least some PRs
 		openPRsCount = len(prs)

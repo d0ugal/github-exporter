@@ -663,18 +663,17 @@ func (gc *GitHubCollector) setOpenPRsMetric(ctx context.Context, owner, repo, vi
 		return
 	}
 
-	// Get open pull requests count
-	listOptions := &github.PullRequestListOptions{
-		State: "open",
+	// Use GitHub Search API to get exact count of open pull requests
+	query := fmt.Sprintf("repo:%s/%s type:pr state:open", owner, repo)
+	searchResult, resp, err := gc.client.Search.Issues(ctx, query, &github.SearchOptions{
 		ListOptions: github.ListOptions{
 			PerPage: 1, // We only need the count, not the actual PRs
 		},
-	}
-	prs, resp, err := gc.client.PullRequests.List(ctx, owner, repo, listOptions)
+	})
 	if err != nil {
-		slog.Error("Failed to get open PRs", "owner", owner, "repo", repo, "error", err)
+		slog.Error("Failed to search open PRs", "owner", owner, "repo", repo, "error", err)
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
-			"endpoint":   "pull_requests",
+			"endpoint":   "search_issues",
 			"error_type": "api_error",
 		}).Inc()
 		return
@@ -683,25 +682,15 @@ func (gc *GitHubCollector) setOpenPRsMetric(ctx context.Context, owner, repo, vi
 	// Update API call metrics
 	if resp != nil {
 		gc.metrics.GitHubAPICallsTotal.With(prometheus.Labels{
-			"endpoint": "pull_requests",
+			"endpoint": "search_issues",
 			"status":   fmt.Sprintf("%d", resp.StatusCode),
 		}).Inc()
 	}
 
-	// Set the open PRs count
-	// Note: GitHub API doesn't provide a direct count, so we use the total count from the response
-	// For a more accurate count, we'd need to paginate through all results, but that would use more API calls
+	// Get the exact count from search results
 	openPRsCount := 0
-	if resp != nil && resp.LastPage > 0 {
-		// Estimate based on pagination info using the actual per_page value
-		perPage := listOptions.PerPage
-		if perPage == 0 {
-			perPage = 30 // GitHub default per_page is 30
-		}
-		openPRsCount = resp.LastPage * perPage
-	} else if len(prs) > 0 {
-		// If we got results, we know there are at least some PRs
-		openPRsCount = len(prs)
+	if searchResult != nil && searchResult.Total != nil {
+		openPRsCount = *searchResult.Total
 	}
 
 	gc.metrics.GitHubReposOpenPRs.With(prometheus.Labels{

@@ -92,22 +92,39 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 	tracer := gc.app.GetTracer()
 
 	var collectorSpan *tracing.CollectorSpan
+	var spanCtx context.Context
 
 	if tracer != nil && tracer.IsEnabled() {
 		collectorSpan = tracer.NewCollectorSpan(ctx, "github-collector", "collect-metrics")
 		collectorSpan.SetAttributes(
 			attribute.Int("github.orgs_count", len(gc.config.GitHub.Orgs)),
 			attribute.Int("github.repos_count", len(gc.config.GitHub.Repos)),
+			attribute.Int("github.branches_count", len(gc.config.GitHub.Branches)),
 		)
+		spanCtx = collectorSpan.Context()
 		defer collectorSpan.End()
+	} else {
+		spanCtx = ctx
+	}
+
+	if collectorSpan != nil {
+		collectorSpan.AddEvent("collection_started")
 	}
 
 	// Check and update rate limits first
-	if err := gc.updateRateLimits(ctx); err != nil {
+	rateLimitStart := time.Now()
+	if err := gc.updateRateLimits(spanCtx); err != nil {
+		rateLimitDuration := time.Since(rateLimitStart).Seconds()
 		slog.Error("Failed to update rate limits", "error", err)
 
 		if collectorSpan != nil {
-			collectorSpan.RecordError(err)
+			collectorSpan.SetAttributes(
+				attribute.Float64("rate_limit.duration_seconds", rateLimitDuration),
+			)
+			collectorSpan.RecordError(err, attribute.String("operation", "update-rate-limits"))
+			collectorSpan.AddEvent("rate_limit_update_failed",
+				attribute.String("error", err.Error()),
+			)
 		}
 
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
@@ -117,39 +134,104 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 
 		return
 	}
+	rateLimitDuration := time.Since(rateLimitStart).Seconds()
+
+	if collectorSpan != nil {
+		collectorSpan.SetAttributes(
+			attribute.Float64("rate_limit.duration_seconds", rateLimitDuration),
+		)
+		collectorSpan.AddEvent("rate_limit_updated")
+	}
 
 	// Wait for rate limiter
-	if err := gc.limiter.Wait(ctx); err != nil {
+	if err := gc.limiter.Wait(spanCtx); err != nil {
 		slog.Error("Rate limiter error", "error", err)
+		if collectorSpan != nil {
+			collectorSpan.RecordError(err, attribute.String("operation", "rate-limiter-wait"))
+		}
 		return
 	}
 
 	// Collect organization metrics
-	if err := gc.collectOrgMetrics(ctx); err != nil {
+	orgStart := time.Now()
+	if err := gc.collectOrgMetrics(spanCtx); err != nil {
+		orgDuration := time.Since(orgStart).Seconds()
 		slog.Error("Failed to collect organization metrics", "error", err)
+		if collectorSpan != nil {
+			collectorSpan.SetAttributes(
+				attribute.Float64("org_metrics.duration_seconds", orgDuration),
+			)
+			collectorSpan.RecordError(err, attribute.String("operation", "collect-org-metrics"))
+		}
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 			"endpoint":   "orgs",
 			"error_type": "collection_error",
 		}).Inc()
+	} else {
+		orgDuration := time.Since(orgStart).Seconds()
+		if collectorSpan != nil {
+			collectorSpan.SetAttributes(
+				attribute.Float64("org_metrics.duration_seconds", orgDuration),
+			)
+			collectorSpan.AddEvent("org_metrics_collected",
+				attribute.Float64("duration_seconds", orgDuration),
+			)
+		}
 	}
 
 	// Collect repository metrics
-	if err := gc.collectRepoMetrics(ctx); err != nil {
+	repoStart := time.Now()
+	if err := gc.collectRepoMetrics(spanCtx); err != nil {
+		repoDuration := time.Since(repoStart).Seconds()
 		slog.Error("Failed to collect repository metrics", "error", err)
+		if collectorSpan != nil {
+			collectorSpan.SetAttributes(
+				attribute.Float64("repo_metrics.duration_seconds", repoDuration),
+			)
+			collectorSpan.RecordError(err, attribute.String("operation", "collect-repo-metrics"))
+		}
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 			"endpoint":   "repos",
 			"error_type": "collection_error",
 		}).Inc()
+	} else {
+		repoDuration := time.Since(repoStart).Seconds()
+		if collectorSpan != nil {
+			collectorSpan.SetAttributes(
+				attribute.Float64("repo_metrics.duration_seconds", repoDuration),
+			)
+			collectorSpan.AddEvent("repo_metrics_collected",
+				attribute.Float64("duration_seconds", repoDuration),
+			)
+		}
 	}
 
 	// Collect build status metrics if branches are configured
 	if len(gc.config.GitHub.Branches) > 0 {
-		if err := gc.collectBuildStatusMetrics(ctx); err != nil {
+		buildStart := time.Now()
+		if err := gc.collectBuildStatusMetrics(spanCtx); err != nil {
+			buildDuration := time.Since(buildStart).Seconds()
 			slog.Error("Failed to collect build status metrics", "error", err)
+			if collectorSpan != nil {
+				collectorSpan.SetAttributes(
+					attribute.Float64("build_status.duration_seconds", buildDuration),
+				)
+				collectorSpan.RecordError(err, attribute.String("operation", "collect-build-status"))
+			}
 			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 				"endpoint":   "build_status",
 				"error_type": "collection_error",
 			}).Inc()
+		} else {
+			buildDuration := time.Since(buildStart).Seconds()
+			if collectorSpan != nil {
+				collectorSpan.SetAttributes(
+					attribute.Float64("build_status.duration_seconds", buildDuration),
+				)
+				collectorSpan.AddEvent("build_status_collected",
+					attribute.Float64("duration_seconds", buildDuration),
+				)
+			}
 		}
 	}
 
@@ -245,6 +327,19 @@ func (gc *GitHubCollector) calculateRefreshInterval() time.Duration {
 
 // updateRateLimits fetches current rate limit information from GitHub
 func (gc *GitHubCollector) updateRateLimits(ctx context.Context) error {
+	tracer := gc.app.GetTracer()
+
+	var collectorSpan *tracing.CollectorSpan
+	var spanCtx context.Context
+
+	if tracer != nil && tracer.IsEnabled() {
+		collectorSpan = tracer.NewCollectorSpan(ctx, "github-collector", "update-rate-limits")
+		spanCtx = collectorSpan.Context()
+		defer collectorSpan.End()
+	} else {
+		spanCtx = ctx
+	}
+
 	// Only check rate limits if it's been more than 5 minutes since last check
 	// or if we've never checked before
 	gc.mu.RLock()
@@ -252,17 +347,36 @@ func (gc *GitHubCollector) updateRateLimits(ctx context.Context) error {
 	gc.mu.RUnlock()
 
 	if time.Since(lastCheck) < 5*time.Minute && !lastCheck.IsZero() {
+		if collectorSpan != nil {
+			collectorSpan.AddEvent("rate_limit_check_skipped",
+				attribute.String("reason", "recent_check"),
+			)
+		}
 		return nil // Skip rate limit check
 	}
 
 	// Wait for rate limiter
-	if err := gc.limiter.Wait(ctx); err != nil {
+	waitStart := time.Now()
+	if err := gc.limiter.Wait(spanCtx); err != nil {
+		if collectorSpan != nil {
+			collectorSpan.RecordError(err, attribute.String("operation", "rate-limiter-wait"))
+		}
 		return fmt.Errorf("rate limiter error: %w", err)
 	}
+	waitDuration := time.Since(waitStart).Seconds()
 
 	// Get rate limit information using the new API
-	rateLimit, resp, err := gc.client.RateLimit.Get(ctx)
+	apiStart := time.Now()
+	rateLimit, resp, err := gc.client.RateLimit.Get(spanCtx)
+	apiDuration := time.Since(apiStart).Seconds()
+
 	if err != nil {
+		if collectorSpan != nil {
+			collectorSpan.SetAttributes(
+				attribute.Float64("api_call.duration_seconds", apiDuration),
+			)
+			collectorSpan.RecordError(err, attribute.String("operation", "get-rate-limit"))
+		}
 		return fmt.Errorf("failed to get rate limit info: %w", err)
 	}
 
@@ -274,11 +388,16 @@ func (gc *GitHubCollector) updateRateLimits(ctx context.Context) error {
 
 	// Update rate limit state
 	gc.mu.Lock()
+	var limit, remaining int
+	var resetTime time.Time
 	if rateLimit.Core != nil {
 		gc.rateLimitTotal = rateLimit.Core.Limit
 		gc.rateLimitRemaining = rateLimit.Core.Remaining
+		limit = rateLimit.Core.Limit
+		remaining = rateLimit.Core.Remaining
 		if !rateLimit.Core.Reset.IsZero() {
 			gc.rateLimitReset = rateLimit.Core.Reset.Time
+			resetTime = rateLimit.Core.Reset.Time
 		}
 	}
 	gc.lastRateLimitCheck = time.Now()
@@ -294,7 +413,28 @@ func (gc *GitHubCollector) updateRateLimits(ctx context.Context) error {
 	}
 
 	// Update rate limiter based on current limits
+	limiterStart := time.Now()
 	gc.updateRateLimiter()
+	limiterDuration := time.Since(limiterStart).Seconds()
+
+	if collectorSpan != nil {
+		collectorSpan.SetAttributes(
+			attribute.Float64("rate_limiter_wait.duration_seconds", waitDuration),
+			attribute.Float64("api_call.duration_seconds", apiDuration),
+			attribute.Float64("rate_limiter_update.duration_seconds", limiterDuration),
+			attribute.Int("rate_limit.total", limit),
+			attribute.Int("rate_limit.remaining", remaining),
+		)
+		if !resetTime.IsZero() {
+			collectorSpan.SetAttributes(
+				attribute.Int64("rate_limit.reset_timestamp", resetTime.Unix()),
+			)
+		}
+		collectorSpan.AddEvent("rate_limit_updated",
+			attribute.Int("total", limit),
+			attribute.Int("remaining", remaining),
+		)
+	}
 
 	return nil
 }
@@ -336,21 +476,56 @@ func (gc *GitHubCollector) updateRateLimiter() {
 }
 
 func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
+	tracer := gc.app.GetTracer()
+
+	var collectorSpan *tracing.CollectorSpan
+	var spanCtx context.Context
+
+	if tracer != nil && tracer.IsEnabled() {
+		collectorSpan = tracer.NewCollectorSpan(ctx, "github-collector", "collect-org-metrics")
+		collectorSpan.SetAttributes(
+			attribute.Int("orgs.count", len(gc.config.GitHub.Orgs)),
+		)
+		spanCtx = collectorSpan.Context()
+		defer collectorSpan.End()
+	} else {
+		spanCtx = ctx
+	}
+
+	successCount := 0
+	errorCount := 0
+
 	// Collect metrics for each organization
 	for _, org := range gc.config.GitHub.Orgs {
+		orgStart := time.Now()
+
 		// Wait for rate limiter
-		if err := gc.limiter.Wait(ctx); err != nil {
-			return fmt.Errorf("rate limiter error: %w", err)
+		if err := gc.limiter.Wait(spanCtx); err != nil {
+			if collectorSpan != nil {
+				collectorSpan.RecordError(err, attribute.String("org", org), attribute.String("operation", "rate-limiter-wait"))
+			}
+			errorCount++
+			continue
 		}
 
 		// Get organization information
-		orgInfo, resp, err := gc.client.Organizations.Get(ctx, org)
+		apiStart := time.Now()
+		orgInfo, resp, err := gc.client.Organizations.Get(spanCtx, org)
+		apiDuration := time.Since(apiStart).Seconds()
+
 		if err != nil {
 			slog.Error("Failed to get organization info", "org", org, "error", err)
+			if collectorSpan != nil {
+				collectorSpan.SetAttributes(
+					attribute.Float64("org.api_duration_seconds", apiDuration),
+				)
+				collectorSpan.RecordError(err, attribute.String("org", org), attribute.String("operation", "get-org-info"))
+			}
 			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 				"endpoint":   "orgs",
 				"error_type": "api_error",
 			}).Inc()
+			errorCount++
 			// Skip this org entirely - don't collect repos for a non-existent org
 			continue
 		}
@@ -395,40 +570,117 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 			}).Set(float64(*orgInfo.Following))
 		}
 
+		orgDuration := time.Since(orgStart).Seconds()
+
+		if collectorSpan != nil {
+			collectorSpan.AddEvent("org_info_retrieved",
+				attribute.String("org", org),
+				attribute.Float64("duration_seconds", orgDuration),
+			)
+		}
+
 		// Get repositories for the organization
 		// Only collect repos if org fetch was successful
-		if err := gc.collectOrgRepos(ctx, org); err != nil {
+		reposStart := time.Now()
+		if err := gc.collectOrgRepos(spanCtx, org); err != nil {
+			reposDuration := time.Since(reposStart).Seconds()
 			slog.Error("Failed to collect organization repositories", "org", org, "error", err)
+			if collectorSpan != nil {
+				collectorSpan.SetAttributes(
+					attribute.Float64("org.repos_duration_seconds", reposDuration),
+				)
+				collectorSpan.RecordError(err, attribute.String("org", org), attribute.String("operation", "collect-org-repos"))
+			}
+			errorCount++
 			// Continue to next org instead of failing completely
 			continue
 		}
+		reposDuration := time.Since(reposStart).Seconds()
+		totalOrgDuration := time.Since(orgStart).Seconds()
+
+		if collectorSpan != nil {
+			collectorSpan.SetAttributes(
+				attribute.Float64("org.total_duration_seconds", totalOrgDuration),
+				attribute.Float64("org.repos_duration_seconds", reposDuration),
+			)
+			collectorSpan.AddEvent("org_collected",
+				attribute.String("org", org),
+				attribute.Float64("total_duration_seconds", totalOrgDuration),
+			)
+		}
+
+		successCount++
 	}
 
 	// Set total organizations count
 	gc.metrics.GitHubOrgsTotal.With(prometheus.Labels{}).Set(float64(len(gc.config.GitHub.Orgs)))
 
+	if collectorSpan != nil {
+		collectorSpan.SetAttributes(
+			attribute.Int("collection.successful", successCount),
+			attribute.Int("collection.errors", errorCount),
+			attribute.Int("collection.total", len(gc.config.GitHub.Orgs)),
+		)
+		collectorSpan.AddEvent("org_metrics_completed",
+			attribute.Int("successful", successCount),
+			attribute.Int("errors", errorCount),
+		)
+	}
+
 	return nil
 }
 
 func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) error {
+	tracer := gc.app.GetTracer()
+
+	var collectorSpan *tracing.CollectorSpan
+	var spanCtx context.Context
+
+	if tracer != nil && tracer.IsEnabled() {
+		collectorSpan = tracer.NewCollectorSpan(ctx, "github-collector", "collect-org-repos")
+		collectorSpan.SetAttributes(
+			attribute.String("org", org),
+		)
+		spanCtx = collectorSpan.Context()
+		defer collectorSpan.End()
+	} else {
+		spanCtx = ctx
+	}
+
 	// Validate org parameter
 	if org == "" {
-		return fmt.Errorf("org parameter cannot be empty")
+		err := fmt.Errorf("org parameter cannot be empty")
+		if collectorSpan != nil {
+			collectorSpan.RecordError(err)
+		}
+		return err
 	}
 
 	// Wait for rate limiter
-	if err := gc.limiter.Wait(ctx); err != nil {
+	if err := gc.limiter.Wait(spanCtx); err != nil {
+		if collectorSpan != nil {
+			collectorSpan.RecordError(err, attribute.String("operation", "rate-limiter-wait"))
+		}
 		return fmt.Errorf("rate limiter error: %w", err)
 	}
 
 	// List repositories for the organization
-	repos, resp, err := gc.client.Repositories.ListByOrg(ctx, org, &github.RepositoryListByOrgOptions{
+	apiStart := time.Now()
+	repos, resp, err := gc.client.Repositories.ListByOrg(spanCtx, org, &github.RepositoryListByOrgOptions{
 		Type: "all",
 		ListOptions: github.ListOptions{
 			PerPage: 100,
 		},
 	})
+	apiDuration := time.Since(apiStart).Seconds()
+
 	if err != nil {
+		if collectorSpan != nil {
+			collectorSpan.SetAttributes(
+				attribute.Float64("api_call.duration_seconds", apiDuration),
+			)
+			collectorSpan.RecordError(err, attribute.String("operation", "list-repos-by-org"))
+		}
 		return fmt.Errorf("failed to list repositories for org %s: %w", org, err)
 	}
 
@@ -476,8 +728,12 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 
 	// Set repository counts (double-check org is not empty before setting metrics)
 	if org == "" {
+		err := fmt.Errorf("org parameter is empty when setting repo counts")
 		slog.Error("Cannot set GitHubReposTotal: org is empty")
-		return fmt.Errorf("org parameter is empty when setting repo counts")
+		if collectorSpan != nil {
+			collectorSpan.RecordError(err)
+		}
+		return err
 	}
 	gc.metrics.GitHubReposTotal.With(prometheus.Labels{
 		"org":        org,
@@ -488,20 +744,60 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 		"visibility": "private",
 	}).Set(float64(privateCount))
 
+	if collectorSpan != nil {
+		collectorSpan.SetAttributes(
+			attribute.Float64("api_call.duration_seconds", apiDuration),
+			attribute.Int("repos.total", len(repos)),
+			attribute.Int("repos.public", publicCount),
+			attribute.Int("repos.private", privateCount),
+		)
+		collectorSpan.AddEvent("org_repos_collected",
+			attribute.Int("total", len(repos)),
+			attribute.Int("public", publicCount),
+			attribute.Int("private", privateCount),
+		)
+	}
+
 	return nil
 }
 
 func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
+	tracer := gc.app.GetTracer()
+
+	var collectorSpan *tracing.CollectorSpan
+	var spanCtx context.Context
+
+	if tracer != nil && tracer.IsEnabled() {
+		collectorSpan = tracer.NewCollectorSpan(ctx, "github-collector", "collect-repo-metrics")
+		collectorSpan.SetAttributes(
+			attribute.Int("repos.count", len(gc.config.GitHub.Repos)),
+			attribute.Bool("repos.wildcard", gc.hasWildcardRepos()),
+		)
+		spanCtx = collectorSpan.Context()
+		defer collectorSpan.End()
+	} else {
+		spanCtx = ctx
+	}
+
 	// Check if wildcard is specified for repos
 	if gc.hasWildcardRepos() {
-		return gc.collectAllRepos(ctx)
+		if collectorSpan != nil {
+			collectorSpan.AddEvent("wildcard_repos_detected")
+		}
+		return gc.collectAllRepos(spanCtx)
 	}
+
+	successCount := 0
+	errorCount := 0
 
 	// Collect metrics for specific repositories
 	for _, repoFullName := range gc.config.GitHub.Repos {
+		repoStart := time.Now()
+
 		parts := strings.Split(repoFullName, "/")
 		if len(parts) != 2 {
 			slog.Error("Invalid repository format", "repo", repoFullName)
+			errorCount++
 			continue
 		}
 
@@ -511,22 +807,39 @@ func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
 		// Skip if owner or repo is empty
 		if owner == "" || repo == "" {
 			slog.Error("Invalid repository format: owner or repo is empty", "repo", repoFullName)
+			errorCount++
 			continue
 		}
 
 		// Wait for rate limiter
-		if err := gc.limiter.Wait(ctx); err != nil {
-			return fmt.Errorf("rate limiter error: %w", err)
+		if err := gc.limiter.Wait(spanCtx); err != nil {
+			if collectorSpan != nil {
+				collectorSpan.RecordError(err, attribute.String("repo", repoFullName), attribute.String("operation", "rate-limiter-wait"))
+			}
+			errorCount++
+			continue
 		}
 
 		// Get repository information
-		repoInfo, resp, err := gc.client.Repositories.Get(ctx, owner, repo)
+		apiStart := time.Now()
+		repoInfo, resp, err := gc.client.Repositories.Get(spanCtx, owner, repo)
+		apiDuration := time.Since(apiStart).Seconds()
+
 		if err != nil {
+			repoDuration := time.Since(repoStart).Seconds()
 			slog.Error("Failed to get repository info", "owner", owner, "repo", repo, "error", err)
+			if collectorSpan != nil {
+				collectorSpan.SetAttributes(
+					attribute.Float64("repo.api_duration_seconds", apiDuration),
+					attribute.Float64("repo.total_duration_seconds", repoDuration),
+				)
+				collectorSpan.RecordError(err, attribute.String("repo", repoFullName), attribute.String("operation", "get-repo-info"))
+			}
 			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 				"endpoint":   "repos",
 				"error_type": "api_error",
 			}).Inc()
+			errorCount++
 			continue
 		}
 
@@ -542,7 +855,36 @@ func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
 			visibility = "private"
 		}
 
-		gc.setRepoMetrics(ctx, owner, repo, visibility, repoInfo)
+		metricsStart := time.Now()
+		gc.setRepoMetrics(spanCtx, owner, repo, visibility, repoInfo)
+		metricsDuration := time.Since(metricsStart).Seconds()
+		repoDuration := time.Since(repoStart).Seconds()
+
+		if collectorSpan != nil {
+			collectorSpan.SetAttributes(
+				attribute.Float64("repo.api_duration_seconds", apiDuration),
+				attribute.Float64("repo.metrics_duration_seconds", metricsDuration),
+				attribute.Float64("repo.total_duration_seconds", repoDuration),
+			)
+			collectorSpan.AddEvent("repo_collected",
+				attribute.String("repo", repoFullName),
+				attribute.String("visibility", visibility),
+			)
+		}
+
+		successCount++
+	}
+
+	if collectorSpan != nil {
+		collectorSpan.SetAttributes(
+			attribute.Int("collection.successful", successCount),
+			attribute.Int("collection.errors", errorCount),
+			attribute.Int("collection.total", len(gc.config.GitHub.Repos)),
+		)
+		collectorSpan.AddEvent("repo_metrics_completed",
+			attribute.Int("successful", successCount),
+			attribute.Int("errors", errorCount),
+		)
 	}
 
 	return nil

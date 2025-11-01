@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.3.0](https://github.com/d0ugal/github-exporter/compare/v0.2.0...v0.3.0) (2025-11-01)
+
+
+### Features
+
+* add OpenTelemetry tracing configuration support ([015f1da](https://github.com/d0ugal/github-exporter/commit/015f1da2495b8bf088e92eda973ba8bd7deaac8e))
+* add tracing configuration support ([4900ec4](https://github.com/d0ugal/github-exporter/commit/4900ec4b7c700f8175278ddd378d4a86d84dfe7b))
+* **ci:** add auto-format workflow ([09597cd](https://github.com/d0ugal/github-exporter/commit/09597cd30ef9acc2c83a05351f3af739ce18d4b7))
+* **ci:** add auto-format workflow ([3b78328](https://github.com/d0ugal/github-exporter/commit/3b78328387dd18a37122a32bb32d56e1c0b6b75f))
+* enhance tracing support with detailed spans ([d05a415](https://github.com/d0ugal/github-exporter/commit/d05a41589ba93d686e75be533ced9cd0d50fa6f6))
+* enhance tracing support with detailed spans ([ee533b6](https://github.com/d0ugal/github-exporter/commit/ee533b60e068c97234f2273d51f9dd5d1b63351f))
+* integrate OpenTelemetry tracing into collector ([fbd3f48](https://github.com/d0ugal/github-exporter/commit/fbd3f48f0dcfb2fecfa1210e488067d472e600f2))
+* integrate OpenTelemetry tracing into collector ([6f797b2](https://github.com/d0ugal/github-exporter/commit/6f797b255f4909965b02d715d30df8dd3a155dca))
+* trigger CI after auto-format workflow completes ([ee8e815](https://github.com/d0ugal/github-exporter/commit/ee8e815d3fe4e27fb6580097733fff5e343c11bc))
+
+
+### Bug Fixes
+
+* add enhanced panic prevention with 404 handling ([8e23aa8](https://github.com/d0ugal/github-exporter/commit/8e23aa878957e581b65ad99d002111b1af11289e))
+* add enhanced panic prevention with 404 handling ([5aafa12](https://github.com/d0ugal/github-exporter/commit/5aafa122bb9907e8e24e84e2c2648f3b906fedc3))
+* check resp nil before accessing StatusCode ([d85b692](https://github.com/d0ugal/github-exporter/commit/d85b69285d92e08a922c7daaf307294e5d6026e7))
+* correct PR count calculation to use actual per_page value ([ed0e222](https://github.com/d0ugal/github-exporter/commit/ed0e222b2f7517d7faebb67a74ae0ffb88d7214c))
+* correct PR count calculation to use actual per_page value ([dc04b41](https://github.com/d0ugal/github-exporter/commit/dc04b418a82784e6ad764159c16a8bb70e909e39))
+* prevent org label panic and add pagination support ([c72ce31](https://github.com/d0ugal/github-exporter/commit/c72ce31be3a4db34ec9f820d596fdb6cdf870654))
+* prevent org label panic and add pagination support ([f9c87c6](https://github.com/d0ugal/github-exporter/commit/f9c87c69de4af1d123b67664aa1c561d10f749c6))
+* prevent panic from missing org label in metrics ([cbb6900](https://github.com/d0ugal/github-exporter/commit/cbb690074dcb0bb93817a02f959aa3bef7d4fe17))
+* prevent panic from missing org label in metrics ([ccadec7](https://github.com/d0ugal/github-exporter/commit/ccadec72acd93ade15d43530a55c612336f54649))
+* prevent panic when org fetch fails ([b001288](https://github.com/d0ugal/github-exporter/commit/b001288390317e032fcf1b61fcd0679534d364d3))
+* prevent panic when org fetch fails (404) ([07f3361](https://github.com/d0ugal/github-exporter/commit/07f33619d736902594cee68f7737e549cd07cce8))
+* resolve staticcheck linting issues in tests ([5b6e622](https://github.com/d0ugal/github-exporter/commit/5b6e6220c3e514834cde719b00b669bdfa6a062f))
+* update google.golang.org/genproto/googleapis/api digest to ab9386a ([#53](https://github.com/d0ugal/github-exporter/issues/53)) ([581caf7](https://github.com/d0ugal/github-exporter/commit/581caf747570c09e588a5e42298e5b8a3b1eb5df))
+* update google.golang.org/genproto/googleapis/rpc digest to ab9386a ([e58dd77](https://github.com/d0ugal/github-exporter/commit/e58dd7797e043394bb7157a745a718ed0d82d8c1))
+* update google.golang.org/genproto/googleapis/rpc digest to ab9386a ([e0aa9e5](https://github.com/d0ugal/github-exporter/commit/e0aa9e5d1dd2708191ccbfbb9e4de401c3e8015e))
+* update module github.com/d0ugal/promexporter to v1.6.1 ([#40](https://github.com/d0ugal/github-exporter/issues/40)) ([c6370e4](https://github.com/d0ugal/github-exporter/commit/c6370e4d5811569f07e8b923bb4bf747081f4a11))
+* update module github.com/d0ugal/promexporter to v1.7.0 ([#58](https://github.com/d0ugal/github-exporter/issues/58)) ([d435c26](https://github.com/d0ugal/github-exporter/commit/d435c2641987352962581e01910197f0681e0a0e))
+* update module github.com/d0ugal/promexporter to v1.7.1 ([#59](https://github.com/d0ugal/github-exporter/issues/59)) ([85eac2f](https://github.com/d0ugal/github-exporter/commit/85eac2fc8d4922fdf9f899045e5f34d4515997e9))
+* update module github.com/gabriel-vasile/mimetype to v1.4.11 ([#49](https://github.com/d0ugal/github-exporter/issues/49)) ([0873f60](https://github.com/d0ugal/github-exporter/commit/0873f6035a4d73e0217635951d5d598916cc6596))
+* update module github.com/prometheus/common to v0.67.2 ([#38](https://github.com/d0ugal/github-exporter/issues/38)) ([f785475](https://github.com/d0ugal/github-exporter/commit/f785475e09a847427f14581cbdc5abaf251c9496))
+* use GitHub Search API for exact PR count instead of estimation ([dbc9a0e](https://github.com/d0ugal/github-exporter/commit/dbc9a0ef90b3f7266a2d77e8bf6b3ffcc45816d9))
+
 ## [0.2.0](https://github.com/d0ugal/github-exporter/compare/v0.1.2...v0.2.0) (2025-10-28)
 
 

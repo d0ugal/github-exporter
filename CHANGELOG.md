@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.1](https://github.com/d0ugal/github-exporter/compare/v0.3.0...v0.3.1) (2025-11-04)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to f26f940 ([2b49381](https://github.com/d0ugal/github-exporter/commit/2b49381ec5f998138d2379f98929efca71bf26ad))
+* update google.golang.org/genproto/googleapis/api digest to f26f940 ([#65](https://github.com/d0ugal/github-exporter/issues/65)) ([4bf48ae](https://github.com/d0ugal/github-exporter/commit/4bf48ae030a03922e24ec8e955e5cfd554087207))
+* update google.golang.org/genproto/googleapis/rpc digest to f26f940 ([#66](https://github.com/d0ugal/github-exporter/issues/66)) ([cd86531](https://github.com/d0ugal/github-exporter/commit/cd86531f046dbc92e5e40553b539e21b29cfa640))
+* update import path from go-github/v76 to v77 ([847603c](https://github.com/d0ugal/github-exporter/commit/847603c1f7577de34f2c672737eab7cf3cf0c797))
+* update module github.com/d0ugal/promexporter to v1.9.0 ([043d2bd](https://github.com/d0ugal/github-exporter/commit/043d2bd3cdeada9b85e5e1da455a8cd3c025a54c))
+* update module github.com/google/go-github/v76 to v77 ([66b18c2](https://github.com/d0ugal/github-exporter/commit/66b18c21fc88812324971054a290ad7c58a63ddb))
+* update module github.com/google/go-github/v76 to v77 ([122f7ce](https://github.com/d0ugal/github-exporter/commit/122f7ced5125957e8c87a8684a3dd988b23fd6d7))
+* update module github.com/google/go-github/v76 to v77 ([#71](https://github.com/d0ugal/github-exporter/issues/71)) ([b48efb4](https://github.com/d0ugal/github-exporter/commit/b48efb4dc4076424c14f7aaece383ac3f04ea8f1))
+* update module go.opentelemetry.io/proto/otlp to v1.9.0 ([d3d5526](https://github.com/d0ugal/github-exporter/commit/d3d55266b56f753cd551818626688d51ce7c9f9a))
+
 ## [0.3.0](https://github.com/d0ugal/github-exporter/compare/v0.2.0...v0.3.0) (2025-11-02)
 
 

@@ -12,7 +12,7 @@ import (
 	"github.com/d0ugal/github-exporter/internal/metrics"
 	"github.com/d0ugal/promexporter/app"
 	"github.com/d0ugal/promexporter/tracing"
-	"github.com/google/go-github/v76/github"
+	"github.com/google/go-github/v77/github"
 	"github.com/prometheus/client_golang/prometheus"
 	"go.opentelemetry.io/otel/attribute"
 	"golang.org/x/time/rate"

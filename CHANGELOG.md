@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/d0ugal/github-exporter/compare/v0.3.2...v0.3.3) (2025-11-05)
+
+
+### Bug Fixes
+
+* update dependency go to v1.25.4 ([a4e9c67](https://github.com/d0ugal/github-exporter/commit/a4e9c674954e9615bb5424a63907bbefa707d844))
+
 ## [0.3.2](https://github.com/d0ugal/github-exporter/compare/v0.3.1...v0.3.2) (2025-11-05)
 
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.5](https://github.com/d0ugal/github-exporter/compare/v0.3.4...v0.3.5) (2025-11-09)
+
+
+### Bug Fixes
+
+* remove duplicate v78 entry and update import from v77 to v78 ([992a19f](https://github.com/d0ugal/github-exporter/commit/992a19f67b74baee77548e6214b15c9147b61ff2))
+* update module github.com/d0ugal/promexporter to v1.11.2 ([#93](https://github.com/d0ugal/github-exporter/issues/93)) ([0189f23](https://github.com/d0ugal/github-exporter/commit/0189f23d50dfd7720d628fecf3ac31d9748e24d8))
+* update module github.com/google/go-github/v77 to v78 ([b58ab54](https://github.com/d0ugal/github-exporter/commit/b58ab54670d181d26920e5f9e65b74c5d77977ef))
+* update module github.com/google/go-github/v77 to v78 ([#90](https://github.com/d0ugal/github-exporter/issues/90)) ([026f873](https://github.com/d0ugal/github-exporter/commit/026f873e6de74a7f97e56ecc9205f97770fb76c8))
+* update module github.com/quic-go/quic-go to v0.56.0 ([#86](https://github.com/d0ugal/github-exporter/issues/86)) ([beff1e0](https://github.com/d0ugal/github-exporter/commit/beff1e020eb508c19aa56b477b11046a2c702c44))
+* update module golang.org/x/arch to v0.23.0 ([#88](https://github.com/d0ugal/github-exporter/issues/88)) ([31e6583](https://github.com/d0ugal/github-exporter/commit/31e6583d4fada5062e61d2f6468cd5994a0d6449))
+* update module golang.org/x/sys to v0.38.0 ([#89](https://github.com/d0ugal/github-exporter/issues/89)) ([8472c54](https://github.com/d0ugal/github-exporter/commit/8472c5419865cffd9be54d6a9a8ecb9fef9ae132))
+
 ## [0.3.4](https://github.com/d0ugal/github-exporter/compare/v0.3.3...v0.3.4) (2025-11-06)
 
 

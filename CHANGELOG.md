@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/d0ugal/github-exporter/compare/v0.4.2...v0.4.3) (2025-11-15)
+
+
+### Bug Fixes
+
+* update module github.com/google/go-github/v78 to v79 ([#115](https://github.com/d0ugal/github-exporter/issues/115)) ([34639f6](https://github.com/d0ugal/github-exporter/commit/34639f6aedf097da63cc56775898eaed0791f477))
+
 ## [0.4.2](https://github.com/d0ugal/github-exporter/compare/v0.4.1...v0.4.2) (2025-11-14)
 
 

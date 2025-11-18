@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.5](https://github.com/d0ugal/github-exporter/compare/v0.4.4...v0.4.5) (2025-11-18)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.13.2 ([#119](https://github.com/d0ugal/github-exporter/issues/119)) ([a3bfe3e](https://github.com/d0ugal/github-exporter/commit/a3bfe3e2320e94a960a9c34246d0c02b0d354cb6))
+* update module github.com/prometheus/common to v0.67.3 ([#120](https://github.com/d0ugal/github-exporter/issues/120)) ([a9bff89](https://github.com/d0ugal/github-exporter/commit/a9bff89e765950133192e725ded2bda3d65f599a))
+
 ## [0.4.4](https://github.com/d0ugal/github-exporter/compare/v0.4.3...v0.4.4) (2025-11-18)
 
 

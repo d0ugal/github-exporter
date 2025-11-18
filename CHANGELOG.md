@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.4](https://github.com/d0ugal/github-exporter/compare/v0.4.3...v0.4.4) (2025-11-18)
+
+
+### Bug Fixes
+
+* update module google.golang.org/grpc to v1.77.0 ([#117](https://github.com/d0ugal/github-exporter/issues/117)) ([5e27f7d](https://github.com/d0ugal/github-exporter/commit/5e27f7d0fe4e61bc13fea883e9ed74bc11bdd9ae))
+
 ## [0.4.3](https://github.com/d0ugal/github-exporter/compare/v0.4.2...v0.4.3) (2025-11-15)
 
 

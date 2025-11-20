@@ -19,12 +19,12 @@ metrics:
 github:
   # GitHub personal access token (required)
   token: "ghp_your_token_here"
-  
+
   # Organizations to monitor (optional)
   orgs:
     - "d0ugal"
     - "prometheus"
-  
+
   # Specific repositories to monitor (optional)
   # Use "*" to monitor all repositories the user has access to
   repos:

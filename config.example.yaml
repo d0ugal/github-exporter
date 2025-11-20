@@ -31,10 +31,10 @@ github:
     - "d0ugal/mqtt-exporter"
     - "d0ugal/filesystem-exporter"
     # - "*"  # Uncomment to monitor ALL accessible repositories
-  
+
   # API timeout
   timeout: 30s
-  
+
   # Rate limiting configuration
   refresh_interval: 0s  # 0 = auto-calculate based on actual API rate limits
   rate_limit_buffer: 0.8  # Use 80% of available rate limit (fetched from API)

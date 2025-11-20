@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.6](https://github.com/d0ugal/github-exporter/compare/v0.4.5...v0.4.6) (2025-11-20)
+
+
+### Bug Fixes
+
+* resolve YAML linting issues ([71a891a](https://github.com/d0ugal/github-exporter/commit/71a891a388a0e90840b1f9a2bf33daaf71289b94))
+* update module github.com/d0ugal/promexporter to v1.13.3 ([#126](https://github.com/d0ugal/github-exporter/issues/126)) ([6e8f723](https://github.com/d0ugal/github-exporter/commit/6e8f723f5ba019c4fb344b5472a6c6b70a7766b0))
+* update module golang.org/x/crypto to v0.45.0 ([#123](https://github.com/d0ugal/github-exporter/issues/123)) ([12616ed](https://github.com/d0ugal/github-exporter/commit/12616ed01020319ebc79602eca007a8061562b67))
+
 ## [0.4.5](https://github.com/d0ugal/github-exporter/compare/v0.4.4...v0.4.5) (2025-11-18)
 
 

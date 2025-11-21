@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.9](https://github.com/d0ugal/github-exporter/compare/v0.4.8...v0.4.9) (2025-11-21)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.13.6 ([94c5ef5](https://github.com/d0ugal/github-exporter/commit/94c5ef54a3a9b155282fbcad6be147dc300ae0ea))
+* update module github.com/prometheus/common to v0.67.4 ([ba05d06](https://github.com/d0ugal/github-exporter/commit/ba05d0667478f231642f96c55e484958a3dc4a4e))
+* update module github.com/quic-go/quic-go to v0.57.0 ([e990564](https://github.com/d0ugal/github-exporter/commit/e990564cae322a03e0921981aa65c8421c0d27e6))
+
 ## [0.4.8](https://github.com/d0ugal/github-exporter/compare/v0.4.7...v0.4.8) (2025-11-20)
 
 

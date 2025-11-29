@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.12](https://github.com/d0ugal/github-exporter/compare/v0.4.11...v0.4.12) (2025-11-29)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.13.8 ([abecd72](https://github.com/d0ugal/github-exporter/commit/abecd7220f3d3aaf5afd8fed2a97b9c5edc06c0f))
+* update module github.com/goccy/go-yaml to v1.19.0 ([9e65c4a](https://github.com/d0ugal/github-exporter/commit/9e65c4aeb37cd16c68f3ab7f09980d0c4a0c577c))
+
 ## [0.4.11](https://github.com/d0ugal/github-exporter/compare/v0.4.10...v0.4.11) (2025-11-27)
 
 

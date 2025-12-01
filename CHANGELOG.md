@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.13](https://github.com/d0ugal/github-exporter/compare/v0.4.12...v0.4.13) (2025-12-01)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.1 ([376d559](https://github.com/d0ugal/github-exporter/commit/376d559cbb1d944a5f246eb4e0bc8c527ad4e9ac))
+* update module github.com/d0ugal/promexporter to v1.14.2 ([de2edc3](https://github.com/d0ugal/github-exporter/commit/de2edc3dc50d5319192e42c417ac53acaa32d759))
+
 ## [0.4.12](https://github.com/d0ugal/github-exporter/compare/v0.4.11...v0.4.12) (2025-11-29)
 
 

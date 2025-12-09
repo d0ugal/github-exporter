@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.4.16](https://github.com/d0ugal/github-exporter/compare/v0.4.15...v0.4.16) (2025-12-04)
+
+
+### Bug Fixes
+
+* update module github.com/google/go-github/v79 to v80 ([baf7dd9](https://github.com/d0ugal/github-exporter/commit/baf7dd9b0c1240543833db5746242dbfbe937cac))
+
+## [0.4.15](https://github.com/d0ugal/github-exporter/compare/v0.4.14...v0.4.15) (2025-12-04)
+
+
+### Bug Fixes
+
+* **workflows:** fix workflow syntax errors, revert Alpine, and enable PR builds ([d29b532](https://github.com/d0ugal/github-exporter/commit/d29b53212200f1175b2db3f12c067a6b33295414))
+
 ## [0.4.14](https://github.com/d0ugal/github-exporter/compare/v0.4.13...v0.4.14) (2025-12-04)
 
 

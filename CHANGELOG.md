@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.20](https://github.com/d0ugal/github-exporter/compare/v0.4.19...v0.4.20) (2025-12-17)
+
+
+### Bug Fixes
+
+* update module github.com/goccy/go-yaml to v1.19.1 ([6253cd1](https://github.com/d0ugal/github-exporter/commit/6253cd1e4459c437a30db8c1c6b0fa4354401ad4))
+
 ## [0.4.19](https://github.com/d0ugal/github-exporter/compare/v0.4.18...v0.4.19) (2025-12-14)
 
 

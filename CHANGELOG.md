@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.21](https://github.com/d0ugal/github-exporter/compare/v0.4.20...v0.4.21) (2025-12-20)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.7 ([cbaba74](https://github.com/d0ugal/github-exporter/commit/cbaba74bc7e37695a3e0a2b9c4f68d5ca9e47733))
+* update module github.com/google/go-github/v79 to v80 ([204be7d](https://github.com/d0ugal/github-exporter/commit/204be7d0ce344408bf2f013427e28bfb707454ff))
+
 ## [0.4.20](https://github.com/d0ugal/github-exporter/compare/v0.4.19...v0.4.20) (2025-12-17)
 
 

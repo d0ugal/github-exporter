@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.24](https://github.com/d0ugal/github-exporter/compare/v0.4.23...v0.4.24) (2025-12-23)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to 0a764e5 ([e1fc6e2](https://github.com/d0ugal/github-exporter/commit/e1fc6e20a8e63f1c4cf26e4ba65cfc76c8c89f74))
+* update google.golang.org/genproto/googleapis/rpc digest to 0a764e5 ([d619280](https://github.com/d0ugal/github-exporter/commit/d619280ac709b419d06bf46b14d7fc39ce6648d2))
+
 ## [0.4.23](https://github.com/d0ugal/github-exporter/compare/v0.4.22...v0.4.23) (2025-12-21)
 
 

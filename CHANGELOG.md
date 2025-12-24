@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.27](https://github.com/d0ugal/github-exporter/compare/v0.4.26...v0.4.27) (2025-12-24)
+
+
+### Bug Fixes
+
+* update module github.com/go-playground/validator/v10 to v10.30.1 ([cbe35ff](https://github.com/d0ugal/github-exporter/commit/cbe35ff1d8143d8d5ca5573abbea1f9c8e38a975))
+
 ## [0.4.26](https://github.com/d0ugal/github-exporter/compare/v0.4.25...v0.4.26) (2025-12-23)
 
 

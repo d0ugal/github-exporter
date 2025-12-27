@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.28](https://github.com/d0ugal/github-exporter/compare/v0.4.27...v0.4.28) (2025-12-27)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.12 ([026599d](https://github.com/d0ugal/github-exporter/commit/026599d0db2db4b3b1949ea901073eff844d7844))
+* update module github.com/grpc-ecosystem/grpc-gateway/v2 to v2.27.4 ([9499aa9](https://github.com/d0ugal/github-exporter/commit/9499aa9c308a09b26672b1ae752fb5acce64e6f9))
+
 ## [0.4.27](https://github.com/d0ugal/github-exporter/compare/v0.4.26...v0.4.27) (2025-12-24)
 
 

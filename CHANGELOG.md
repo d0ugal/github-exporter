@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.29](https://github.com/d0ugal/github-exporter/compare/v0.4.28...v0.4.29) (2025-12-30)
+
+
+### Bug Fixes
+
+* update module github.com/google/go-querystring to v1.2.0 ([eaedefb](https://github.com/d0ugal/github-exporter/commit/eaedefbaf25ff4805fa00bde0cd248cb2b8659c7))
+
 ## [0.4.28](https://github.com/d0ugal/github-exporter/compare/v0.4.27...v0.4.28) (2025-12-27)
 
 

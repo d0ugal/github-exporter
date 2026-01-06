@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.30](https://github.com/d0ugal/github-exporter/compare/v0.4.29...v0.4.30) (2026-01-06)
+
+
+### Bug Fixes
+
+* update module github.com/google/go-github/v79 to v81 ([a1aea43](https://github.com/d0ugal/github-exporter/commit/a1aea436129cf44838211a1189bbc805e9f923c0))
+* update module github.com/prometheus/common to v0.67.5 ([9af5e1b](https://github.com/d0ugal/github-exporter/commit/9af5e1bfa84f9ce99234187c1d17ee650342a13d))
+
 ## [0.4.29](https://github.com/d0ugal/github-exporter/compare/v0.4.28...v0.4.29) (2025-12-30)
 
 

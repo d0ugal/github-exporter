@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.33](https://github.com/d0ugal/github-exporter/compare/v0.4.32...v0.4.33) (2026-01-08)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.14 ([398b3cd](https://github.com/d0ugal/github-exporter/commit/398b3cdc351b248e761491dc0523324edc3c1695))
+* update module golang.org/x/sys to v0.40.0 ([af70bf4](https://github.com/d0ugal/github-exporter/commit/af70bf4749ccac97b6c981ef69a5e055d9b09fbc))
+
 ## [0.4.32](https://github.com/d0ugal/github-exporter/compare/v0.4.31...v0.4.32) (2026-01-08)
 
 

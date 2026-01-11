@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.36](https://github.com/d0ugal/github-exporter/compare/v0.4.35...v0.4.36) (2026-01-11)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.17 ([2516daa](https://github.com/d0ugal/github-exporter/commit/2516daa57e151cca6ac5498fbdba0f18dd817f41))
+* update module github.com/quic-go/quic-go to v0.59.0 ([474d971](https://github.com/d0ugal/github-exporter/commit/474d97110d8ee1b27e52c7cdb515eb314d002e7d))
+
 ## [0.4.35](https://github.com/d0ugal/github-exporter/compare/v0.4.34...v0.4.35) (2026-01-10)
 
 

@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.4.37](https://github.com/d0ugal/github-exporter/compare/v0.4.36...v0.4.37) (2026-01-16)
+
+
+### Bug Fixes
+
+* update dependency go to v1.25.6 ([88bc225](https://github.com/d0ugal/github-exporter/commit/88bc225ae92547dc06dcf76eb08994fbf584edc3))
+* update google.golang.org/genproto/googleapis/api digest to 3f89685 ([088887c](https://github.com/d0ugal/github-exporter/commit/088887c8e206384db3a84c18770bb2212ea6871f))
+* update google.golang.org/genproto/googleapis/api digest to 99fd39f ([f9f4235](https://github.com/d0ugal/github-exporter/commit/f9f4235070e47a45508b472334c7b172372cdf4f))
+* update google.golang.org/genproto/googleapis/rpc digest to 3f89685 ([432502e](https://github.com/d0ugal/github-exporter/commit/432502e47d9d410dbabbe640fdf78287cf38b2c8))
+* update google.golang.org/genproto/googleapis/rpc digest to 99fd39f ([33f1c5c](https://github.com/d0ugal/github-exporter/commit/33f1c5c6d65b4f9913020f97868b78a0dc83d249))
+* update module github.com/d0ugal/promexporter to v1.14.18 ([12dc443](https://github.com/d0ugal/github-exporter/commit/12dc443bc78ab8d196704a2e6c9026741d7521ab))
+* update module github.com/d0ugal/promexporter to v1.14.19 ([ac41fdf](https://github.com/d0ugal/github-exporter/commit/ac41fdf14bca510a62a1f7e3b12c41c12dbb03de))
+* update module github.com/d0ugal/promexporter to v1.14.20 ([823daa8](https://github.com/d0ugal/github-exporter/commit/823daa8a896810d725ba47487cdef8ef5616b61e))
+* update module github.com/klauspost/compress to v1.18.3 ([f67da3a](https://github.com/d0ugal/github-exporter/commit/f67da3a6314a2d95a41081e38e5325251e8cec03))
+* update module golang.org/x/crypto to v0.47.0 ([bfaad58](https://github.com/d0ugal/github-exporter/commit/bfaad582ba801e4ec9ace0c25edb960e7ea8a86d))
+
 ## [0.4.36](https://github.com/d0ugal/github-exporter/compare/v0.4.35...v0.4.36) (2026-01-11)
 
 

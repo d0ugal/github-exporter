@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.4.39](https://github.com/d0ugal/github-exporter/compare/v0.4.38...v0.4.39) (2026-01-23)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to 409b4a9 ([3976d34](https://github.com/d0ugal/github-exporter/commit/3976d344456cf796ef1f44ab132f9bd24a597745))
+* update google.golang.org/genproto/googleapis/api digest to 8e98ce8 ([3521634](https://github.com/d0ugal/github-exporter/commit/3521634603ae8286afb680abdfdf22f6231f27e5))
+* update google.golang.org/genproto/googleapis/api digest to b8f7ae3 ([62c372d](https://github.com/d0ugal/github-exporter/commit/62c372df54691335ae6f7595bfc1027309afde98))
+* update google.golang.org/genproto/googleapis/rpc digest to 8e98ce8 ([6e86cb8](https://github.com/d0ugal/github-exporter/commit/6e86cb8bab27ef1c02d2562d9535917a5508b2c3))
+* update google.golang.org/genproto/googleapis/rpc digest to b8f7ae3 ([e988e66](https://github.com/d0ugal/github-exporter/commit/e988e664cb98c38b95d3dfe42aa245d4a4a89cd5))
+* update module github.com/bytedance/sonic to v1.15.0 ([e1a315b](https://github.com/d0ugal/github-exporter/commit/e1a315bffc83df6d6017c8c09108d452b70ca444))
+* update module github.com/d0ugal/promexporter to v1.14.22 ([d53a7a7](https://github.com/d0ugal/github-exporter/commit/d53a7a7af1d84c3c0b478d2c775a0d1de99414e9))
+* update module github.com/d0ugal/promexporter to v1.14.23 ([ffbeb1c](https://github.com/d0ugal/github-exporter/commit/ffbeb1cab716796cdf031520cc1e0a132e5753a8))
+* update module github.com/d0ugal/promexporter to v1.14.24 ([71f36bb](https://github.com/d0ugal/github-exporter/commit/71f36bb24a502b211b797bb4910ac2b2a940ea52))
+* update module github.com/grpc-ecosystem/grpc-gateway/v2 to v2.27.5 ([a00b0dc](https://github.com/d0ugal/github-exporter/commit/a00b0dcba7a8e68c5f58793396175c28c14cbf2a))
+
 ## [0.4.38](https://github.com/d0ugal/github-exporter/compare/v0.4.37...v0.4.38) (2026-01-17)
 
 

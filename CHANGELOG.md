@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.42](https://github.com/d0ugal/github-exporter/compare/v0.4.41...v0.4.42) (2026-03-24)
+
+
+### Bug Fixes
+
+* update module github.com/google/go-github/v79 to v84 ([1fb81e4](https://github.com/d0ugal/github-exporter/commit/1fb81e4d3ddf98c308110f6e470bed9767661a59))
+* update module github.com/pelletier/go-toml/v2 to v2.3.0 ([21c0461](https://github.com/d0ugal/github-exporter/commit/21c0461125733ea50e98a52d73bbd5e30bc6ce2e))
+
 ## [0.4.41](https://github.com/d0ugal/github-exporter/compare/v0.4.40...v0.4.41) (2026-03-23)
 
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.43](https://github.com/d0ugal/github-exporter/compare/v0.4.42...v0.4.43) (2026-03-25)
+
+
+### Bug Fixes
+
+* update go-github from v79 to v84 ([eea5122](https://github.com/d0ugal/github-exporter/commit/eea51221ab1719335fc2f5982f775d2ec6036b77))
+* update module github.com/d0ugal/promexporter to v1.14.28 ([3f27662](https://github.com/d0ugal/github-exporter/commit/3f27662b26038002ea111ff8d685d03295f02295))
+
 ## [0.4.42](https://github.com/d0ugal/github-exporter/compare/v0.4.41...v0.4.42) (2026-03-24)
 
 

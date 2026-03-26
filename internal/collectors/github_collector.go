@@ -2,6 +2,7 @@ package collectors
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"strings"
@@ -1151,15 +1152,22 @@ func (gc *GitHubCollector) collectBuildStatusMetrics(ctx context.Context) error 
 		owner := parts[0]
 		repo := parts[1]
 
-		// Collect build status for each configured branch
+		// Try branches in order, stop at first success
 		for _, branchName := range gc.config.GitHub.Branches {
-			if err := gc.collectBranchBuildStatus(ctx, owner, repo, branchName); err != nil {
-				slog.Error("Failed to collect branch build status", "owner", owner, "repo", repo, "branch", branchName, "error", err)
-				gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
-					"endpoint":   "build_status",
-					"error_type": "branch_error",
-				}).Inc()
+			err := gc.collectBranchBuildStatus(ctx, owner, repo, branchName)
+			if err == nil {
+				break
 			}
+			if errors.Is(err, errBranchNotFound) {
+				slog.Debug("Branch not found, trying next", "owner", owner, "repo", repo, "branch", branchName)
+				continue
+			}
+			slog.Error("Failed to collect branch build status", "owner", owner, "repo", repo, "branch", branchName, "error", err)
+			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
+				"endpoint":   "build_status",
+				"error_type": "branch_error",
+			}).Inc()
+			break
 		}
 	}
 
@@ -1232,21 +1240,31 @@ func (gc *GitHubCollector) collectBuildStatusForAllRepos(ctx context.Context) er
 			continue
 		}
 
-		// Collect build status for each configured branch
+		// Try branches in order, stop at first success
 		for _, branchName := range gc.config.GitHub.Branches {
-			if err := gc.collectBranchBuildStatus(ctx, owner, repoName, branchName); err != nil {
-				slog.Error("Failed to collect branch build status", "owner", owner, "repo", repoName, "branch", branchName, "error", err)
-				gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
-					"endpoint":   "build_status",
-					"error_type": "branch_error",
-				}).Inc()
+			err := gc.collectBranchBuildStatus(ctx, owner, repoName, branchName)
+			if err == nil {
+				break
 			}
+			if errors.Is(err, errBranchNotFound) {
+				slog.Debug("Branch not found, trying next", "owner", owner, "repo", repoName, "branch", branchName)
+				continue
+			}
+			slog.Error("Failed to collect branch build status", "owner", owner, "repo", repoName, "branch", branchName, "error", err)
+			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
+				"endpoint":   "build_status",
+				"error_type": "branch_error",
+			}).Inc()
+			break
 		}
 	}
 
 	slog.Debug("Build status metrics collection completed", "repos_processed", len(allRepos))
 	return nil
 }
+
+// errBranchNotFound is returned when a branch does not exist in the repository.
+var errBranchNotFound = errors.New("branch not found")
 
 // collectBranchBuildStatus collects build status for a specific branch
 func (gc *GitHubCollector) collectBranchBuildStatus(ctx context.Context, owner, repo, branch string) error {
@@ -1333,6 +1351,9 @@ func (gc *GitHubCollector) collectBranchBuildStatus(ctx context.Context, owner, 
 
 	// Get check runs for the branch
 	if err := gc.collectCheckRuns(ctx, owner, repo, branch); err != nil {
+		if errors.Is(err, errBranchNotFound) {
+			return errBranchNotFound
+		}
 		slog.Error("Failed to collect check runs", "owner", owner, "repo", repo, "branch", branch, "error", err)
 	}
 
@@ -1353,6 +1374,10 @@ func (gc *GitHubCollector) collectCheckRuns(ctx context.Context, owner, repo, br
 		},
 	})
 	if err != nil {
+		var githubErr *github.ErrorResponse
+		if errors.As(err, &githubErr) && githubErr.Response.StatusCode == 422 {
+			return errBranchNotFound
+		}
 		return fmt.Errorf("failed to get check runs for branch %s: %w", branch, err)
 	}
 

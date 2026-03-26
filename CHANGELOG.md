@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0](https://github.com/d0ugal/github-exporter/compare/v0.4.43...v0.5.0) (2026-03-26)
+
+
+### Features
+
+* try branches in order with fallback on 422 ([2ef312c](https://github.com/d0ugal/github-exporter/commit/2ef312c17095d67105f184536a18f40536926df0))
+
+
+### Bug Fixes
+
+* update module github.com/grafana/pyroscope-go to v1.2.8 ([bfa27f3](https://github.com/d0ugal/github-exporter/commit/bfa27f39d3f55e1e5698b055092d97493b40b924))
+
 ## [0.4.43](https://github.com/d0ugal/github-exporter/compare/v0.4.42...v0.4.43) (2026-03-25)
 
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.1](https://github.com/d0ugal/github-exporter/compare/v0.5.0...v0.5.1) (2026-03-28)
+
+
+### Bug Fixes
+
+* update module github.com/bytedance/sonic/loader to v0.5.1 ([a6228b2](https://github.com/d0ugal/github-exporter/commit/a6228b2bbae18412fa0153e597f50241ed82754f))
+* update module github.com/d0ugal/promexporter to v1.14.29 ([a1b9d86](https://github.com/d0ugal/github-exporter/commit/a1b9d864f2688ef5b6f4b811a39a171f09d6bb1b))
+* update module github.com/gin-contrib/sse to v1.1.1 ([6cd2395](https://github.com/d0ugal/github-exporter/commit/6cd239593efd1d6a48d74e614889f52399feaefd))
+
 ## [0.5.0](https://github.com/d0ugal/github-exporter/compare/v0.4.43...v0.5.0) (2026-03-26)
 
 

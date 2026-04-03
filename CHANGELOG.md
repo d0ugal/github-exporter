@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.6](https://github.com/d0ugal/github-exporter/compare/v0.5.5...v0.5.6) (2026-04-03)
+
+
+### Bug Fixes
+
+* update opentelemetry-go monorepo to v1.43.0 ([ea2bd3b](https://github.com/d0ugal/github-exporter/commit/ea2bd3b5d602d00b526cbc745c0541d627745d9f))
+
 ## [0.5.5](https://github.com/d0ugal/github-exporter/compare/v0.5.4...v0.5.5) (2026-04-01)
 
 

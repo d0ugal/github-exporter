@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.8](https://github.com/d0ugal/github-exporter/compare/v0.5.7...v0.5.8) (2026-04-07)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to 6f92a3b ([293fcbc](https://github.com/d0ugal/github-exporter/commit/293fcbcd4b85f16dde71834aa74c7c14e8400f4b))
+* update google.golang.org/genproto/googleapis/api digest to 8fb7ec1 ([dfdd3fd](https://github.com/d0ugal/github-exporter/commit/dfdd3fd6e85e77d1e421c28b2f717cbc04a82309))
+* update google.golang.org/genproto/googleapis/rpc digest to 6f92a3b ([bfcf51b](https://github.com/d0ugal/github-exporter/commit/bfcf51bfa662f7b909c17358c2ea2281d747004a))
+* update google.golang.org/genproto/googleapis/rpc digest to 8fb7ec1 ([5a6b3a9](https://github.com/d0ugal/github-exporter/commit/5a6b3a950ebe33ba62600bfbd66f56dda35b1615))
+
 ## [0.5.7](https://github.com/d0ugal/github-exporter/compare/v0.5.6...v0.5.7) (2026-04-04)
 
 

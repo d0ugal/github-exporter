@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.10](https://github.com/d0ugal/github-exporter/compare/v0.5.9...v0.5.10) (2026-04-07)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.35 ([27a0779](https://github.com/d0ugal/github-exporter/commit/27a0779be850c7785b7328b2866b58f3d369e810))
+
 ## [0.5.9](https://github.com/d0ugal/github-exporter/compare/v0.5.8...v0.5.9) (2026-04-07)
 
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.13](https://github.com/d0ugal/github-exporter/compare/v0.5.12...v0.5.13) (2026-04-09)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.37 ([efdb3fb](https://github.com/d0ugal/github-exporter/commit/efdb3fbdb2d7cd0b6306690840f47b9a1f444f90))
+* update module golang.org/x/crypto to v0.50.0 ([de993ee](https://github.com/d0ugal/github-exporter/commit/de993eee95a138716d8560961bf0dbcaad0d0e82))
+* update module golang.org/x/text to v0.36.0 ([679f3ac](https://github.com/d0ugal/github-exporter/commit/679f3ac325a65b85bb5a1fab3844c1c2b4e879bc))
+
 ## [0.5.12](https://github.com/d0ugal/github-exporter/compare/v0.5.11...v0.5.12) (2026-04-08)
 
 

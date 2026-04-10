@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.14](https://github.com/d0ugal/github-exporter/compare/v0.5.13...v0.5.14) (2026-04-10)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.38 ([e0fffe4](https://github.com/d0ugal/github-exporter/commit/e0fffe49e45a99125318b7095c99a60b8041eec1))
+* update module golang.org/x/net to v0.53.0 ([4b8aaf2](https://github.com/d0ugal/github-exporter/commit/4b8aaf27f207a9d31a12d258561ed1d0f45397d5))
+
 ## [0.5.13](https://github.com/d0ugal/github-exporter/compare/v0.5.12...v0.5.13) (2026-04-09)
 
 

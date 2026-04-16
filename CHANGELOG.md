@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.17](https://github.com/d0ugal/github-exporter/compare/v0.5.16...v0.5.17) (2026-04-16)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to 3e5c5a5 ([4d1df4b](https://github.com/d0ugal/github-exporter/commit/4d1df4bdb85e4726a3535a44c53ff817cd18677d))
+* update google.golang.org/genproto/googleapis/api digest to 85fdc51 ([33a7cc8](https://github.com/d0ugal/github-exporter/commit/33a7cc88bf094fb6a00fefb3a353c9866f30a6d4))
+* update google.golang.org/genproto/googleapis/api digest to afd174a ([1100833](https://github.com/d0ugal/github-exporter/commit/110083325e37352c5c6d107118d10163b7fb386f))
+* update google.golang.org/genproto/googleapis/rpc digest to afd174a ([bb31349](https://github.com/d0ugal/github-exporter/commit/bb31349e039d3e9d962e23e4fdd3acb38193f188))
+* update module github.com/grpc-ecosystem/grpc-gateway/v2 to v2.29.0 ([0e9516e](https://github.com/d0ugal/github-exporter/commit/0e9516e87dc15355f66c6485335755d15be935de))
+* update module go.mongodb.org/mongo-driver/v2 to v2.5.1 ([fc2d625](https://github.com/d0ugal/github-exporter/commit/fc2d625fdd43487e7b371fd99ed3a1098effd778))
+
 ## [0.5.16](https://github.com/d0ugal/github-exporter/compare/v0.5.15...v0.5.16) (2026-04-11)
 
 

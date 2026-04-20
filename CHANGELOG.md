@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.19](https://github.com/d0ugal/github-exporter/compare/v0.5.18...v0.5.19) (2026-04-20)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to e10c466 ([652b1d5](https://github.com/d0ugal/github-exporter/commit/652b1d5edaf957987e8f84f1a2feabbc6e9574cc))
+
 ## [0.5.18](https://github.com/d0ugal/github-exporter/compare/v0.5.17...v0.5.18) (2026-04-17)
 
 

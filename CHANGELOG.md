@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.20](https://github.com/d0ugal/github-exporter/compare/v0.5.19...v0.5.20) (2026-04-20)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/rpc digest to e10c466 ([aca3468](https://github.com/d0ugal/github-exporter/commit/aca346844be393e670d782686dfc283f7306c7df))
+* update module github.com/google/go-github/v84 to v85 ([419c60b](https://github.com/d0ugal/github-exporter/commit/419c60bb891d9a56479bb573c6cf3a1f361dba2c))
+
 ## [0.5.19](https://github.com/d0ugal/github-exporter/compare/v0.5.18...v0.5.19) (2026-04-20)
 
 

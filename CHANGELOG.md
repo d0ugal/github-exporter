@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.22](https://github.com/d0ugal/github-exporter/compare/v0.5.21...v0.5.22) (2026-04-21)
+
+
+### Bug Fixes
+
+* remove trailing blank line in commits.yml ([b30ca73](https://github.com/d0ugal/github-exporter/commit/b30ca73291d81093c39a7203e1607bea831134cb))
+
 ## [0.5.21](https://github.com/d0ugal/github-exporter/compare/v0.5.20...v0.5.21) (2026-04-21)
 
 

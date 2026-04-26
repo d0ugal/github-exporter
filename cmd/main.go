@@ -15,30 +15,6 @@ import (
 	promexporter_metrics "github.com/d0ugal/promexporter/metrics"
 )
 
-// hasEnvironmentVariables checks if any GITHUB_EXPORTER_* environment variables are set
-func hasEnvironmentVariables() bool {
-	envVars := []string{
-		"GITHUB_EXPORTER_SERVER_HOST",
-		"GITHUB_EXPORTER_SERVER_PORT",
-		"GITHUB_EXPORTER_LOG_LEVEL",
-		"GITHUB_EXPORTER_LOG_FORMAT",
-		"GITHUB_EXPORTER_METRICS_DEFAULT_INTERVAL",
-		"GITHUB_EXPORTER_GITHUB_TOKEN",
-		"GITHUB_EXPORTER_GITHUB_ORGS",
-		"GITHUB_EXPORTER_GITHUB_REPOS",
-		"GITHUB_EXPORTER_GITHUB_TIMEOUT",
-		"GITHUB_EXPORTER_GITHUB_RATE_LIMIT",
-	}
-
-	for _, envVar := range envVars {
-		if os.Getenv(envVar) != "" {
-			return true
-		}
-	}
-
-	return false
-}
-
 func main() {
 	// Parse command line flags
 	var showVersion bool
@@ -51,7 +27,7 @@ func main() {
 	)
 
 	flag.StringVar(&configPath, "config", "config.yaml", "Path to configuration file")
-	flag.BoolVar(&configFromEnv, "config-from-env", false, "Load configuration from environment variables only")
+	flag.BoolVar(&configFromEnv, "config-from-env", false, "Deprecated: env vars are always applied on top of yaml; this flag is a no-op")
 	flag.Parse()
 
 	// Show version if requested
@@ -63,25 +39,19 @@ func main() {
 	}
 
 	// Use environment variable if config flag is not provided
-	if configPath == "config.yaml" && !configFromEnv {
+	if configPath == "config.yaml" {
 		if envConfig := os.Getenv("CONFIG_PATH"); envConfig != "" {
 			configPath = envConfig
 		}
 	}
 
-	// Check if we should use environment-only configuration
-	if !configFromEnv {
-		// Check explicit flag first
-		if os.Getenv("GITHUB_EXPORTER_CONFIG_FROM_ENV") == "true" {
-			configFromEnv = true
-		} else if hasEnvironmentVariables() {
-			// Auto-detect environment variables and use them
-			configFromEnv = true
-		}
+	// Warn if deprecated flag / env var is used
+	if configFromEnv || os.Getenv("GITHUB_EXPORTER_CONFIG_FROM_ENV") == "true" {
+		fmt.Fprintln(os.Stderr, "Warning: --config-from-env / GITHUB_EXPORTER_CONFIG_FROM_ENV is deprecated and has no effect. Env vars are always applied on top of yaml config.")
 	}
 
-	// Load configuration
-	cfg, err := config.LoadConfig(configPath, configFromEnv)
+	// Load configuration — yaml is optional, env vars always overlay
+	cfg, err := config.LoadConfig(configPath)
 	if err != nil {
 		slog.Error("Failed to load configuration", "error", err)
 		os.Exit(1)

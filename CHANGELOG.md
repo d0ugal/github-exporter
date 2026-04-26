@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.24](https://github.com/d0ugal/github-exporter/compare/v0.5.23...v0.5.24) (2026-04-26)
+
+
+### Bug Fixes
+
+* make yaml optional and always overlay env vars on config ([0c57173](https://github.com/d0ugal/github-exporter/commit/0c571739fe2b83d09ea61bca8ecdaf9f297ab2ff))
+* use RELEASE_TOKEN in auto-format workflow to trigger CI ([f08fc7a](https://github.com/d0ugal/github-exporter/commit/f08fc7ad3e6164f335f4099b23bf32d956268ffa))
+
 ## [0.5.23](https://github.com/d0ugal/github-exporter/compare/v0.5.22...v0.5.23) (2026-04-21)
 
 

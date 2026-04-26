@@ -31,156 +31,95 @@ type GitHubConfig struct {
 	RateLimitBuffer float64  `yaml:"rate_limit_buffer"` // Percentage to stay under limit (0.8 = 80%)
 }
 
-// LoadConfig loads configuration from either a YAML file or environment variables
-func LoadConfig(path string, configFromEnv bool) (*Config, error) {
-	if configFromEnv {
-		return loadFromEnv()
-	}
+// LoadConfig loads configuration with priority: env vars > yaml file > defaults.
+// The yaml file is optional; if path is empty or the file does not exist it is
+// silently skipped. Environment variables are always applied on top.
+func LoadConfig(path string) (*Config, error) {
+	var cfg Config
 
-	return Load(path)
-}
-
-// Load loads configuration from a YAML file
-func Load(path string) (*Config, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read config file: %w", err)
-	}
-
-	var config Config
-	if err := yaml.Unmarshal(data, &config); err != nil {
-		return nil, fmt.Errorf("failed to parse config file: %w", err)
-	}
-
-	// Set defaults
-	setDefaults(&config)
-
-	// Validate configuration
-	if err := config.Validate(); err != nil {
-		return nil, fmt.Errorf("configuration validation failed: %w", err)
-	}
-
-	return &config, nil
-}
-
-// loadFromEnv loads configuration from environment variables
-func loadFromEnv() (*Config, error) {
-	config := &Config{}
-
-	// Load base configuration from environment
-	baseConfig := &promexporter_config.BaseConfig{}
-
-	// Server configuration
-	if host := os.Getenv("GITHUB_EXPORTER_SERVER_HOST"); host != "" {
-		baseConfig.Server.Host = host
-	} else {
-		baseConfig.Server.Host = "0.0.0.0"
-	}
-
-	if portStr := os.Getenv("GITHUB_EXPORTER_SERVER_PORT"); portStr != "" {
-		if port, err := strconv.Atoi(portStr); err != nil {
-			return nil, fmt.Errorf("invalid server port: %w", err)
-		} else {
-			baseConfig.Server.Port = port
+	// Optional yaml — silently skip if not found
+	if path != "" {
+		data, err := os.ReadFile(path)
+		if err == nil {
+			if err := yaml.Unmarshal(data, &cfg); err != nil {
+				return nil, fmt.Errorf("failed to parse config file %s: %w", path, err)
+			}
+		} else if !os.IsNotExist(err) {
+			return nil, fmt.Errorf("failed to read config file %s: %w", path, err)
 		}
-	} else {
-		baseConfig.Server.Port = 8080
 	}
 
-	// Logging configuration
-	if level := os.Getenv("GITHUB_EXPORTER_LOG_LEVEL"); level != "" {
-		baseConfig.Logging.Level = level
-	} else {
-		baseConfig.Logging.Level = "info"
-	}
-
-	if format := os.Getenv("GITHUB_EXPORTER_LOG_FORMAT"); format != "" {
-		baseConfig.Logging.Format = format
-	} else {
-		baseConfig.Logging.Format = "json"
-	}
-
-	// Metrics configuration
-	if intervalStr := os.Getenv("GITHUB_EXPORTER_METRICS_DEFAULT_INTERVAL"); intervalStr != "" {
-		if interval, err := time.ParseDuration(intervalStr); err != nil {
-			return nil, fmt.Errorf("invalid metrics default interval: %w", err)
-		} else {
-			baseConfig.Metrics.Collection.DefaultInterval = promexporter_config.Duration{Duration: interval}
-			baseConfig.Metrics.Collection.DefaultIntervalSet = true
-		}
-	} else {
-		baseConfig.Metrics.Collection.DefaultInterval = promexporter_config.Duration{Duration: time.Second * 30}
-	}
-
-	config.BaseConfig = *baseConfig
-
-	// Apply generic environment variables (TRACING_ENABLED, PROFILING_ENABLED, etc.)
-	// These are handled by promexporter and are shared across all exporters
-	if err := promexporter_config.ApplyGenericEnvVars(&config.BaseConfig); err != nil {
+	// Always apply generic env vars (TRACING_ENABLED, PROFILING_ENABLED, etc.)
+	if err := promexporter_config.ApplyGenericEnvVars(&cfg.BaseConfig); err != nil {
 		return nil, fmt.Errorf("failed to apply generic environment variables: %w", err)
 	}
 
-	// GitHub configuration
-	if token := os.Getenv("GITHUB_EXPORTER_GITHUB_TOKEN"); token != "" {
-		config.GitHub.Token = token
-	}
+	// Always apply GitHub-specific env vars on top
+	applyEnvVars(&cfg)
 
-	if orgsStr := os.Getenv("GITHUB_EXPORTER_GITHUB_ORGS"); orgsStr != "" {
-		config.GitHub.Orgs = strings.Split(orgsStr, ",")
-	}
+	setDefaults(&cfg)
 
-	if reposStr := os.Getenv("GITHUB_EXPORTER_GITHUB_REPOS"); reposStr != "" {
-		config.GitHub.Repos = strings.Split(reposStr, ",")
-	}
-
-	if branchesStr := os.Getenv("GITHUB_EXPORTER_GITHUB_BRANCHES"); branchesStr != "" {
-		config.GitHub.Branches = strings.Split(branchesStr, ",")
-	}
-
-	if workflowsStr := os.Getenv("GITHUB_EXPORTER_GITHUB_WORKFLOWS"); workflowsStr != "" {
-		config.GitHub.Workflows = strings.Split(workflowsStr, ",")
-	}
-
-	if timeoutStr := os.Getenv("GITHUB_EXPORTER_GITHUB_TIMEOUT"); timeoutStr != "" {
-		if timeout, err := time.ParseDuration(timeoutStr); err != nil {
-			return nil, fmt.Errorf("invalid GitHub timeout: %w", err)
-		} else {
-			config.GitHub.Timeout = Duration{Duration: timeout}
-		}
-	} else {
-		config.GitHub.Timeout = Duration{Duration: time.Second * 30}
-	}
-
-	if refreshIntervalStr := os.Getenv("GITHUB_EXPORTER_GITHUB_REFRESH_INTERVAL"); refreshIntervalStr != "" {
-		if refreshInterval, err := time.ParseDuration(refreshIntervalStr); err != nil {
-			return nil, fmt.Errorf("invalid GitHub refresh interval: %w", err)
-		} else {
-			config.GitHub.RefreshInterval = Duration{Duration: refreshInterval}
-		}
-	} else {
-		// Default to 0, will be calculated dynamically based on rate limits
-		config.GitHub.RefreshInterval = Duration{Duration: 0}
-	}
-
-	if bufferStr := os.Getenv("GITHUB_EXPORTER_GITHUB_RATE_LIMIT_BUFFER"); bufferStr != "" {
-		if buffer, err := strconv.ParseFloat(bufferStr, 64); err != nil {
-			return nil, fmt.Errorf("invalid GitHub rate limit buffer: %w", err)
-		} else {
-			config.GitHub.RateLimitBuffer = buffer
-		}
-	} else {
-		config.GitHub.RateLimitBuffer = 0.8 // Default to 80% of rate limit
-	}
-
-	// Set defaults for any missing values
-	setDefaults(config)
-
-	// Validate configuration
-	if err := config.Validate(); err != nil {
+	if err := cfg.Validate(); err != nil {
 		return nil, fmt.Errorf("configuration validation failed: %w", err)
 	}
 
-	return config, nil
+	return &cfg, nil
+}
+
+// applyEnvVars overlays GitHub-exporter environment variables onto cfg.
+// Only variables that are set (non-empty) are applied; unset variables leave
+// the existing value (from yaml or zero-value) unchanged.
+func applyEnvVars(cfg *Config) {
+	if host := os.Getenv("GITHUB_EXPORTER_SERVER_HOST"); host != "" {
+		cfg.Server.Host = host
+	}
+	if portStr := os.Getenv("GITHUB_EXPORTER_SERVER_PORT"); portStr != "" {
+		if port, err := strconv.Atoi(portStr); err == nil {
+			cfg.Server.Port = port
+		}
+	}
+	if level := os.Getenv("GITHUB_EXPORTER_LOG_LEVEL"); level != "" {
+		cfg.Logging.Level = level
+	}
+	if format := os.Getenv("GITHUB_EXPORTER_LOG_FORMAT"); format != "" {
+		cfg.Logging.Format = format
+	}
+	if intervalStr := os.Getenv("GITHUB_EXPORTER_METRICS_DEFAULT_INTERVAL"); intervalStr != "" {
+		if interval, err := time.ParseDuration(intervalStr); err == nil {
+			cfg.Metrics.Collection.DefaultInterval = promexporter_config.Duration{Duration: interval}
+			cfg.Metrics.Collection.DefaultIntervalSet = true
+		}
+	}
+	if token := os.Getenv("GITHUB_EXPORTER_GITHUB_TOKEN"); token != "" {
+		cfg.GitHub.Token = token
+	}
+	if orgsStr := os.Getenv("GITHUB_EXPORTER_GITHUB_ORGS"); orgsStr != "" {
+		cfg.GitHub.Orgs = strings.Split(orgsStr, ",")
+	}
+	if reposStr := os.Getenv("GITHUB_EXPORTER_GITHUB_REPOS"); reposStr != "" {
+		cfg.GitHub.Repos = strings.Split(reposStr, ",")
+	}
+	if branchesStr := os.Getenv("GITHUB_EXPORTER_GITHUB_BRANCHES"); branchesStr != "" {
+		cfg.GitHub.Branches = strings.Split(branchesStr, ",")
+	}
+	if workflowsStr := os.Getenv("GITHUB_EXPORTER_GITHUB_WORKFLOWS"); workflowsStr != "" {
+		cfg.GitHub.Workflows = strings.Split(workflowsStr, ",")
+	}
+	if timeoutStr := os.Getenv("GITHUB_EXPORTER_GITHUB_TIMEOUT"); timeoutStr != "" {
+		if timeout, err := time.ParseDuration(timeoutStr); err == nil {
+			cfg.GitHub.Timeout = Duration{Duration: timeout}
+		}
+	}
+	if refreshIntervalStr := os.Getenv("GITHUB_EXPORTER_GITHUB_REFRESH_INTERVAL"); refreshIntervalStr != "" {
+		if refreshInterval, err := time.ParseDuration(refreshIntervalStr); err == nil {
+			cfg.GitHub.RefreshInterval = Duration{Duration: refreshInterval}
+		}
+	}
+	if bufferStr := os.Getenv("GITHUB_EXPORTER_GITHUB_RATE_LIMIT_BUFFER"); bufferStr != "" {
+		if buffer, err := strconv.ParseFloat(bufferStr, 64); err == nil {
+			cfg.GitHub.RateLimitBuffer = buffer
+		}
+	}
 }
 
 // setDefaults sets default values for configuration

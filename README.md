@@ -8,7 +8,7 @@ A Prometheus exporter for GitHub metrics that collects repository statistics, or
 - **Organization Monitoring**: Track multiple organizations and their repositories
 - **Build Status Monitoring**: Track build status, workflow runs, and check runs for specific branches
 - **Rate Limit Management**: Intelligent rate limiting to respect GitHub API limits
-- **Flexible Configuration**: YAML config file or environment variables
+- **Flexible Configuration**: YAML config file, environment variables, or both (env vars always overlay yaml)
 - **Docker Support**: Ready-to-use Docker container
 - **Prometheus Integration**: Native Prometheus metrics format
 
@@ -110,7 +110,7 @@ github:
 
 #### Environment Variables
 
-All configuration can be set via environment variables:
+Environment variables are always applied on top of any yaml config (priority: env > yaml > defaults). No flag is required to activate them.
 
 ```bash
 GITHUB_EXPORTER_SERVER_HOST=0.0.0.0
@@ -124,8 +124,10 @@ GITHUB_EXPORTER_GITHUB_REPOS=d0ugal/mqtt-exporter,d0ugal/filesystem-exporter
 GITHUB_EXPORTER_GITHUB_BRANCHES=main,develop
 GITHUB_EXPORTER_GITHUB_WORKFLOWS=CI,CD
 GITHUB_EXPORTER_GITHUB_TIMEOUT=30s
-GITHUB_EXPORTER_GITHUB_RATE_LIMIT=0.8
+GITHUB_EXPORTER_GITHUB_RATE_LIMIT_BUFFER=0.8
 ```
+
+> **Note:** `--config-from-env` and `GITHUB_EXPORTER_CONFIG_FROM_ENV` are deprecated no-ops. Remove them from any existing configuration.
 
 ## Metrics
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.25](https://github.com/d0ugal/github-exporter/compare/v0.5.24...v0.5.25) (2026-04-27)
+
+
+### Bug Fixes
+
+* update module github.com/mattn/go-isatty to v0.0.22 ([71a11f7](https://github.com/d0ugal/github-exporter/commit/71a11f7ef28740f5ad2a890ce010c9d7ee66c4a6))
+
 ## [0.5.24](https://github.com/d0ugal/github-exporter/compare/v0.5.23...v0.5.24) (2026-04-26)
 
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.28](https://github.com/d0ugal/github-exporter/compare/v0.5.27...v0.5.28) (2026-05-01)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.47 ([1d42d0b](https://github.com/d0ugal/github-exporter/commit/1d42d0b366b0bf6720b2597bb5b087e0f7c63992))
+* update module github.com/pelletier/go-toml/v2 to v2.3.1 ([225ea15](https://github.com/d0ugal/github-exporter/commit/225ea15c677176b07a8e5ab6138945681b9ee048))
+
 ## [0.5.27](https://github.com/d0ugal/github-exporter/compare/v0.5.26...v0.5.27) (2026-04-30)
 
 

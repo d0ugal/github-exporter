@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.29](https://github.com/d0ugal/github-exporter/compare/v0.5.28...v0.5.29) (2026-05-04)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.48 ([0d73260](https://github.com/d0ugal/github-exporter/commit/0d73260310289b57ec332f9d33e3a4e8ae2721fd))
+* update module github.com/d0ugal/promexporter to v1.14.49 ([a6505d9](https://github.com/d0ugal/github-exporter/commit/a6505d98b9ba5b6021f1e31256f5561e9fd23c7b))
+* update module google.golang.org/grpc to v1.81.0 ([c38ebe3](https://github.com/d0ugal/github-exporter/commit/c38ebe3e09e6000f275e5bd38f868577f8a2449f))
+
 ## [0.5.28](https://github.com/d0ugal/github-exporter/compare/v0.5.27...v0.5.28) (2026-05-01)
 
 

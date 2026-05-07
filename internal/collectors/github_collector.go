@@ -440,7 +440,11 @@ func (gc *GitHubCollector) updateRateLimits(ctx context.Context) error {
 	return nil
 }
 
-// updateRateLimiter updates the rate limiter based on current rate limit information
+// updateRateLimiter updates the rate limiter based on current rate limit information.
+// We mutate the limiter in place via SetLimit/SetBurst rather than swapping the pointer
+// so that concurrent readers (gc.limiter.Wait calls scattered across collect functions)
+// never observe a half-replaced limiter — the rate.Limiter's own internal mutex
+// serialises the rate change against in-flight Waits.
 func (gc *GitHubCollector) updateRateLimiter() {
 	gc.mu.RLock()
 	remaining := gc.rateLimitRemaining
@@ -462,12 +466,8 @@ func (gc *GitHubCollector) updateRateLimiter() {
 	effectiveRemaining := int(float64(remaining) * gc.config.GitHub.RateLimitBuffer)
 	ratePerSecond := float64(effectiveRemaining) / timeUntilReset.Seconds()
 
-	// Create new rate limiter
-	newLimiter := rate.NewLimiter(rate.Limit(ratePerSecond), 1)
-
-	gc.mu.Lock()
-	gc.limiter = newLimiter
-	gc.mu.Unlock()
+	gc.limiter.SetLimit(rate.Limit(ratePerSecond))
+	gc.limiter.SetBurst(1)
 
 	slog.Debug("Updated rate limiter",
 		"rate_per_second", ratePerSecond,

@@ -1,10 +1,18 @@
 package collectors
 
 import (
+	"context"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"sync/atomic"
 	"testing"
 
 	"github.com/d0ugal/github-exporter/internal/config"
 	"github.com/d0ugal/github-exporter/internal/metrics"
+	"github.com/d0ugal/promexporter/app"
+	promexporter_config "github.com/d0ugal/promexporter/config"
 	promexporter_metrics "github.com/d0ugal/promexporter/metrics"
 )
 
@@ -165,6 +173,79 @@ func TestRateLimiterInitialization(t *testing.T) {
 
 	// Test that limiter has reasonable initial values
 	// The exact values depend on the implementation, but it should not be nil
+}
+
+// TestCollectOrgRepos_PagesAllResults verifies that collectOrgRepos walks
+// every Link-rel="next" page from the GitHub API rather than stopping at
+// page 1. Without the loop, orgs with more than 100 repositories would
+// silently report wrong totals.
+func TestCollectOrgRepos_PagesAllResults(t *testing.T) {
+	var pageRequests atomic.Int32
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/orgs/test-org/repos", func(w http.ResponseWriter, r *http.Request) {
+		pageRequests.Add(1)
+
+		page := r.URL.Query().Get("page")
+		if page == "" {
+			page = "1"
+		}
+
+		nextLink := func(p int) string {
+			return fmt.Sprintf(`<http://%s/orgs/test-org/repos?page=%d>; rel="next"`, r.Host, p)
+		}
+
+		switch page {
+		case "1":
+			w.Header().Set("Link", nextLink(2))
+			fmt.Fprint(w, `[{"id":1,"name":"repo1","private":false}]`)
+		case "2":
+			w.Header().Set("Link", nextLink(3))
+			fmt.Fprint(w, `[{"id":2,"name":"repo2","private":false}]`)
+		case "3":
+			// final page — no rel="next" Link
+			fmt.Fprint(w, `[{"id":3,"name":"repo3","private":true}]`)
+		default:
+			t.Errorf("unexpected page request: %s", page)
+			http.Error(w, "unexpected page", http.StatusInternalServerError)
+		}
+	})
+
+	server := httptest.NewServer(mux)
+	defer server.Close()
+
+	cfg := &config.Config{
+		GitHub: config.GitHubConfig{
+			Orgs: []string{"test-org"},
+		},
+		BaseConfig: promexporter_config.BaseConfig{
+			Server:  promexporter_config.ServerConfig{Host: "127.0.0.1", Port: 8080},
+			Logging: promexporter_config.LoggingConfig{Level: "info", Format: "json"},
+		},
+	}
+	baseRegistry := promexporter_metrics.NewRegistry("github-exporter-pagination-test")
+	metricsRegistry := metrics.NewGitHubRegistry(baseRegistry)
+	testApp := app.New("github-exporter-pagination-test").
+		WithConfig(&cfg.BaseConfig).
+		WithMetrics(baseRegistry).
+		Build()
+
+	gc := NewGitHubCollector(cfg, metricsRegistry, testApp)
+
+	baseURL, err := url.Parse(server.URL + "/")
+	if err != nil {
+		t.Fatalf("parse server URL: %v", err)
+	}
+
+	gc.client.BaseURL = baseURL
+
+	if err := gc.collectOrgRepos(context.Background(), "test-org"); err != nil {
+		t.Fatalf("collectOrgRepos: %v", err)
+	}
+
+	if got := pageRequests.Load(); got != 3 {
+		t.Fatalf("expected 3 page requests (full pagination), got %d — collector likely stopped early", got)
+	}
 }
 
 // TestMetricsRegistry tests that metrics registry is properly set up

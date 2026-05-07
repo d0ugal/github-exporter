@@ -657,44 +657,62 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 		return err
 	}
 
-	// Wait for rate limiter
-	if err := gc.limiter.Wait(spanCtx); err != nil {
-		if collectorSpan != nil {
-			collectorSpan.RecordError(err, attribute.String("operation", "rate-limiter-wait"))
+	// Page through every repository for the org. Without the loop we'd only
+	// see the first 100 repositories — orgs like grafana have thousands and
+	// would silently report wrong totals.
+	opt := &github.RepositoryListByOrgOptions{
+		Type:        "all",
+		ListOptions: github.ListOptions{PerPage: 100},
+	}
+
+	var (
+		repos       []*github.Repository
+		lastResp    *github.Response
+		apiDuration float64
+	)
+
+	for {
+		if err := gc.limiter.Wait(spanCtx); err != nil {
+			if collectorSpan != nil {
+				collectorSpan.RecordError(err, attribute.String("operation", "rate-limiter-wait"))
+			}
+			return fmt.Errorf("rate limiter error: %w", err)
 		}
-		return fmt.Errorf("rate limiter error: %w", err)
-	}
 
-	// List repositories for the organization
-	apiStart := time.Now()
-	repos, resp, err := gc.client.Repositories.ListByOrg(spanCtx, org, &github.RepositoryListByOrgOptions{
-		Type: "all",
-		ListOptions: github.ListOptions{
-			PerPage: 100,
-		},
-	})
-	apiDuration := time.Since(apiStart).Seconds()
+		apiStart := time.Now()
+		page, resp, err := gc.client.Repositories.ListByOrg(spanCtx, org, opt)
+		apiDuration += time.Since(apiStart).Seconds()
 
-	if err != nil {
-		if collectorSpan != nil {
-			collectorSpan.SetAttributes(
-				attribute.Float64("api_call.duration_seconds", apiDuration),
-			)
-			collectorSpan.RecordError(err, attribute.String("operation", "list-repos-by-org"))
+		if err != nil {
+			if collectorSpan != nil {
+				collectorSpan.SetAttributes(
+					attribute.Float64("api_call.duration_seconds", apiDuration),
+				)
+				collectorSpan.RecordError(err, attribute.String("operation", "list-repos-by-org"))
+			}
+			return fmt.Errorf("failed to list repositories for org %s: %w", org, err)
 		}
-		return fmt.Errorf("failed to list repositories for org %s: %w", org, err)
+
+		// Skip if organization not found (404)
+		if resp != nil && resp.StatusCode == 404 {
+			slog.Warn("Organization not found, skipping repository collection", "org", org)
+			return nil
+		}
+
+		repos = append(repos, page...)
+		lastResp = resp
+
+		if resp == nil || resp.NextPage == 0 {
+			break
+		}
+
+		opt.Page = resp.NextPage
 	}
 
-	// Skip if organization not found (404)
-	if resp != nil && resp.StatusCode == 404 {
-		slog.Warn("Organization not found, skipping repository collection", "org", org)
-		return nil
-	}
-
-	// Update API call metrics
+	// Update API call metrics — record the status of the final response.
 	statusCode := "unknown"
-	if resp != nil {
-		statusCode = fmt.Sprintf("%d", resp.StatusCode)
+	if lastResp != nil {
+		statusCode = fmt.Sprintf("%d", lastResp.StatusCode)
 	}
 	gc.metrics.GitHubAPICallsTotal.With(prometheus.Labels{
 		"endpoint": "repos",

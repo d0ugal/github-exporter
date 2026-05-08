@@ -198,13 +198,13 @@ func TestCollectOrgRepos_PagesAllResults(t *testing.T) {
 		switch page {
 		case "1":
 			w.Header().Set("Link", nextLink(2))
-			fmt.Fprint(w, `[{"id":1,"name":"repo1","private":false}]`)
+			_, _ = fmt.Fprint(w, `[{"id":1,"name":"repo1","private":false}]`)
 		case "2":
 			w.Header().Set("Link", nextLink(3))
-			fmt.Fprint(w, `[{"id":2,"name":"repo2","private":false}]`)
+			_, _ = fmt.Fprint(w, `[{"id":2,"name":"repo2","private":false}]`)
 		case "3":
 			// final page — no rel="next" Link
-			fmt.Fprint(w, `[{"id":3,"name":"repo3","private":true}]`)
+			_, _ = fmt.Fprint(w, `[{"id":3,"name":"repo3","private":true}]`)
 		default:
 			t.Errorf("unexpected page request: %s", page)
 			http.Error(w, "unexpected page", http.StatusInternalServerError)

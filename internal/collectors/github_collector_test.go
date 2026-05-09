@@ -6,8 +6,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"sync"
 	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/d0ugal/github-exporter/internal/config"
 	"github.com/d0ugal/github-exporter/internal/metrics"
@@ -271,6 +273,46 @@ func TestGitHubToken_RedactsInString(t *testing.T) {
 }
 
 // TestMetricsRegistry tests that metrics registry is properly set up
+// TestUpdateRateLimiter_NoRace exercises the rate-limiter mutation path
+// concurrently with the Wait() readers used throughout the collector. With
+// the previous pointer-swap implementation, `go test -race` would flag this
+// immediately. With the in-place SetLimit/SetBurst fix the rate.Limiter's
+// own mutex serialises everything.
+func TestUpdateRateLimiter_NoRace(t *testing.T) {
+	cfg := &config.Config{
+		GitHub: config.GitHubConfig{
+			RateLimitBuffer: 0.8,
+		},
+	}
+
+	baseRegistry := promexporter_metrics.NewRegistry("github-exporter-race-test")
+	metricsRegistry := metrics.NewGitHubRegistry(baseRegistry)
+
+	gc := NewGitHubCollector(cfg, metricsRegistry, nil)
+	gc.rateLimitRemaining = 1000
+	gc.rateLimitReset = time.Now().Add(time.Hour)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	var wg sync.WaitGroup
+
+	for i := 0; i < 100; i++ {
+		wg.Add(2)
+
+		go func() {
+			defer wg.Done()
+			gc.updateRateLimiter()
+		}()
+		go func() {
+			defer wg.Done()
+			_ = gc.limiter.Wait(ctx)
+		}()
+	}
+
+	wg.Wait()
+}
+
 func TestMetricsRegistry(t *testing.T) {
 	collector := createTestCollector()
 

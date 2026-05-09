@@ -248,6 +248,28 @@ func TestCollectOrgRepos_PagesAllResults(t *testing.T) {
 	}
 }
 
+// TestGitHubToken_RedactsInString locks in that GitHub.Token's String()
+// emits "[REDACTED]" rather than the raw token. Without this, any code path
+// that prints the config struct (slog with %v, error wrapping, etc.) would
+// leak the PAT into logs.
+func TestGitHubToken_RedactsInString(t *testing.T) {
+	const secret = "ghp_supersecrettokenvalue1234"
+
+	tok := promexporter_config.NewSensitiveString(secret)
+
+	if tok.Value() != secret {
+		t.Fatalf("Value() did not round-trip: want %q, got %q", secret, tok.Value())
+	}
+
+	if got := tok.String(); got == secret {
+		t.Fatalf("String() leaked the raw token: %q", got)
+	}
+
+	if got := tok.String(); got != "[REDACTED]" {
+		t.Fatalf("String() unexpected: want [REDACTED], got %q", got)
+	}
+}
+
 // TestMetricsRegistry tests that metrics registry is properly set up
 func TestMetricsRegistry(t *testing.T) {
 	collector := createTestCollector()

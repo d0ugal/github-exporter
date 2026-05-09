@@ -21,14 +21,14 @@ type Config struct {
 }
 
 type GitHubConfig struct {
-	Token           string   `yaml:"token"`
-	Orgs            []string `yaml:"orgs"`
-	Repos           []string `yaml:"repos"`
-	Branches        []string `yaml:"branches"`  // Branches to monitor for build status
-	Workflows       []string `yaml:"workflows"` // Specific workflows to monitor (empty = all)
-	Timeout         Duration `yaml:"timeout"`
-	RefreshInterval Duration `yaml:"refresh_interval"`
-	RateLimitBuffer float64  `yaml:"rate_limit_buffer"` // Percentage to stay under limit (0.8 = 80%)
+	Token           promexporter_config.SensitiveString `yaml:"token"`
+	Orgs            []string                            `yaml:"orgs"`
+	Repos           []string                            `yaml:"repos"`
+	Branches        []string                            `yaml:"branches"`  // Branches to monitor for build status
+	Workflows       []string                            `yaml:"workflows"` // Specific workflows to monitor (empty = all)
+	Timeout         Duration                            `yaml:"timeout"`
+	RefreshInterval Duration                            `yaml:"refresh_interval"`
+	RateLimitBuffer float64                             `yaml:"rate_limit_buffer"` // Percentage to stay under limit (0.8 = 80%)
 }
 
 // LoadConfig loads configuration with priority: env vars > yaml file > defaults.
@@ -91,7 +91,7 @@ func applyEnvVars(cfg *Config) {
 		}
 	}
 	if token := os.Getenv("GITHUB_EXPORTER_GITHUB_TOKEN"); token != "" {
-		cfg.GitHub.Token = token
+		cfg.GitHub.Token = promexporter_config.NewSensitiveString(token)
 	}
 	if orgsStr := os.Getenv("GITHUB_EXPORTER_GITHUB_ORGS"); orgsStr != "" {
 		cfg.GitHub.Orgs = strings.Split(orgsStr, ",")
@@ -226,7 +226,7 @@ func (c *Config) validateMetricsConfig() error {
 }
 
 func (c *Config) validateGitHubConfig() error {
-	if c.GitHub.Token == "" {
+	if c.GitHub.Token.IsEmpty() {
 		return fmt.Errorf("github token is required")
 	}
 

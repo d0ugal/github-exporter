@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/d0ugal/github-exporter/internal/config"
 	"github.com/d0ugal/github-exporter/internal/metrics"
@@ -267,6 +268,28 @@ func TestGitHubToken_RedactsInString(t *testing.T) {
 
 	if got := tok.String(); got != "[REDACTED]" {
 		t.Fatalf("String() unexpected: want [REDACTED], got %q", got)
+	}
+}
+
+// TestNewGitHubCollector_WiresHTTPTimeout asserts that the configured
+// GitHub.Timeout flows through into the underlying *http.Client. Without
+// this, github.NewClient(nil) used http.DefaultClient (no timeout) and a
+// hung TCP connection would block the collector indefinitely.
+func TestNewGitHubCollector_WiresHTTPTimeout(t *testing.T) {
+	wantTimeout := 17 * time.Second
+
+	cfg := &config.Config{
+		GitHub: config.GitHubConfig{
+			Timeout: promexporter_config.Duration{Duration: wantTimeout},
+		},
+	}
+	baseRegistry := promexporter_metrics.NewRegistry("github-exporter-timeout-test")
+	metricsRegistry := metrics.NewGitHubRegistry(baseRegistry)
+
+	gc := NewGitHubCollector(cfg, metricsRegistry, nil)
+
+	if gc.client.Client().Timeout != wantTimeout {
+		t.Fatalf("expected http client timeout %v, got %v", wantTimeout, gc.client.Client().Timeout)
 	}
 }
 

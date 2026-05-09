@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"net/http"
 	"strings"
 	"sync"
 	"time"
@@ -35,8 +36,14 @@ type GitHubCollector struct {
 }
 
 func NewGitHubCollector(cfg *config.Config, metricsRegistry *metrics.GitHubRegistry, app *app.App) *GitHubCollector {
-	// Create GitHub client
-	client := github.NewClient(nil).WithAuthToken(cfg.GitHub.Token.Value())
+	// github.NewClient(nil) uses http.DefaultClient which has no timeout — a
+	// hung TCP connection to api.github.com would block the collector forever.
+	// Wire cfg.GitHub.Timeout (validated to be at least 1s) into a real
+	// *http.Client so every API call has a concrete deadline.
+	httpClient := &http.Client{
+		Timeout: cfg.GitHub.Timeout.Duration,
+	}
+	client := github.NewClient(httpClient).WithAuthToken(cfg.GitHub.Token.Value())
 
 	// Create initial conservative rate limiter - will be updated dynamically based on actual API limits
 	// Start with a very conservative rate (1 request per second)

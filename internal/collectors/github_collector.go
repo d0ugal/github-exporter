@@ -36,7 +36,7 @@ type GitHubCollector struct {
 
 func NewGitHubCollector(cfg *config.Config, metricsRegistry *metrics.GitHubRegistry, app *app.App) *GitHubCollector {
 	// Create GitHub client
-	client := github.NewClient(nil).WithAuthToken(cfg.GitHub.Token)
+	client := github.NewClient(nil).WithAuthToken(cfg.GitHub.Token.Value())
 
 	// Create initial conservative rate limiter - will be updated dynamically based on actual API limits
 	// Start with a very conservative rate (1 request per second)

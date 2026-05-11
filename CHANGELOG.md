@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.5.33](https://github.com/d0ugal/github-exporter/compare/v0.5.32...v0.5.33) (2026-05-11)
+
+
+### Bug Fixes
+
+* eliminate data race on rate limiter ([5147514](https://github.com/d0ugal/github-exporter/commit/5147514b98607b4e709733bec7307d330c256f73))
+* paginate Repositories.ListByOrg ([886cb6f](https://github.com/d0ugal/github-exporter/commit/886cb6feb133a3c58c267c6edc0bb2df2398a0bb))
+* **security:** store GitHub token as SensitiveString ([67c5d56](https://github.com/d0ugal/github-exporter/commit/67c5d565cfc03d07e29afedbe0afe59fc63464e2))
+* update go toolchain directive to v1.26.3 ([8d34ea2](https://github.com/d0ugal/github-exporter/commit/8d34ea2c3a4d1a56efab37091cd8bebe020c9a5c))
+* update module github.com/d0ugal/promexporter to v1.14.52 ([ca70f31](https://github.com/d0ugal/github-exporter/commit/ca70f314dcbcf49d1e4c59dbae2fdf7a1fc757f8))
+* update module github.com/d0ugal/promexporter to v1.14.53 ([cd53b89](https://github.com/d0ugal/github-exporter/commit/cd53b895944a649c5f9f104f55c874309610f183))
+* update module github.com/google/go-github/v84 to v86 ([4f7226d](https://github.com/d0ugal/github-exporter/commit/4f7226d95c269f814b53aa0c74cd11b26af14b0f))
+* update module github.com/quic-go/quic-go to v0.59.1 ([687f069](https://github.com/d0ugal/github-exporter/commit/687f069b80f6d5b0e641f038042850a6c7357f27))
+* update module golang.org/x/arch to v0.27.0 ([67d27c4](https://github.com/d0ugal/github-exporter/commit/67d27c434d61a0a7d4c33662ba81b726cf2e2b0c))
+* update module golang.org/x/crypto to v0.51.0 ([bc2af7d](https://github.com/d0ugal/github-exporter/commit/bc2af7dc2ddc4fa8526b269d053b984becfa45f7))
+* update module golang.org/x/net to v0.54.0 ([df350b9](https://github.com/d0ugal/github-exporter/commit/df350b9fc42e3c95af4c7e82b333a013bb8edf55))
+* update module golang.org/x/sys to v0.44.0 ([aaace2c](https://github.com/d0ugal/github-exporter/commit/aaace2c5f021c82c4b5955bd17438e41b59e56d9))
+* update module golang.org/x/text to v0.37.0 ([39abeb0](https://github.com/d0ugal/github-exporter/commit/39abeb0d81fc2d56c6de402ff9d10490cbc29b74))
+* wire cfg.GitHub.Timeout into the HTTP client ([5202328](https://github.com/d0ugal/github-exporter/commit/52023287da2b5326f8badaff78babe1b9838a693))
+
 ## [0.5.32](https://github.com/d0ugal/github-exporter/compare/v0.5.31...v0.5.32) (2026-05-07)
 
 

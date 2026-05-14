@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.36](https://github.com/d0ugal/github-exporter/compare/v0.5.35...v0.5.36) (2026-05-14)
+
+
+### Bug Fixes
+
+* update module google.golang.org/grpc to v1.81.1 ([2007ad6](https://github.com/d0ugal/github-exporter/commit/2007ad638d1172f805d2bcf537e082de816219de))
+
 ## [0.5.35](https://github.com/d0ugal/github-exporter/compare/v0.5.34...v0.5.35) (2026-05-12)
 
 

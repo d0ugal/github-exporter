@@ -7,7 +7,6 @@ toolchain go1.26.3
 require (
 	github.com/d0ugal/promexporter v1.14.56
 	github.com/google/go-github/v84 v84.0.0
-	github.com/google/go-github/v87 v87.0.0
 	github.com/prometheus/client_golang v1.23.2
 	go.opentelemetry.io/otel v1.43.0
 	golang.org/x/time v0.15.0
@@ -70,7 +69,7 @@ require (
 	golang.org/x/net v0.54.0 // indirect
 	golang.org/x/sys v0.44.0 // indirect
 	golang.org/x/text v0.37.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260511170946-3700d4141b60 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260518230821-037a81a441c8 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260511170946-3700d4141b60 // indirect
 	google.golang.org/grpc v1.81.1 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect

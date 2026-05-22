@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.40](https://github.com/d0ugal/github-exporter/compare/v0.5.39...v0.5.40) (2026-05-22)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to 9641223 ([d15e784](https://github.com/d0ugal/github-exporter/commit/d15e784dec5b991bbeb8637705c5a2b8d25ce164))
+* update google.golang.org/genproto/googleapis/rpc digest to aa98bba ([697111a](https://github.com/d0ugal/github-exporter/commit/697111a89b7594f4b3e63b6d02968041f01d977c))
+
 ## [0.5.39](https://github.com/d0ugal/github-exporter/compare/v0.5.38...v0.5.39) (2026-05-22)
 
 

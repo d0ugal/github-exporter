@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.39](https://github.com/d0ugal/github-exporter/compare/v0.5.38...v0.5.39) (2026-05-22)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.57 ([dddc41c](https://github.com/d0ugal/github-exporter/commit/dddc41c8dec092f11d27ee1cd15bc8624e7ec477))
+* update module github.com/d0ugal/promexporter to v1.14.58 ([7081538](https://github.com/d0ugal/github-exporter/commit/70815388029b2e7361d9062381c1e7e9ed0964ad))
+* update module github.com/google/go-github to v88 ([2875640](https://github.com/d0ugal/github-exporter/commit/287564039c8cb16a1f25d42f7bd0161f3308e5bb))
+* update module github.com/google/go-github/v84 to v88 ([84a7d42](https://github.com/d0ugal/github-exporter/commit/84a7d4222a4f2f6e71e0bebb14b2420e3c92c961))
+* update module github.com/google/go-github/v84 to v88 ([961139e](https://github.com/d0ugal/github-exporter/commit/961139e25feb48e9bb89b579c77b9286f46317f1))
+* update module golang.org/x/crypto to v0.52.0 ([b2cae18](https://github.com/d0ugal/github-exporter/commit/b2cae18940ab8cee8feab5d7ada70198c1ebef57))
+* update module golang.org/x/sys to v0.45.0 ([e04bb75](https://github.com/d0ugal/github-exporter/commit/e04bb75bdb7d8660192808d801985d962347d3b1))
+
 ## [0.5.38](https://github.com/d0ugal/github-exporter/compare/v0.5.37...v0.5.38) (2026-05-19)
 
 

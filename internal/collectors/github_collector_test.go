@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -16,6 +15,7 @@ import (
 	"github.com/d0ugal/promexporter/app"
 	promexporter_config "github.com/d0ugal/promexporter/config"
 	promexporter_metrics "github.com/d0ugal/promexporter/metrics"
+	"github.com/google/go-github/v88/github"
 )
 
 // createTestCollector creates a test GitHubCollector for testing
@@ -77,7 +77,10 @@ func TestCollectorInitialization(t *testing.T) {
 	baseRegistry := promexporter_metrics.NewRegistry("github-exporter-test")
 	metricsRegistry := metrics.NewGitHubRegistry(baseRegistry)
 
-	collector := NewGitHubCollector(cfg, metricsRegistry, nil)
+	collector, err := NewGitHubCollector(cfg, metricsRegistry, nil)
+	if err != nil {
+		t.Fatalf("NewGitHubCollector: %v", err)
+	}
 
 	if collector == nil {
 		t.Fatal("Expected collector to be initialized")
@@ -93,6 +96,31 @@ func TestCollectorInitialization(t *testing.T) {
 	
 	if collector.limiter == nil {
 		t.Error("Expected rate limiter to be initialized")
+	}
+}
+
+// TestNewGitHubCollector_WithAuthToken locks in that go-github v88's
+// WithAuthToken option flows through cleanly when a real token is set.
+// v88 rejects an empty WithAuthToken at construction; we side-step that
+// in NewGitHubCollector by only attaching the option when a token is
+// present, so both paths (token / no-token) need to be exercised.
+func TestNewGitHubCollector_WithAuthToken(t *testing.T) {
+	cfg := &config.Config{
+		GitHub: config.GitHubConfig{
+			Token: promexporter_config.NewSensitiveString("ghp_dummy_token_for_test"),
+			Orgs:  []string{"test-org"},
+		},
+	}
+
+	baseRegistry := promexporter_metrics.NewRegistry("github-exporter-test")
+	metricsRegistry := metrics.NewGitHubRegistry(baseRegistry)
+
+	collector, err := NewGitHubCollector(cfg, metricsRegistry, nil)
+	if err != nil {
+		t.Fatalf("NewGitHubCollector with token: %v", err)
+	}
+	if collector == nil || collector.client == nil {
+		t.Fatal("collector and underlying client should be initialised")
 	}
 }
 
@@ -146,7 +174,10 @@ func TestConfigValidation(t *testing.T) {
 			baseRegistry := promexporter_metrics.NewRegistry("github-exporter-test")
 			metricsRegistry := metrics.NewGitHubRegistry(baseRegistry)
 
-			collector := NewGitHubCollector(cfg, metricsRegistry, nil)
+			collector, err := NewGitHubCollector(cfg, metricsRegistry, nil)
+			if err != nil {
+				t.Fatalf("NewGitHubCollector: %v", err)
+			}
 
 			if collector == nil {
 				t.Error("Expected collector to be initialized")
@@ -167,7 +198,10 @@ func TestRateLimiterInitialization(t *testing.T) {
 	metricsRegistry := metrics.NewGitHubRegistry(baseRegistry)
 
 	// Use NewGitHubCollector to ensure rate limiter is initialized
-	collector := NewGitHubCollector(cfg, metricsRegistry, nil)
+	collector, err := NewGitHubCollector(cfg, metricsRegistry, nil)
+	if err != nil {
+		t.Fatalf("NewGitHubCollector: %v", err)
+	}
 
 	if collector.limiter == nil {
 		t.Error("Expected rate limiter to be initialized")
@@ -232,14 +266,20 @@ func TestCollectOrgRepos_PagesAllResults(t *testing.T) {
 		WithMetrics(baseRegistry).
 		Build()
 
-	gc := NewGitHubCollector(cfg, metricsRegistry, testApp)
-
-	baseURL, err := url.Parse(server.URL + "/")
+	gc, err := NewGitHubCollector(cfg, metricsRegistry, testApp)
 	if err != nil {
-		t.Fatalf("parse server URL: %v", err)
+		t.Fatalf("NewGitHubCollector: %v", err)
 	}
 
-	gc.client.BaseURL = baseURL
+	// go-github v88 made BaseURL a getter; the test server URL has to
+	// be supplied at construction time. Swap the client for one pointed
+	// at the httptest server.
+	baseURL := server.URL + "/"
+	testClient, err := github.NewClient(github.WithURLs(&baseURL, &baseURL))
+	if err != nil {
+		t.Fatalf("create test client: %v", err)
+	}
+	gc.client = testClient
 
 	if err := gc.collectOrgRepos(context.Background(), "test-org"); err != nil {
 		t.Fatalf("collectOrgRepos: %v", err)
@@ -287,7 +327,10 @@ func TestNewGitHubCollector_WiresHTTPTimeout(t *testing.T) {
 	baseRegistry := promexporter_metrics.NewRegistry("github-exporter-timeout-test")
 	metricsRegistry := metrics.NewGitHubRegistry(baseRegistry)
 
-	gc := NewGitHubCollector(cfg, metricsRegistry, nil)
+	gc, err := NewGitHubCollector(cfg, metricsRegistry, nil)
+	if err != nil {
+		t.Fatalf("NewGitHubCollector: %v", err)
+	}
 
 	if gc.client.Client().Timeout != wantTimeout {
 		t.Fatalf("expected http client timeout %v, got %v", wantTimeout, gc.client.Client().Timeout)
@@ -310,7 +353,10 @@ func TestUpdateRateLimiter_NoRace(t *testing.T) {
 	baseRegistry := promexporter_metrics.NewRegistry("github-exporter-race-test")
 	metricsRegistry := metrics.NewGitHubRegistry(baseRegistry)
 
-	gc := NewGitHubCollector(cfg, metricsRegistry, nil)
+	gc, err := NewGitHubCollector(cfg, metricsRegistry, nil)
+	if err != nil {
+		t.Fatalf("NewGitHubCollector: %v", err)
+	}
 	gc.rateLimitRemaining = 1000
 	gc.rateLimitReset = time.Now().Add(time.Hour)
 

@@ -68,7 +68,11 @@ func main() {
 		Build()
 
 	// Create collector with app reference for tracing
-	githubCollector := collectors.NewGitHubCollector(cfg, githubRegistry, application)
+	githubCollector, err := collectors.NewGitHubCollector(cfg, githubRegistry, application)
+	if err != nil {
+		slog.Error("Failed to create GitHub collector", "error", err)
+		os.Exit(1)
+	}
 	application.WithCollector(githubCollector)
 
 	if err := application.Run(); err != nil {

@@ -14,7 +14,7 @@ import (
 	"github.com/d0ugal/github-exporter/internal/metrics"
 	"github.com/d0ugal/promexporter/app"
 	"github.com/d0ugal/promexporter/tracing"
-	"github.com/google/go-github/v84/github"
+	"github.com/google/go-github/v88/github"
 	"github.com/prometheus/client_golang/prometheus"
 	"go.opentelemetry.io/otel/attribute"
 	"golang.org/x/time/rate"
@@ -35,15 +35,25 @@ type GitHubCollector struct {
 	lastRateLimitCheck time.Time
 }
 
-func NewGitHubCollector(cfg *config.Config, metricsRegistry *metrics.GitHubRegistry, app *app.App) *GitHubCollector {
-	// github.NewClient(nil) uses http.DefaultClient which has no timeout — a
-	// hung TCP connection to api.github.com would block the collector forever.
-	// Wire cfg.GitHub.Timeout (validated to be at least 1s) into a real
-	// *http.Client so every API call has a concrete deadline.
+func NewGitHubCollector(cfg *config.Config, metricsRegistry *metrics.GitHubRegistry, app *app.App) (*GitHubCollector, error) {
+	// Default HTTP client has no timeout — a hung TCP connection to
+	// api.github.com would block the collector forever. Wire
+	// cfg.GitHub.Timeout (validated to be at least 1s) through
+	// WithHTTPClient so every API call has a concrete deadline.
 	httpClient := &http.Client{
 		Timeout: cfg.GitHub.Timeout.Duration,
 	}
-	client := github.NewClient(httpClient).WithAuthToken(cfg.GitHub.Token.Value())
+	opts := []github.ClientOptionsFunc{github.WithHTTPClient(httpClient)}
+	// v88's WithAuthToken rejects an empty string at construction time;
+	// only attach the option when we actually have a token so tests
+	// (and any unauthenticated probes) still build a usable client.
+	if token := cfg.GitHub.Token.Value(); token != "" {
+		opts = append(opts, github.WithAuthToken(token))
+	}
+	client, err := github.NewClient(opts...)
+	if err != nil {
+		return nil, fmt.Errorf("create github client: %w", err)
+	}
 
 	// Create initial conservative rate limiter - will be updated dynamically based on actual API limits
 	// Start with a very conservative rate (1 request per second)
@@ -55,7 +65,7 @@ func NewGitHubCollector(cfg *config.Config, metricsRegistry *metrics.GitHubRegis
 		app:     app,
 		client:  client,
 		limiter: limiter,
-	}
+	}, nil
 }
 
 func (gc *GitHubCollector) Start(ctx context.Context) {

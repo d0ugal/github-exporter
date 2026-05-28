@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.42](https://github.com/d0ugal/github-exporter/compare/v0.5.41...v0.5.42) (2026-05-28)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.60 ([8c2695a](https://github.com/d0ugal/github-exporter/commit/8c2695af3f720222e0dfce826ca008773eeddc56))
+* update module github.com/grafana/pyroscope-go to v1.3.1 ([8c146ed](https://github.com/d0ugal/github-exporter/commit/8c146ed2e6674cc69ff3158117138f441aeea517))
+* update opentelemetry-go monorepo to v1.44.0 ([6ac3208](https://github.com/d0ugal/github-exporter/commit/6ac320885299e4723fe4bcf59ace735772528dab))
+* update opentelemetry-go-contrib monorepo to v0.69.0 ([64a64c0](https://github.com/d0ugal/github-exporter/commit/64a64c0a1aa0441cc405bbbedb30bef52fc5178f))
+
 ## [0.5.41](https://github.com/d0ugal/github-exporter/compare/v0.5.40...v0.5.41) (2026-05-27)
 
 

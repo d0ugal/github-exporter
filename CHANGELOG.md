@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.46](https://github.com/d0ugal/github-exporter/compare/v0.5.45...v0.5.46) (2026-06-04)
+
+
+### Bug Fixes
+
+* update module github.com/bytedance/sonic to v1.15.2 ([3d26284](https://github.com/d0ugal/github-exporter/commit/3d262849675e85f6580e0cb70bd78624a70da564))
+
 ## [0.5.45](https://github.com/d0ugal/github-exporter/compare/v0.5.44...v0.5.45) (2026-06-03)
 
 

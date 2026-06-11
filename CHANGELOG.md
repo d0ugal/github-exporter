@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.49](https://github.com/d0ugal/github-exporter/compare/v0.5.48...v0.5.49) (2026-06-11)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to 4308a22 ([6414ff4](https://github.com/d0ugal/github-exporter/commit/6414ff4dcdc7b509848c8ce00f25c02aae7bc3e4))
+* update google.golang.org/genproto/googleapis/api digest to 7ab31c2 ([ae92f6d](https://github.com/d0ugal/github-exporter/commit/ae92f6ddc69da195d39c3f9ea082d43355854cb8))
+* update google.golang.org/genproto/googleapis/rpc digest to 4308a22 ([e8a4e3b](https://github.com/d0ugal/github-exporter/commit/e8a4e3b3191d56c677d3b91bfaebc3a85b695aa8))
+* update google.golang.org/genproto/googleapis/rpc digest to 7ab31c2 ([c5435f1](https://github.com/d0ugal/github-exporter/commit/c5435f128d5e230d42a90c09a03f438e287d4eb8))
+* update module golang.org/x/arch to v0.28.0 ([ed77226](https://github.com/d0ugal/github-exporter/commit/ed7722691dfdce0c42f9e9542c184832bd5f6593))
+* update module golang.org/x/crypto to v0.53.0 ([038ebd0](https://github.com/d0ugal/github-exporter/commit/038ebd0db0678d4f2cc9bbb10ae65a1e7e55e238))
+* update module golang.org/x/net to v0.56.0 ([4cbe37d](https://github.com/d0ugal/github-exporter/commit/4cbe37d0a76f7524f5d6df1f66ca4e2d1b28be28))
+* update module golang.org/x/sys to v0.46.0 ([96fcce9](https://github.com/d0ugal/github-exporter/commit/96fcce909c118a1acd460cd2c816b9e1bb0cb2a7))
+
 ## [0.5.48](https://github.com/d0ugal/github-exporter/compare/v0.5.47...v0.5.48) (2026-06-07)
 
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.51](https://github.com/d0ugal/github-exporter/compare/v0.5.50...v0.5.51) (2026-06-18)
+
+
+### Bug Fixes
+
+* update module github.com/cenkalti/backoff/v5 to v6 ([482ed12](https://github.com/d0ugal/github-exporter/commit/482ed12b5bdd7c14fafe37fe2e0cc6cfb50a33b8))
+* update module github.com/cenkalti/backoff/v6 to v6.0.1 ([ac1827a](https://github.com/d0ugal/github-exporter/commit/ac1827ab3898ae3e71a7361e7769628a95b85029))
+* update module github.com/pelletier/go-toml/v2 to v2.4.0 ([e3de4c7](https://github.com/d0ugal/github-exporter/commit/e3de4c7ae0f02494e637310752e40d5a2366074f))
+* update module github.com/prometheus/common to v0.69.0 ([437256f](https://github.com/d0ugal/github-exporter/commit/437256fe815a55679a998ed1e62fe6b58f691168))
+* update module go.mongodb.org/mongo-driver/v2 to v2.6.1 ([365bf13](https://github.com/d0ugal/github-exporter/commit/365bf1310547676a5b107a7d738c1309633f9416))
+* update module go.mongodb.org/mongo-driver/v2 to v2.7.0 ([64d0bda](https://github.com/d0ugal/github-exporter/commit/64d0bda2dc2e5eb141f868520d6c540d9e8b0e79))
+
 ## [0.5.50](https://github.com/d0ugal/github-exporter/compare/v0.5.49...v0.5.50) (2026-06-16)
 
 

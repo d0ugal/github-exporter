@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.53](https://github.com/d0ugal/github-exporter/compare/v0.5.52...v0.5.53) (2026-06-24)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to b703f56 ([5a2bac7](https://github.com/d0ugal/github-exporter/commit/5a2bac7ad4c203f8035ef35b8104df53db56b6a1))
+* update google.golang.org/genproto/googleapis/rpc digest to b703f56 ([1e4fb7c](https://github.com/d0ugal/github-exporter/commit/1e4fb7ca0553a48d8ed2517a85dc29d83d4f75bd))
+* update module github.com/pelletier/go-toml/v2 to v2.4.1 ([b5b2627](https://github.com/d0ugal/github-exporter/commit/b5b2627d81bb0d19113886269f92eed079eb2573))
+* update module github.com/pelletier/go-toml/v2 to v2.4.2 ([b2046f4](https://github.com/d0ugal/github-exporter/commit/b2046f46692332b77f70fbdd5ee715f24bd52a38))
+
 ## [0.5.52](https://github.com/d0ugal/github-exporter/compare/v0.5.51...v0.5.52) (2026-06-19)
 
 

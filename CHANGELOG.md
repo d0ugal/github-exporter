@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.54](https://github.com/d0ugal/github-exporter/compare/v0.5.53...v0.5.54) (2026-06-27)
+
+
+### Bug Fixes
+
+* update module github.com/prometheus/procfs to v0.21.0 ([9b3cfd6](https://github.com/d0ugal/github-exporter/commit/9b3cfd6e3d5fca884a7267c6f90419422ccc1166))
+
 ## [0.5.53](https://github.com/d0ugal/github-exporter/compare/v0.5.52...v0.5.53) (2026-06-24)
 
 

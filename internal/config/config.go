@@ -73,48 +73,60 @@ func applyEnvVars(cfg *Config) {
 	if host := os.Getenv("GITHUB_EXPORTER_SERVER_HOST"); host != "" {
 		cfg.Server.Host = host
 	}
+
 	if portStr := os.Getenv("GITHUB_EXPORTER_SERVER_PORT"); portStr != "" {
 		if port, err := strconv.Atoi(portStr); err == nil {
 			cfg.Server.Port = port
 		}
 	}
+
 	if level := os.Getenv("GITHUB_EXPORTER_LOG_LEVEL"); level != "" {
 		cfg.Logging.Level = level
 	}
+
 	if format := os.Getenv("GITHUB_EXPORTER_LOG_FORMAT"); format != "" {
 		cfg.Logging.Format = format
 	}
+
 	if intervalStr := os.Getenv("GITHUB_EXPORTER_METRICS_DEFAULT_INTERVAL"); intervalStr != "" {
 		if interval, err := time.ParseDuration(intervalStr); err == nil {
 			cfg.Metrics.Collection.DefaultInterval = promexporter_config.Duration{Duration: interval}
 			cfg.Metrics.Collection.DefaultIntervalSet = true
 		}
 	}
+
 	if token := os.Getenv("GITHUB_EXPORTER_GITHUB_TOKEN"); token != "" {
 		cfg.GitHub.Token = promexporter_config.NewSensitiveString(token)
 	}
+
 	if orgsStr := os.Getenv("GITHUB_EXPORTER_GITHUB_ORGS"); orgsStr != "" {
 		cfg.GitHub.Orgs = strings.Split(orgsStr, ",")
 	}
+
 	if reposStr := os.Getenv("GITHUB_EXPORTER_GITHUB_REPOS"); reposStr != "" {
 		cfg.GitHub.Repos = strings.Split(reposStr, ",")
 	}
+
 	if branchesStr := os.Getenv("GITHUB_EXPORTER_GITHUB_BRANCHES"); branchesStr != "" {
 		cfg.GitHub.Branches = strings.Split(branchesStr, ",")
 	}
+
 	if workflowsStr := os.Getenv("GITHUB_EXPORTER_GITHUB_WORKFLOWS"); workflowsStr != "" {
 		cfg.GitHub.Workflows = strings.Split(workflowsStr, ",")
 	}
+
 	if timeoutStr := os.Getenv("GITHUB_EXPORTER_GITHUB_TIMEOUT"); timeoutStr != "" {
 		if timeout, err := time.ParseDuration(timeoutStr); err == nil {
 			cfg.GitHub.Timeout = Duration{Duration: timeout}
 		}
 	}
+
 	if refreshIntervalStr := os.Getenv("GITHUB_EXPORTER_GITHUB_REFRESH_INTERVAL"); refreshIntervalStr != "" {
 		if refreshInterval, err := time.ParseDuration(refreshIntervalStr); err == nil {
 			cfg.GitHub.RefreshInterval = Duration{Duration: refreshInterval}
 		}
 	}
+
 	if bufferStr := os.Getenv("GITHUB_EXPORTER_GITHUB_RATE_LIMIT_BUFFER"); bufferStr != "" {
 		if buffer, err := strconv.ParseFloat(bufferStr, 64); err == nil {
 			cfg.GitHub.RateLimitBuffer = buffer

@@ -85,15 +85,15 @@ func TestCollectorInitialization(t *testing.T) {
 	if collector == nil {
 		t.Fatal("Expected collector to be initialized")
 	}
-	
+
 	if collector.config == nil {
 		t.Error("Expected config to be set")
 	}
-	
+
 	if collector.metrics == nil {
 		t.Error("Expected metrics to be set")
 	}
-	
+
 	if collector.limiter == nil {
 		t.Error("Expected rate limiter to be initialized")
 	}
@@ -119,6 +119,7 @@ func TestNewGitHubCollector_WithAuthToken(t *testing.T) {
 	if err != nil {
 		t.Fatalf("NewGitHubCollector with token: %v", err)
 	}
+
 	if collector == nil || collector.client == nil {
 		t.Fatal("collector and underlying client should be initialised")
 	}
@@ -275,10 +276,12 @@ func TestCollectOrgRepos_PagesAllResults(t *testing.T) {
 	// be supplied at construction time. Swap the client for one pointed
 	// at the httptest server.
 	baseURL := server.URL + "/"
+
 	testClient, err := github.NewClient(github.WithURLs(&baseURL, &baseURL))
 	if err != nil {
 		t.Fatalf("create test client: %v", err)
 	}
+
 	gc.client = testClient
 
 	if err := gc.collectOrgRepos(context.Background(), "test-org"); err != nil {
@@ -357,6 +360,7 @@ func TestUpdateRateLimiter_NoRace(t *testing.T) {
 	if err != nil {
 		t.Fatalf("NewGitHubCollector: %v", err)
 	}
+
 	gc.rateLimitRemaining = 1000
 	gc.rateLimitReset = time.Now().Add(time.Hour)
 
@@ -370,10 +374,12 @@ func TestUpdateRateLimiter_NoRace(t *testing.T) {
 
 		go func() {
 			defer wg.Done()
+
 			gc.updateRateLimiter()
 		}()
 		go func() {
 			defer wg.Done()
+
 			_ = gc.limiter.Wait(ctx)
 		}()
 	}

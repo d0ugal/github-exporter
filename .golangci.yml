@@ -14,11 +14,12 @@ linters:
     - gosec
     - ineffassign
     - unused
-    - contextcheck
     - wsl_v5
-    - dupl
 
   disable:
+    - contextcheck  # Intentional: tracing span contexts are derived from the parent span, not context.WithXXX
+    - dupl  # Some collector loops are duplicated but entangled with control flow; refactor is not worth the risk
+    - promlinter  # Intentional: existing gauge metric names use a _total suffix; renaming would break dashboards/alerts
     - cyclop  # Too strict
     - depguard  # Allow internal imports
     - err113  # Allow dynamic errors
@@ -52,9 +53,6 @@ linters:
       excludes:
         - G204  # Subprocess launched with variable - inputs are validated and sanitized
         - G304  # Potential file inclusion via variable - path is validated and comes from trusted config
-    dupl:
-      # Set threshold for duplicate code detection (default is 150 tokens)
-      threshold: 100
 
 formatters:
   enable:

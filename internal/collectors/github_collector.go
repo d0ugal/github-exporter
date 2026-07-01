@@ -50,6 +50,7 @@ func NewGitHubCollector(cfg *config.Config, metricsRegistry *metrics.GitHubRegis
 	if token := cfg.GitHub.Token.Value(); token != "" {
 		opts = append(opts, github.WithAuthToken(token))
 	}
+
 	client, err := github.NewClient(opts...)
 	if err != nil {
 		return nil, fmt.Errorf("create github client: %w", err)
@@ -109,8 +110,10 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 	// Create span for collection cycle
 	tracer := gc.app.GetTracer()
 
-	var collectorSpan *tracing.CollectorSpan
-	var spanCtx context.Context
+	var (
+		collectorSpan *tracing.CollectorSpan
+		spanCtx       context.Context
+	)
 
 	if tracer != nil && tracer.IsEnabled() {
 		collectorSpan = tracer.NewCollectorSpan(ctx, "github-collector", "collect-metrics")
@@ -119,6 +122,7 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 			attribute.Int("github.repos_count", len(gc.config.GitHub.Repos)),
 			attribute.Int("github.branches_count", len(gc.config.GitHub.Branches)),
 		)
+
 		spanCtx = collectorSpan.Context()
 		defer collectorSpan.End()
 	} else {
@@ -133,6 +137,7 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 	rateLimitStart := time.Now()
 	if err := gc.updateRateLimits(spanCtx); err != nil {
 		rateLimitDuration := time.Since(rateLimitStart).Seconds()
+
 		slog.Error("Failed to update rate limits", "error", err)
 
 		if collectorSpan != nil {
@@ -152,6 +157,7 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 
 		return
 	}
+
 	rateLimitDuration := time.Since(rateLimitStart).Seconds()
 
 	if collectorSpan != nil {
@@ -164,9 +170,11 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 	// Wait for rate limiter
 	if err := gc.limiter.Wait(spanCtx); err != nil {
 		slog.Error("Rate limiter error", "error", err)
+
 		if collectorSpan != nil {
 			collectorSpan.RecordError(err, attribute.String("operation", "rate-limiter-wait"))
 		}
+
 		return
 	}
 
@@ -174,13 +182,16 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 	orgStart := time.Now()
 	if err := gc.collectOrgMetrics(spanCtx); err != nil {
 		orgDuration := time.Since(orgStart).Seconds()
+
 		slog.Error("Failed to collect organization metrics", "error", err)
+
 		if collectorSpan != nil {
 			collectorSpan.SetAttributes(
 				attribute.Float64("org_metrics.duration_seconds", orgDuration),
 			)
 			collectorSpan.RecordError(err, attribute.String("operation", "collect-org-metrics"))
 		}
+
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 			"endpoint":   "orgs",
 			"error_type": "collection_error",
@@ -201,13 +212,16 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 	repoStart := time.Now()
 	if err := gc.collectRepoMetrics(spanCtx); err != nil {
 		repoDuration := time.Since(repoStart).Seconds()
+
 		slog.Error("Failed to collect repository metrics", "error", err)
+
 		if collectorSpan != nil {
 			collectorSpan.SetAttributes(
 				attribute.Float64("repo_metrics.duration_seconds", repoDuration),
 			)
 			collectorSpan.RecordError(err, attribute.String("operation", "collect-repo-metrics"))
 		}
+
 		gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 			"endpoint":   "repos",
 			"error_type": "collection_error",
@@ -229,13 +243,16 @@ func (gc *GitHubCollector) collectMetrics(ctx context.Context) {
 		buildStart := time.Now()
 		if err := gc.collectBuildStatusMetrics(spanCtx); err != nil {
 			buildDuration := time.Since(buildStart).Seconds()
+
 			slog.Error("Failed to collect build status metrics", "error", err)
+
 			if collectorSpan != nil {
 				collectorSpan.SetAttributes(
 					attribute.Float64("build_status.duration_seconds", buildDuration),
 				)
 				collectorSpan.RecordError(err, attribute.String("operation", "collect-build-status"))
 			}
+
 			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 				"endpoint":   "build_status",
 				"error_type": "collection_error",
@@ -347,11 +364,14 @@ func (gc *GitHubCollector) calculateRefreshInterval() time.Duration {
 func (gc *GitHubCollector) updateRateLimits(ctx context.Context) error {
 	tracer := gc.app.GetTracer()
 
-	var collectorSpan *tracing.CollectorSpan
-	var spanCtx context.Context
+	var (
+		collectorSpan *tracing.CollectorSpan
+		spanCtx       context.Context
+	)
 
 	if tracer != nil && tracer.IsEnabled() {
 		collectorSpan = tracer.NewCollectorSpan(ctx, "github-collector", "update-rate-limits")
+
 		spanCtx = collectorSpan.Context()
 		defer collectorSpan.End()
 	} else {
@@ -370,17 +390,21 @@ func (gc *GitHubCollector) updateRateLimits(ctx context.Context) error {
 				attribute.String("reason", "recent_check"),
 			)
 		}
+
 		return nil // Skip rate limit check
 	}
 
 	// Wait for rate limiter
 	waitStart := time.Now()
+
 	if err := gc.limiter.Wait(spanCtx); err != nil {
 		if collectorSpan != nil {
 			collectorSpan.RecordError(err, attribute.String("operation", "rate-limiter-wait"))
 		}
+
 		return fmt.Errorf("rate limiter error: %w", err)
 	}
+
 	waitDuration := time.Since(waitStart).Seconds()
 
 	// Get rate limit information using the new API
@@ -395,6 +419,7 @@ func (gc *GitHubCollector) updateRateLimits(ctx context.Context) error {
 			)
 			collectorSpan.RecordError(err, attribute.String("operation", "get-rate-limit"))
 		}
+
 		return fmt.Errorf("failed to get rate limit info: %w", err)
 	}
 
@@ -406,18 +431,24 @@ func (gc *GitHubCollector) updateRateLimits(ctx context.Context) error {
 
 	// Update rate limit state
 	gc.mu.Lock()
-	var limit, remaining int
-	var resetTime time.Time
+
+	var (
+		limit, remaining int
+		resetTime        time.Time
+	)
+
 	if rateLimit.Core != nil {
 		gc.rateLimitTotal = rateLimit.Core.Limit
 		gc.rateLimitRemaining = rateLimit.Core.Remaining
 		limit = rateLimit.Core.Limit
+
 		remaining = rateLimit.Core.Remaining
 		if !rateLimit.Core.Reset.IsZero() {
 			gc.rateLimitReset = rateLimit.Core.Reset.Time
 			resetTime = rateLimit.Core.Reset.Time
 		}
 	}
+
 	gc.lastRateLimitCheck = time.Now()
 	gc.mu.Unlock()
 
@@ -425,6 +456,7 @@ func (gc *GitHubCollector) updateRateLimits(ctx context.Context) error {
 	if rateLimit.Core != nil {
 		gc.metrics.GitHubRateLimitTotal.With(prometheus.Labels{}).Set(float64(rateLimit.Core.Limit))
 		gc.metrics.GitHubRateLimitRemaining.With(prometheus.Labels{}).Set(float64(rateLimit.Core.Remaining))
+
 		if !rateLimit.Core.Reset.IsZero() {
 			gc.metrics.GitHubRateLimitReset.With(prometheus.Labels{}).Set(float64(rateLimit.Core.Reset.Unix()))
 		}
@@ -432,7 +464,9 @@ func (gc *GitHubCollector) updateRateLimits(ctx context.Context) error {
 
 	// Update rate limiter based on current limits
 	limiterStart := time.Now()
+
 	gc.updateRateLimiter()
+
 	limiterDuration := time.Since(limiterStart).Seconds()
 
 	if collectorSpan != nil {
@@ -443,11 +477,13 @@ func (gc *GitHubCollector) updateRateLimits(ctx context.Context) error {
 			attribute.Int("rate_limit.total", limit),
 			attribute.Int("rate_limit.remaining", remaining),
 		)
+
 		if !resetTime.IsZero() {
 			collectorSpan.SetAttributes(
 				attribute.Int64("rate_limit.reset_timestamp", resetTime.Unix()),
 			)
 		}
+
 		collectorSpan.AddEvent("rate_limit_updated",
 			attribute.Int("total", limit),
 			attribute.Int("remaining", remaining),
@@ -496,14 +532,17 @@ func (gc *GitHubCollector) updateRateLimiter() {
 func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 	tracer := gc.app.GetTracer()
 
-	var collectorSpan *tracing.CollectorSpan
-	var spanCtx context.Context
+	var (
+		collectorSpan *tracing.CollectorSpan
+		spanCtx       context.Context
+	)
 
 	if tracer != nil && tracer.IsEnabled() {
 		collectorSpan = tracer.NewCollectorSpan(ctx, "github-collector", "collect-org-metrics")
 		collectorSpan.SetAttributes(
 			attribute.Int("orgs.count", len(gc.config.GitHub.Orgs)),
 		)
+
 		spanCtx = collectorSpan.Context()
 		defer collectorSpan.End()
 	} else {
@@ -522,7 +561,9 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 			if collectorSpan != nil {
 				collectorSpan.RecordError(err, attribute.String("org", org), attribute.String("operation", "rate-limiter-wait"))
 			}
+
 			errorCount++
+
 			continue
 		}
 
@@ -533,16 +574,19 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 
 		if err != nil {
 			slog.Error("Failed to get organization info", "org", org, "error", err)
+
 			if collectorSpan != nil {
 				collectorSpan.SetAttributes(
 					attribute.Float64("org.api_duration_seconds", apiDuration),
 				)
 				collectorSpan.RecordError(err, attribute.String("org", org), attribute.String("operation", "get-org-info"))
 			}
+
 			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 				"endpoint":   "orgs",
 				"error_type": "api_error",
 			}).Inc()
+
 			errorCount++
 			// Skip this org entirely - don't collect repos for a non-existent org
 			continue
@@ -553,13 +597,14 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 		if resp != nil {
 			statusCode = fmt.Sprintf("%d", resp.StatusCode)
 		}
+
 		gc.metrics.GitHubAPICallsTotal.With(prometheus.Labels{
 			"endpoint": "orgs",
 			"status":   statusCode,
 		}).Inc()
 
 		// Check for 404 even if err is nil (some APIs return status without error)
-		if resp != nil && resp.StatusCode == 404 {
+		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			slog.Warn("Organization not found (404), skipping", "org", org)
 			// Skip this org entirely - don't collect repos for a non-existent org
 			continue
@@ -577,11 +622,13 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 				"org": org,
 			}).Set(float64(*orgInfo.PublicRepos))
 		}
+
 		if orgInfo.Followers != nil {
 			gc.metrics.GitHubOrgsFollowers.With(prometheus.Labels{
 				"org": org,
 			}).Set(float64(*orgInfo.Followers))
 		}
+
 		if orgInfo.Following != nil {
 			gc.metrics.GitHubOrgsFollowing.With(prometheus.Labels{
 				"org": org,
@@ -602,17 +649,21 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 		reposStart := time.Now()
 		if err := gc.collectOrgRepos(spanCtx, org); err != nil {
 			reposDuration := time.Since(reposStart).Seconds()
+
 			slog.Error("Failed to collect organization repositories", "org", org, "error", err)
+
 			if collectorSpan != nil {
 				collectorSpan.SetAttributes(
 					attribute.Float64("org.repos_duration_seconds", reposDuration),
 				)
 				collectorSpan.RecordError(err, attribute.String("org", org), attribute.String("operation", "collect-org-repos"))
 			}
+
 			errorCount++
 			// Continue to next org instead of failing completely
 			continue
 		}
+
 		reposDuration := time.Since(reposStart).Seconds()
 		totalOrgDuration := time.Since(orgStart).Seconds()
 
@@ -651,14 +702,17 @@ func (gc *GitHubCollector) collectOrgMetrics(ctx context.Context) error {
 func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) error {
 	tracer := gc.app.GetTracer()
 
-	var collectorSpan *tracing.CollectorSpan
-	var spanCtx context.Context
+	var (
+		collectorSpan *tracing.CollectorSpan
+		spanCtx       context.Context
+	)
 
 	if tracer != nil && tracer.IsEnabled() {
 		collectorSpan = tracer.NewCollectorSpan(ctx, "github-collector", "collect-org-repos")
 		collectorSpan.SetAttributes(
 			attribute.String("org", org),
 		)
+
 		spanCtx = collectorSpan.Context()
 		defer collectorSpan.End()
 	} else {
@@ -671,6 +725,7 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 		if collectorSpan != nil {
 			collectorSpan.RecordError(err)
 		}
+
 		return err
 	}
 
@@ -693,6 +748,7 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 			if collectorSpan != nil {
 				collectorSpan.RecordError(err, attribute.String("operation", "rate-limiter-wait"))
 			}
+
 			return fmt.Errorf("rate limiter error: %w", err)
 		}
 
@@ -707,11 +763,12 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 				)
 				collectorSpan.RecordError(err, attribute.String("operation", "list-repos-by-org"))
 			}
+
 			return fmt.Errorf("failed to list repositories for org %s: %w", org, err)
 		}
 
 		// Skip if organization not found (404)
-		if resp != nil && resp.StatusCode == 404 {
+		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			slog.Warn("Organization not found, skipping repository collection", "org", org)
 			return nil
 		}
@@ -731,6 +788,7 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 	if lastResp != nil {
 		statusCode = fmt.Sprintf("%d", lastResp.StatusCode)
 	}
+
 	gc.metrics.GitHubAPICallsTotal.With(prometheus.Labels{
 		"endpoint": "repos",
 		"status":   statusCode,
@@ -765,12 +823,16 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 	// Set repository counts (double-check org is not empty before setting metrics)
 	if org == "" {
 		err := fmt.Errorf("org parameter is empty when setting repo counts")
+
 		slog.Error("Cannot set GitHubReposTotal: org is empty")
+
 		if collectorSpan != nil {
 			collectorSpan.RecordError(err)
 		}
+
 		return err
 	}
+
 	gc.metrics.GitHubReposTotal.With(prometheus.Labels{
 		"org":        org,
 		"visibility": "public",
@@ -800,8 +862,10 @@ func (gc *GitHubCollector) collectOrgRepos(ctx context.Context, org string) erro
 func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
 	tracer := gc.app.GetTracer()
 
-	var collectorSpan *tracing.CollectorSpan
-	var spanCtx context.Context
+	var (
+		collectorSpan *tracing.CollectorSpan
+		spanCtx       context.Context
+	)
 
 	if tracer != nil && tracer.IsEnabled() {
 		collectorSpan = tracer.NewCollectorSpan(ctx, "github-collector", "collect-repo-metrics")
@@ -809,6 +873,7 @@ func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
 			attribute.Int("repos.count", len(gc.config.GitHub.Repos)),
 			attribute.Bool("repos.wildcard", gc.hasWildcardRepos()),
 		)
+
 		spanCtx = collectorSpan.Context()
 		defer collectorSpan.End()
 	} else {
@@ -820,6 +885,7 @@ func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
 		if collectorSpan != nil {
 			collectorSpan.AddEvent("wildcard_repos_detected")
 		}
+
 		return gc.collectAllRepos(spanCtx)
 	}
 
@@ -833,7 +899,9 @@ func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
 		parts := strings.Split(repoFullName, "/")
 		if len(parts) != 2 {
 			slog.Error("Invalid repository format", "repo", repoFullName)
+
 			errorCount++
+
 			continue
 		}
 
@@ -843,7 +911,9 @@ func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
 		// Skip if owner or repo is empty
 		if owner == "" || repo == "" {
 			slog.Error("Invalid repository format: owner or repo is empty", "repo", repoFullName)
+
 			errorCount++
+
 			continue
 		}
 
@@ -852,7 +922,9 @@ func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
 			if collectorSpan != nil {
 				collectorSpan.RecordError(err, attribute.String("repo", repoFullName), attribute.String("operation", "rate-limiter-wait"))
 			}
+
 			errorCount++
+
 			continue
 		}
 
@@ -863,7 +935,9 @@ func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
 
 		if err != nil {
 			repoDuration := time.Since(repoStart).Seconds()
+
 			slog.Error("Failed to get repository info", "owner", owner, "repo", repo, "error", err)
+
 			if collectorSpan != nil {
 				collectorSpan.SetAttributes(
 					attribute.Float64("repo.api_duration_seconds", apiDuration),
@@ -871,11 +945,14 @@ func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
 				)
 				collectorSpan.RecordError(err, attribute.String("repo", repoFullName), attribute.String("operation", "get-repo-info"))
 			}
+
 			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 				"endpoint":   "repos",
 				"error_type": "api_error",
 			}).Inc()
+
 			errorCount++
+
 			continue
 		}
 
@@ -892,7 +969,9 @@ func (gc *GitHubCollector) collectRepoMetrics(ctx context.Context) error {
 		}
 
 		metricsStart := time.Now()
+
 		gc.setRepoMetrics(spanCtx, owner, repo, visibility, repoInfo)
+
 		metricsDuration := time.Since(metricsStart).Seconds()
 		repoDuration := time.Since(repoStart).Seconds()
 
@@ -932,10 +1011,12 @@ func (gc *GitHubCollector) setRepoMetrics(ctx context.Context, owner, repo, visi
 		slog.Warn("Skipping setRepoMetrics: owner is empty", "repo", repo)
 		return
 	}
+
 	if repo == "" {
 		slog.Warn("Skipping setRepoMetrics: repo is empty", "owner", owner)
 		return
 	}
+
 	if visibility == "" {
 		visibility = "unknown"
 	}
@@ -1043,6 +1124,7 @@ func (gc *GitHubCollector) setOpenPRsMetric(ctx context.Context, owner, repo, vi
 
 	// Use GitHub Search API to get exact count of open pull requests
 	query := fmt.Sprintf("repo:%s/%s type:pr state:open", owner, repo)
+
 	searchResult, resp, err := gc.client.Search.Issues(ctx, query, &github.SearchOptions{
 		ListOptions: github.ListOptions{
 			PerPage: 1, // We only need the count, not the actual PRs
@@ -1054,6 +1136,7 @@ func (gc *GitHubCollector) setOpenPRsMetric(ctx context.Context, owner, repo, vi
 			"endpoint":   "search_issues",
 			"error_type": "api_error",
 		}).Inc()
+
 		return
 	}
 
@@ -1085,6 +1168,7 @@ func (gc *GitHubCollector) hasWildcardRepos() bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -1093,6 +1177,7 @@ func (gc *GitHubCollector) collectAllRepos(ctx context.Context) error {
 	slog.Info("Wildcard repos specified, collecting all accessible repositories")
 
 	var allRepos []*github.Repository
+
 	page := 1
 	perPage := 100
 
@@ -1116,6 +1201,7 @@ func (gc *GitHubCollector) collectAllRepos(ctx context.Context) error {
 				"endpoint":   "repos",
 				"error_type": "api_error",
 			}).Inc()
+
 			return fmt.Errorf("failed to list repositories page %d: %w", page, err)
 		}
 
@@ -1193,15 +1279,18 @@ func (gc *GitHubCollector) collectBuildStatusMetrics(ctx context.Context) error 
 			if err == nil {
 				break
 			}
+
 			if errors.Is(err, errBranchNotFound) {
 				slog.Debug("Branch not found, trying next", "owner", owner, "repo", repo, "branch", branchName)
 				continue
 			}
+
 			slog.Error("Failed to collect branch build status", "owner", owner, "repo", repo, "branch", branchName, "error", err)
 			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 				"endpoint":   "build_status",
 				"error_type": "branch_error",
 			}).Inc()
+
 			break
 		}
 	}
@@ -1214,6 +1303,7 @@ func (gc *GitHubCollector) collectBuildStatusForAllRepos(ctx context.Context) er
 	slog.Debug("Collecting build status metrics for all accessible repositories")
 
 	var allRepos []*github.Repository
+
 	page := 1
 	perPage := 100
 
@@ -1237,6 +1327,7 @@ func (gc *GitHubCollector) collectBuildStatusForAllRepos(ctx context.Context) er
 				"endpoint":   "repos",
 				"error_type": "api_error",
 			}).Inc()
+
 			return fmt.Errorf("failed to list repositories page %d: %w", page, err)
 		}
 
@@ -1281,20 +1372,24 @@ func (gc *GitHubCollector) collectBuildStatusForAllRepos(ctx context.Context) er
 			if err == nil {
 				break
 			}
+
 			if errors.Is(err, errBranchNotFound) {
 				slog.Debug("Branch not found, trying next", "owner", owner, "repo", repoName, "branch", branchName)
 				continue
 			}
+
 			slog.Error("Failed to collect branch build status", "owner", owner, "repo", repoName, "branch", branchName, "error", err)
 			gc.metrics.GitHubAPIErrorsTotal.With(prometheus.Labels{
 				"endpoint":   "build_status",
 				"error_type": "branch_error",
 			}).Inc()
+
 			break
 		}
 	}
 
 	slog.Debug("Build status metrics collection completed", "repos_processed", len(allRepos))
+
 	return nil
 }
 
@@ -1342,6 +1437,7 @@ func (gc *GitHubCollector) collectBranchBuildStatus(ctx context.Context, owner, 
 
 		hasRuns = true
 		workflowName := *run.Name
+
 		conclusion := "unknown"
 		if run.Conclusion != nil {
 			conclusion = *run.Conclusion
@@ -1389,6 +1485,7 @@ func (gc *GitHubCollector) collectBranchBuildStatus(ctx context.Context, owner, 
 		if errors.Is(err, errBranchNotFound) {
 			return errBranchNotFound
 		}
+
 		slog.Error("Failed to collect check runs", "owner", owner, "repo", repo, "branch", branch, "error", err)
 	}
 
@@ -1410,9 +1507,10 @@ func (gc *GitHubCollector) collectCheckRuns(ctx context.Context, owner, repo, br
 	})
 	if err != nil {
 		var githubErr *github.ErrorResponse
-		if errors.As(err, &githubErr) && githubErr.Response.StatusCode == 422 {
+		if errors.As(err, &githubErr) && githubErr.Response.StatusCode == http.StatusUnprocessableEntity {
 			return errBranchNotFound
 		}
+
 		return fmt.Errorf("failed to get check runs for branch %s: %w", branch, err)
 	}
 
@@ -1431,6 +1529,7 @@ func (gc *GitHubCollector) collectCheckRuns(ctx context.Context, owner, repo, br
 		}
 
 		checkName := *checkRun.Name
+
 		conclusion := "unknown"
 		if checkRun.Conclusion != nil {
 			conclusion = *checkRun.Conclusion

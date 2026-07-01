@@ -73,6 +73,7 @@ func main() {
 		slog.Error("Failed to create GitHub collector", "error", err)
 		os.Exit(1)
 	}
+
 	application.WithCollector(githubCollector)
 
 	if err := application.Run(); err != nil {

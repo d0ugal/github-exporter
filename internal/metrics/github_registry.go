@@ -60,6 +60,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org", "visibility"},
 	)
+
 	baseRegistry.AddMetricInfo("github_repos_total", "Total number of GitHub repositories", []string{"org", "visibility"})
 
 	github.GitHubReposInfo = factory.NewGaugeVec(
@@ -69,6 +70,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org", "repo", "visibility", "archived", "fork", "language"},
 	)
+
 	baseRegistry.AddMetricInfo("github_repo_info", "Information about GitHub repositories", []string{"org", "repo", "visibility", "archived", "fork", "language"})
 
 	github.GitHubReposStars = factory.NewGaugeVec(
@@ -78,6 +80,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org", "repo", "visibility"},
 	)
+
 	baseRegistry.AddMetricInfo("github_repo_stars", "Number of stars for a GitHub repository", []string{"org", "repo", "visibility"})
 
 	github.GitHubReposForks = factory.NewGaugeVec(
@@ -87,6 +90,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org", "repo", "visibility"},
 	)
+
 	baseRegistry.AddMetricInfo("github_repo_forks", "Number of forks for a GitHub repository", []string{"org", "repo", "visibility"})
 
 	github.GitHubReposWatchers = factory.NewGaugeVec(
@@ -96,6 +100,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org", "repo", "visibility"},
 	)
+
 	baseRegistry.AddMetricInfo("github_repo_watchers", "Number of watchers for a GitHub repository", []string{"org", "repo", "visibility"})
 
 	github.GitHubReposOpenIssues = factory.NewGaugeVec(
@@ -105,6 +110,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org", "repo", "visibility"},
 	)
+
 	baseRegistry.AddMetricInfo("github_repo_open_issues", "Number of open issues for a GitHub repository", []string{"org", "repo", "visibility"})
 
 	github.GitHubReposOpenPRs = factory.NewGaugeVec(
@@ -114,6 +120,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org", "repo", "visibility"},
 	)
+
 	baseRegistry.AddMetricInfo("github_repo_open_prs", "Number of open pull requests for a GitHub repository", []string{"org", "repo", "visibility"})
 
 	github.GitHubReposSize = factory.NewGaugeVec(
@@ -123,6 +130,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org", "repo", "visibility"},
 	)
+
 	baseRegistry.AddMetricInfo("github_repo_size_bytes", "Size of a GitHub repository in bytes", []string{"org", "repo", "visibility"})
 
 	github.GitHubReposLastUpdated = factory.NewGaugeVec(
@@ -132,6 +140,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org", "repo", "visibility"},
 	)
+
 	baseRegistry.AddMetricInfo("github_repo_last_updated_timestamp", "Unix timestamp of the last update for a GitHub repository", []string{"org", "repo", "visibility"})
 
 	github.GitHubReposCreatedAt = factory.NewGaugeVec(
@@ -141,6 +150,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org", "repo", "visibility"},
 	)
+
 	baseRegistry.AddMetricInfo("github_repo_created_timestamp", "Unix timestamp of the creation date for a GitHub repository", []string{"org", "repo", "visibility"})
 
 	// GitHub organization metrics
@@ -151,6 +161,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{},
 	)
+
 	baseRegistry.AddMetricInfo("github_orgs_total", "Total number of GitHub organizations", []string{})
 
 	github.GitHubOrgsPublicRepos = factory.NewGaugeVec(
@@ -160,6 +171,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org"},
 	)
+
 	baseRegistry.AddMetricInfo("github_org_public_repos", "Number of public repositories for a GitHub organization", []string{"org"})
 
 	github.GitHubOrgsFollowers = factory.NewGaugeVec(
@@ -169,6 +181,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org"},
 	)
+
 	baseRegistry.AddMetricInfo("github_org_followers", "Number of followers for a GitHub organization", []string{"org"})
 
 	github.GitHubOrgsFollowing = factory.NewGaugeVec(
@@ -178,6 +191,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org"},
 	)
+
 	baseRegistry.AddMetricInfo("github_org_following", "Number of organizations that a GitHub organization is following", []string{"org"})
 
 	// GitHub build status metrics
@@ -188,6 +202,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org", "repo", "branch"},
 	)
+
 	baseRegistry.AddMetricInfo("github_branch_build_status", "Build status for GitHub repository branches (0=failed, 1=success, 2=pending, 3=skipped)", []string{"org", "repo", "branch"})
 
 	github.GitHubWorkflowRunStatus = factory.NewGaugeVec(
@@ -197,6 +212,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org", "repo", "workflow", "branch", "conclusion"},
 	)
+
 	baseRegistry.AddMetricInfo("github_workflow_run_status", "Status of GitHub workflow runs (0=failed, 1=success, 2=pending, 3=skipped)", []string{"org", "repo", "workflow", "branch", "conclusion"})
 
 	github.GitHubCheckRunStatus = factory.NewGaugeVec(
@@ -206,6 +222,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org", "repo", "check_name", "branch", "conclusion"},
 	)
+
 	baseRegistry.AddMetricInfo("github_check_run_status", "Status of GitHub check runs (0=failed, 1=success, 2=pending, 3=skipped)", []string{"org", "repo", "check_name", "branch", "conclusion"})
 
 	github.GitHubWorkflowRunDuration = factory.NewGaugeVec(
@@ -215,6 +232,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"org", "repo", "workflow", "branch", "conclusion"},
 	)
+
 	baseRegistry.AddMetricInfo("github_workflow_run_duration_seconds", "Duration of GitHub workflow runs in seconds", []string{"org", "repo", "workflow", "branch", "conclusion"})
 
 	// GitHub API metrics
@@ -225,6 +243,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"endpoint", "status"},
 	)
+
 	baseRegistry.AddMetricInfo("github_api_calls_total", "Total number of GitHub API calls made", []string{"endpoint", "status"})
 
 	github.GitHubAPIErrorsTotal = factory.NewCounterVec(
@@ -234,6 +253,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{"endpoint", "error_type"},
 	)
+
 	baseRegistry.AddMetricInfo("github_api_errors_total", "Total number of GitHub API errors", []string{"endpoint", "error_type"})
 
 	github.GitHubRateLimitTotal = factory.NewGaugeVec(
@@ -243,6 +263,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{},
 	)
+
 	baseRegistry.AddMetricInfo("github_rate_limit_total", "Total number of GitHub API requests allowed in the current rate limit window", []string{})
 
 	github.GitHubRateLimitRemaining = factory.NewGaugeVec(
@@ -252,6 +273,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{},
 	)
+
 	baseRegistry.AddMetricInfo("github_rate_limit_remaining", "Number of GitHub API requests remaining in the current rate limit window", []string{})
 
 	github.GitHubRateLimitReset = factory.NewGaugeVec(
@@ -261,6 +283,7 @@ func NewGitHubRegistry(baseRegistry *promexporter_metrics.Registry) *GitHubRegis
 		},
 		[]string{},
 	)
+
 	baseRegistry.AddMetricInfo("github_rate_limit_reset_timestamp", "Unix timestamp when the GitHub API rate limit resets", []string{})
 
 	return github

@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.55](https://github.com/d0ugal/github-exporter/compare/v0.5.54...v0.5.55) (2026-07-01)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to 925bb5d ([7c5695a](https://github.com/d0ugal/github-exporter/commit/7c5695a2cfb2db83d5adf59f89ef6acc5eb61949))
+* update google.golang.org/genproto/googleapis/rpc digest to 925bb5d ([28a6ac1](https://github.com/d0ugal/github-exporter/commit/28a6ac1a83ab1827dd55600d66b34693612e118a))
+* update module github.com/cenkalti/backoff/v5 to v7 ([d48f7b3](https://github.com/d0ugal/github-exporter/commit/d48f7b3a7102544aac67a2844fe0df10b5731232))
+* update module github.com/klauspost/compress to v1.18.7 ([09ab64a](https://github.com/d0ugal/github-exporter/commit/09ab64af47169d4458b6cc8738425e1a92c05750))
+* update module github.com/klauspost/compress to v1.19.0 ([d9431e4](https://github.com/d0ugal/github-exporter/commit/d9431e454867bee79af4d7017226a7b8ced82f70))
+* update module github.com/klauspost/cpuid/v2 to v2.4.0 ([743a232](https://github.com/d0ugal/github-exporter/commit/743a2320686cb31f022d8dbee6c901a55e83b665))
+* update module github.com/prometheus/procfs to v0.21.1 ([adc4587](https://github.com/d0ugal/github-exporter/commit/adc4587bb4a7e937c2d3291c8eb3c7eb32a0f9e5))
+* update module google.golang.org/grpc to v1.82.0 ([ff23e69](https://github.com/d0ugal/github-exporter/commit/ff23e69b6a2b08dee779f28e097e94f6f7600871))
+
 ## [0.5.54](https://github.com/d0ugal/github-exporter/compare/v0.5.53...v0.5.54) (2026-06-27)
 
 

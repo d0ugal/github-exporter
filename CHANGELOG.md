@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.56](https://github.com/d0ugal/github-exporter/compare/v0.5.55...v0.5.56) (2026-07-05)
+
+
+### Bug Fixes
+
+* update module github.com/grafana/pyroscope-go to v1.4.0 ([0d9a320](https://github.com/d0ugal/github-exporter/commit/0d9a32064592fa519d6c1304f432e2e48e093c54))
+* update module github.com/pelletier/go-toml/v2 to v2.4.3 ([b60fbc8](https://github.com/d0ugal/github-exporter/commit/b60fbc80a72347bf350db5ad008c6e0f6c464efa))
+
 ## [0.5.55](https://github.com/d0ugal/github-exporter/compare/v0.5.54...v0.5.55) (2026-07-01)
 
 

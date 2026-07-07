@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.57](https://github.com/d0ugal/github-exporter/compare/v0.5.56...v0.5.57) (2026-07-07)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to b6c8e81 ([41237a4](https://github.com/d0ugal/github-exporter/commit/41237a4c19e0542e0c098346a732675bb621af67))
+* update google.golang.org/genproto/googleapis/rpc digest to f0a9213 ([b06d0b3](https://github.com/d0ugal/github-exporter/commit/b06d0b307b213de4e88ab219700121d0ea003e4c))
+* update module golang.org/x/text to v0.39.0 ([abd87c8](https://github.com/d0ugal/github-exporter/commit/abd87c8744a552fc309a5fad400699b7b63edd98))
+
 ## [0.5.56](https://github.com/d0ugal/github-exporter/compare/v0.5.55...v0.5.56) (2026-07-05)
 
 

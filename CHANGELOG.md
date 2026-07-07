@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.58](https://github.com/d0ugal/github-exporter/compare/v0.5.57...v0.5.58) (2026-07-07)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to f0a9213 ([c0e0982](https://github.com/d0ugal/github-exporter/commit/c0e09823e482e79dbeb21805b4df03029cfa8312))
+
 ## [0.5.57](https://github.com/d0ugal/github-exporter/compare/v0.5.56...v0.5.57) (2026-07-07)
 
 

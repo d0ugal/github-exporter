@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.60](https://github.com/d0ugal/github-exporter/compare/v0.5.59...v0.5.60) (2026-07-08)
+
+
+### Bug Fixes
+
+* update go toolchain directive to v1.26.5 ([021e775](https://github.com/d0ugal/github-exporter/commit/021e77532d80cce748f104945525f89938fea646))
+* update module github.com/d0ugal/promexporter to v1.14.65 ([8e9ead3](https://github.com/d0ugal/github-exporter/commit/8e9ead33c564899718bd779d518723fbd0088a02))
+
 ## [0.5.59](https://github.com/d0ugal/github-exporter/compare/v0.5.58...v0.5.59) (2026-07-07)
 
 

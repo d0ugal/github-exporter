@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.5.61](https://github.com/d0ugal/github-exporter/compare/v0.5.60...v0.5.61) (2026-07-12)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.66 ([c631544](https://github.com/d0ugal/github-exporter/commit/c631544aec1728f68581d86a030792b10dcc6bb7))
+* update module github.com/google/go-github/v88 to v89 ([782f2a3](https://github.com/d0ugal/github-exporter/commit/782f2a3b616f6e298784609ac56224524f401cc4))
+* update module github.com/google/go-github/v88 to v89 ([61f6455](https://github.com/d0ugal/github-exporter/commit/61f6455da7f79befb97176524d0a64bb04ab268b))
+* update module github.com/grafana/pyroscope-go to v1.4.1 ([aeecc65](https://github.com/d0ugal/github-exporter/commit/aeecc651beb533cc112ed9195a1d681bc8b0b8c2))
+* update module github.com/grafana/pyroscope-go/godeltaprof to v0.1.12 ([c26bff5](https://github.com/d0ugal/github-exporter/commit/c26bff59d4764dfff06979844db2a62c85f37ebf))
+* update module github.com/prometheus/common to v0.70.0 ([c188d6c](https://github.com/d0ugal/github-exporter/commit/c188d6c3388f1405994ead0eed5e5c64c08594d2))
+* update module go.mongodb.org/mongo-driver/v2 to v2.8.0 ([4a34279](https://github.com/d0ugal/github-exporter/commit/4a34279f2caf6f7302a70692b80f1353e6bb1b66))
+* update module golang.org/x/arch to v0.29.0 ([8dab31f](https://github.com/d0ugal/github-exporter/commit/8dab31f6aae0a76a95c3e233e6b048e41d664fef))
+* update module golang.org/x/crypto to v0.54.0 ([484ca46](https://github.com/d0ugal/github-exporter/commit/484ca46932bff335c97ecdb8902852439f70020a))
+* update module golang.org/x/net to v0.57.0 ([c8e879a](https://github.com/d0ugal/github-exporter/commit/c8e879a62d87f728e5d91cbae312cb2599f7a956))
+* update module golang.org/x/sys to v0.47.0 ([91e7973](https://github.com/d0ugal/github-exporter/commit/91e7973f38bf224717cd418b8ed833ca7e3e7872))
+* update module golang.org/x/text to v0.40.0 ([fd53fee](https://github.com/d0ugal/github-exporter/commit/fd53fee8d344e55b5be9bdfaa28d3adbb4c8fb81))
+
 ## [0.5.60](https://github.com/d0ugal/github-exporter/compare/v0.5.59...v0.5.60) (2026-07-08)
 
 

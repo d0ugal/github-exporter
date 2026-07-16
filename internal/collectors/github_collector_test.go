@@ -15,7 +15,7 @@ import (
 	"github.com/d0ugal/promexporter/app"
 	promexporter_config "github.com/d0ugal/promexporter/config"
 	promexporter_metrics "github.com/d0ugal/promexporter/metrics"
-	"github.com/google/go-github/v88/github"
+	"github.com/google/go-github/v89/github"
 )
 
 // createTestCollector creates a test GitHubCollector for testing

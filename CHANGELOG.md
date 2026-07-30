@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.5.64](https://github.com/d0ugal/github-exporter/compare/v0.5.63...v0.5.64) (2026-07-30)
+
+
+### Bug Fixes
+
+* migrate github.com/google/go-github to v89 ([3b07738](https://github.com/d0ugal/github-exporter/commit/3b077381075f7d0277857eadfc9fab60160d6de7))
+* update google.golang.org/genproto/googleapis/api digest to 0afa2a6 ([830a611](https://github.com/d0ugal/github-exporter/commit/830a61170f56b1f540c922a7a00010d249c39d34))
+* update google.golang.org/genproto/googleapis/api digest to 3fe39f3 ([#701](https://github.com/d0ugal/github-exporter/issues/701)) ([37a6603](https://github.com/d0ugal/github-exporter/commit/37a660331b8a00d3fb366f88dd75a73f3bf42048))
+* update google.golang.org/genproto/googleapis/api digest to 6c54ddd ([#710](https://github.com/d0ugal/github-exporter/issues/710)) ([31883d5](https://github.com/d0ugal/github-exporter/commit/31883d59bb22ee1800a321c4f1ba85de99f26f59))
+* update google.golang.org/genproto/googleapis/api digest to 7274b71 ([#700](https://github.com/d0ugal/github-exporter/issues/700)) ([8d0b2eb](https://github.com/d0ugal/github-exporter/commit/8d0b2eb0e2dc496c347deb98bb71c1db35cc0c01))
+* update google.golang.org/genproto/googleapis/api digest to 8efbd57 ([#714](https://github.com/d0ugal/github-exporter/issues/714)) ([2de0fe5](https://github.com/d0ugal/github-exporter/commit/2de0fe51818dba239d27c0a07a232ebe9881fdeb))
+* update google.golang.org/genproto/googleapis/api digest to b2f2020 ([#707](https://github.com/d0ugal/github-exporter/issues/707)) ([9643f9c](https://github.com/d0ugal/github-exporter/commit/9643f9c0acad2bde1851f10d3c7f4fcee8bb2c77))
+* update google.golang.org/genproto/googleapis/rpc digest to 0afa2a6 ([2d73f80](https://github.com/d0ugal/github-exporter/commit/2d73f80ad3b254e0a47743c7edbb9847c4781037))
+* update google.golang.org/genproto/googleapis/rpc digest to 3fe39f3 ([#702](https://github.com/d0ugal/github-exporter/issues/702)) ([7cf8a8f](https://github.com/d0ugal/github-exporter/commit/7cf8a8fab5e93f990d97c9e59b2becc346484a89))
+* update google.golang.org/genproto/googleapis/rpc digest to 6c54ddd ([#711](https://github.com/d0ugal/github-exporter/issues/711)) ([f967aad](https://github.com/d0ugal/github-exporter/commit/f967aadd58ef73cdc3d80e2cee205057f9746ee7))
+* update google.golang.org/genproto/googleapis/rpc digest to 8efbd57 ([#715](https://github.com/d0ugal/github-exporter/issues/715)) ([f99ffd6](https://github.com/d0ugal/github-exporter/commit/f99ffd623503fe077e76adee46ead8f18a2c5702))
+* update google.golang.org/genproto/googleapis/rpc digest to b2f2020 ([#708](https://github.com/d0ugal/github-exporter/issues/708)) ([e4fc245](https://github.com/d0ugal/github-exporter/commit/e4fc245ee1a1ad61ea01eb33351a730dc6a9b6a6))
+* update module github.com/bytedance/sonic/loader to v0.5.2 ([#716](https://github.com/d0ugal/github-exporter/issues/716)) ([128aa95](https://github.com/d0ugal/github-exporter/commit/128aa9521978ca2b4420f7973f2820bb004a8814))
+* update module github.com/gabriel-vasile/mimetype to v1.4.14 ([013474c](https://github.com/d0ugal/github-exporter/commit/013474c27dd1c46d6de55922f8e01df8cef616ea))
+* update module github.com/gabriel-vasile/mimetype to v1.4.15 ([#703](https://github.com/d0ugal/github-exporter/issues/703)) ([89618b1](https://github.com/d0ugal/github-exporter/commit/89618b12cedb411e79d7d19426fe55adae0961bd))
+* update module github.com/go-logr/logr to v1.4.4 ([78cc403](https://github.com/d0ugal/github-exporter/commit/78cc4033c268b462ef4ecf86ae0a05eef0e0dc44))
+* update module github.com/klauspost/compress to v1.19.1 ([7e06737](https://github.com/d0ugal/github-exporter/commit/7e06737656a9e79fdbc3e974688a81ff836a380f))
+* update module github.com/leodido/go-urn to v1.5.0 ([#698](https://github.com/d0ugal/github-exporter/issues/698)) ([1ec5ee6](https://github.com/d0ugal/github-exporter/commit/1ec5ee66e19e6b2709674a3668861c4e996201ba))
+* update module github.com/mattn/go-isatty to v0.0.23 ([9a881c2](https://github.com/d0ugal/github-exporter/commit/9a881c2815d1ae1b9029bc04fdec39201e2562dd))
+* update module github.com/mattn/go-isatty to v0.0.24 ([#704](https://github.com/d0ugal/github-exporter/issues/704)) ([2f0e074](https://github.com/d0ugal/github-exporter/commit/2f0e07440583112a59eec61ec0338ac8abece821))
+* update module github.com/prometheus/client_golang to v1.24.0 ([21d41f2](https://github.com/d0ugal/github-exporter/commit/21d41f2ca28ecc07a7d874b93a265dbab099cd36))
+* update module github.com/prometheus/client_golang to v1.24.1 ([#705](https://github.com/d0ugal/github-exporter/issues/705)) ([a76fbfc](https://github.com/d0ugal/github-exporter/commit/a76fbfccd609003dccca072debda52de1f02b9d9))
+* update module github.com/prometheus/common to v0.70.1 ([34ea991](https://github.com/d0ugal/github-exporter/commit/34ea991219826122c7d721af1a01089d4e83c46c))
+* update module github.com/quic-go/quic-go to v0.61.0 ([#709](https://github.com/d0ugal/github-exporter/issues/709)) ([d21d083](https://github.com/d0ugal/github-exporter/commit/d21d0834137186a22dd2058134fba637756c4428))
+* update module go.opentelemetry.io/proto/otlp to v1.11.0 ([e0183d4](https://github.com/d0ugal/github-exporter/commit/e0183d42ae57f51c089f66246843d271de45664a))
+* update module google.golang.org/grpc to v1.83.0 ([#717](https://github.com/d0ugal/github-exporter/issues/717)) ([7293ea1](https://github.com/d0ugal/github-exporter/commit/7293ea1f31d3e9a8d5895712850a94938792fb60))
+
 ## [0.5.63](https://github.com/d0ugal/github-exporter/compare/v0.5.62...v0.5.63) (2026-07-16)
 
 

@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.5.66](https://github.com/d0ugal/github-exporter/compare/v0.5.65...v0.5.66) (2026-09-12)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to f61a6ca ([#796](https://github.com/d0ugal/github-exporter/issues/796)) ([16ed88d](https://github.com/d0ugal/github-exporter/commit/16ed88d20b76d8a53414afd70baa5ebd5cc886aa))
+* update google.golang.org/genproto/googleapis/api digest to f8649dd ([#785](https://github.com/d0ugal/github-exporter/issues/785)) ([6781a33](https://github.com/d0ugal/github-exporter/commit/6781a3370ae77943e08dd0937a4cf1b2b9364fb1))
+* update google.golang.org/genproto/googleapis/rpc digest to f61a6ca ([#797](https://github.com/d0ugal/github-exporter/issues/797)) ([b9c40d2](https://github.com/d0ugal/github-exporter/commit/b9c40d2ed80bbdb992820d287acd9ccecfe0f2d6))
+* update module github.com/bytedance/sonic to v1.15.4 ([#795](https://github.com/d0ugal/github-exporter/issues/795)) ([d5ffffe](https://github.com/d0ugal/github-exporter/commit/d5ffffe2b4d4f847666e68a2771ec3e4bcca6840))
+* update module go.mongodb.org/mongo-driver/v2 to v2.9.1 ([#794](https://github.com/d0ugal/github-exporter/issues/794)) ([8fa4ae3](https://github.com/d0ugal/github-exporter/commit/8fa4ae3c4ab5f2c4a574d573da853a8708d28cb9))
+* update module golang.org/x/arch to v0.31.0 ([#788](https://github.com/d0ugal/github-exporter/issues/788)) ([bc1f9af](https://github.com/d0ugal/github-exporter/commit/bc1f9af74e8fc4c80cd17f56ff08361bcd17e378))
+* update module golang.org/x/crypto to v0.57.0 ([#792](https://github.com/d0ugal/github-exporter/issues/792)) ([c43c0cd](https://github.com/d0ugal/github-exporter/commit/c43c0cd8dee5c9fca5b3195d7ad660a9c493863c))
+* update module golang.org/x/net to v0.59.0 ([#793](https://github.com/d0ugal/github-exporter/issues/793)) ([4c68b10](https://github.com/d0ugal/github-exporter/commit/4c68b10d70eaf5fc327005566360a7ece1edf4e5))
+* update module golang.org/x/sys to v0.48.0 ([#789](https://github.com/d0ugal/github-exporter/issues/789)) ([62258d6](https://github.com/d0ugal/github-exporter/commit/62258d60a5aebbacede89ff304e2f481649435a8))
+* update module golang.org/x/text to v0.42.0 ([#790](https://github.com/d0ugal/github-exporter/issues/790)) ([c0731d2](https://github.com/d0ugal/github-exporter/commit/c0731d2c444aff4a365cf5a46d9afdaf9ae2914e))
+* update module golang.org/x/time to v0.16.0 ([#791](https://github.com/d0ugal/github-exporter/issues/791)) ([f458e00](https://github.com/d0ugal/github-exporter/commit/f458e001f458ea1e44db0873a539a651faef0a6f))
+
 ## [0.5.65](https://github.com/d0ugal/github-exporter/compare/v0.5.64...v0.5.65) (2026-09-08)
 
 

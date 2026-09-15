@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.67](https://github.com/d0ugal/github-exporter/compare/v0.5.66...v0.5.67) (2026-09-15)
+
+
+### Bug Fixes
+
+* update module github.com/google/go-github/v89 to v92 ([#798](https://github.com/d0ugal/github-exporter/issues/798)) ([d59b1d9](https://github.com/d0ugal/github-exporter/commit/d59b1d95274d925fca21139c0c62c12baab79a6a))
+
 ## [0.5.66](https://github.com/d0ugal/github-exporter/compare/v0.5.65...v0.5.66) (2026-09-12)
 
 

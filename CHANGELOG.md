@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.5.68](https://github.com/d0ugal/github-exporter/compare/v0.5.67...v0.5.68) (2026-09-22)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to b142276 ([#821](https://github.com/d0ugal/github-exporter/issues/821)) ([8e88f05](https://github.com/d0ugal/github-exporter/commit/8e88f0529922ae5010a52778d82f8114bd9ce97d))
+* update google.golang.org/genproto/googleapis/api digest to cecb647 ([#814](https://github.com/d0ugal/github-exporter/issues/814)) ([71ea735](https://github.com/d0ugal/github-exporter/commit/71ea735dc5f267e99d7f5a18d8a82b3d3b6ed318))
+* update google.golang.org/genproto/googleapis/api digest to eeb232e ([#806](https://github.com/d0ugal/github-exporter/issues/806)) ([f39faee](https://github.com/d0ugal/github-exporter/commit/f39faeecdd106dd136be560a0dba29397b73b3b9))
+* update google.golang.org/genproto/googleapis/rpc digest to b142276 ([#822](https://github.com/d0ugal/github-exporter/issues/822)) ([79db054](https://github.com/d0ugal/github-exporter/commit/79db0544f4cb0e1ab613831efd8254543fe62b55))
+* update google.golang.org/genproto/googleapis/rpc digest to cecb647 ([#815](https://github.com/d0ugal/github-exporter/issues/815)) ([1be235f](https://github.com/d0ugal/github-exporter/commit/1be235f47eb24793cd8cce4319442e96ee0e6b17))
+* update google.golang.org/genproto/googleapis/rpc digest to eeb232e ([#807](https://github.com/d0ugal/github-exporter/issues/807)) ([3b4ce5b](https://github.com/d0ugal/github-exporter/commit/3b4ce5b241e7f82f0f77e303a3b87e3dc3063bfc))
+* update module github.com/go-playground/universal-translator to v0.18.2 ([#818](https://github.com/d0ugal/github-exporter/issues/818)) ([4e754dd](https://github.com/d0ugal/github-exporter/commit/4e754dd6d9398ac5ddd3d36281073800eab7a610))
+* update module github.com/go-playground/validator/v10 to v10.30.5 ([#817](https://github.com/d0ugal/github-exporter/issues/817)) ([c8fa7f7](https://github.com/d0ugal/github-exporter/commit/c8fa7f7a59ae79ae09bf63bdc2ee243a8cf86f8e))
+* update module github.com/google/go-github/v89 to v92 ([#801](https://github.com/d0ugal/github-exporter/issues/801)) ([0eb6e8d](https://github.com/d0ugal/github-exporter/commit/0eb6e8dfb3fb696bc5a7fb70c9a341a3dc4900d1))
+* update module github.com/quic-go/quic-go to v0.63.0 ([#823](https://github.com/d0ugal/github-exporter/issues/823)) ([49c6c9e](https://github.com/d0ugal/github-exporter/commit/49c6c9e31e39aa9edeeb70877199760675be19bb))
+
 ## [0.5.67](https://github.com/d0ugal/github-exporter/compare/v0.5.66...v0.5.67) (2026-09-15)
 
 

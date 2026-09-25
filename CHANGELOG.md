@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.69](https://github.com/d0ugal/github-exporter/compare/v0.5.68...v0.5.69) (2026-09-25)
+
+
+### Bug Fixes
+
+* update module github.com/grpc-ecosystem/grpc-gateway/v2 to v2.31.0 ([#827](https://github.com/d0ugal/github-exporter/issues/827)) ([01c5353](https://github.com/d0ugal/github-exporter/commit/01c53533602c8c7d251a99326307272da9e28d2e))
+* update module github.com/klauspost/compress to v1.20.1 ([#825](https://github.com/d0ugal/github-exporter/issues/825)) ([e8927c5](https://github.com/d0ugal/github-exporter/commit/e8927c53e0e76960d6eac6b09b859c4e1a07bb7c))
+* update module google.golang.org/grpc to v1.84.0 ([#816](https://github.com/d0ugal/github-exporter/issues/816)) ([dbf407b](https://github.com/d0ugal/github-exporter/commit/dbf407bd58263c7ee1b2b760a3459ea7243f066d))
+
 ## [0.5.68](https://github.com/d0ugal/github-exporter/compare/v0.5.67...v0.5.68) (2026-09-22)
 
 

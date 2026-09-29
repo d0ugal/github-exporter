@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.5.69](https://github.com/d0ugal/github-exporter/compare/v0.5.68...v0.5.69) (2026-09-29)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to 8a89bd6 ([#832](https://github.com/d0ugal/github-exporter/issues/832)) ([e2db059](https://github.com/d0ugal/github-exporter/commit/e2db05927bc1b5e7619a373e43cdea537287b0bb))
+* update google.golang.org/genproto/googleapis/rpc digest to 8a89bd6 ([#834](https://github.com/d0ugal/github-exporter/issues/834)) ([7781f6a](https://github.com/d0ugal/github-exporter/commit/7781f6a90960655658bf3368b791cfebb86983e8))
+* update module github.com/go-playground/locales to v0.14.2 ([#830](https://github.com/d0ugal/github-exporter/issues/830)) ([b923b75](https://github.com/d0ugal/github-exporter/commit/b923b75bd7beb2bcd431ea749696076707b1d4ef))
+* update module github.com/goccy/go-json to v0.11.0 ([#828](https://github.com/d0ugal/github-exporter/issues/828)) ([90846a7](https://github.com/d0ugal/github-exporter/commit/90846a75b74c70ac00b67a2d50997cc9cc56eb24))
+* update module github.com/goccy/go-json to v0.11.1 ([#829](https://github.com/d0ugal/github-exporter/issues/829)) ([5b22c11](https://github.com/d0ugal/github-exporter/commit/5b22c11715a41e2fb870f273f11d35fa0a2b1e4d))
+* update module github.com/google/go-github/v89 to v92 ([#819](https://github.com/d0ugal/github-exporter/issues/819)) ([a4ac8ac](https://github.com/d0ugal/github-exporter/commit/a4ac8ac207b97982723171469084ce5933344a03))
+* update module github.com/grpc-ecosystem/grpc-gateway/v2 to v2.31.0 ([#827](https://github.com/d0ugal/github-exporter/issues/827)) ([01c5353](https://github.com/d0ugal/github-exporter/commit/01c53533602c8c7d251a99326307272da9e28d2e))
+* update module github.com/klauspost/compress to v1.20.1 ([#825](https://github.com/d0ugal/github-exporter/issues/825)) ([e8927c5](https://github.com/d0ugal/github-exporter/commit/e8927c53e0e76960d6eac6b09b859c4e1a07bb7c))
+* update module github.com/prometheus/common to v0.72.0 ([#833](https://github.com/d0ugal/github-exporter/issues/833)) ([2b7c956](https://github.com/d0ugal/github-exporter/commit/2b7c956edc78001361ebd1c371cc4441adb0f5bb))
+* update module google.golang.org/grpc to v1.84.0 ([#816](https://github.com/d0ugal/github-exporter/issues/816)) ([dbf407b](https://github.com/d0ugal/github-exporter/commit/dbf407bd58263c7ee1b2b760a3459ea7243f066d))
+
 ## [0.5.68](https://github.com/d0ugal/github-exporter/compare/v0.5.67...v0.5.68) (2026-09-22)
 
 

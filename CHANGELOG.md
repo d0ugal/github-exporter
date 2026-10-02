@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.70](https://github.com/d0ugal/github-exporter/compare/v0.5.69...v0.5.70) (2026-10-02)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.70 ([#837](https://github.com/d0ugal/github-exporter/issues/837)) ([067640e](https://github.com/d0ugal/github-exporter/commit/067640eabca2762e9fd24a6f522270f7e2e9312e))
+* update module github.com/d0ugal/promexporter to v1.14.71 ([#840](https://github.com/d0ugal/github-exporter/issues/840)) ([faf924b](https://github.com/d0ugal/github-exporter/commit/faf924b97a2c5235181034e0e28a5d38ed5dc600))
+* update module github.com/goccy/go-json to v0.11.2 ([#835](https://github.com/d0ugal/github-exporter/issues/835)) ([5627d32](https://github.com/d0ugal/github-exporter/commit/5627d3209c6b1ea5481e53cee7b7b420e3df9af2))
+* update module github.com/grafana/pyroscope-go to v1.4.3 ([#838](https://github.com/d0ugal/github-exporter/issues/838)) ([491457a](https://github.com/d0ugal/github-exporter/commit/491457a4bdf6d23946d77ececb3c700a384c9e04))
+* update module go.opentelemetry.io/proto/otlp to v1.11.1 ([#839](https://github.com/d0ugal/github-exporter/issues/839)) ([b50a98a](https://github.com/d0ugal/github-exporter/commit/b50a98a3e75f8d0363633faf846680df0ca88343))
+* update opentelemetry-go monorepo to v1.47.0 ([#841](https://github.com/d0ugal/github-exporter/issues/841)) ([1c9fcee](https://github.com/d0ugal/github-exporter/commit/1c9fceed40085bb7d286a9ffb78757bbcbdaa75f))
+* update opentelemetry-go-contrib monorepo to v0.72.0 ([#842](https://github.com/d0ugal/github-exporter/issues/842)) ([393708b](https://github.com/d0ugal/github-exporter/commit/393708b67c2840ce5792773d9d727677510a87a7))
+
 ## [0.5.69](https://github.com/d0ugal/github-exporter/compare/v0.5.68...v0.5.69) (2026-09-29)
 
 

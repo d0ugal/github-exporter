@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.71](https://github.com/d0ugal/github-exporter/compare/v0.5.70...v0.5.71) (2026-10-07)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to fad4113 ([#844](https://github.com/d0ugal/github-exporter/issues/844)) ([a3769d0](https://github.com/d0ugal/github-exporter/commit/a3769d019aed088b5cb24b03ec16954c641be557))
+* update google.golang.org/genproto/googleapis/rpc digest to fad4113 ([#845](https://github.com/d0ugal/github-exporter/issues/845)) ([24ea12d](https://github.com/d0ugal/github-exporter/commit/24ea12dd5d5064c71e3789ce29b7dd848225b21c))
+* update module go.mongodb.org/mongo-driver/v2 to v2.9.2 ([#847](https://github.com/d0ugal/github-exporter/issues/847)) ([205087a](https://github.com/d0ugal/github-exporter/commit/205087a23ac17ca53a1a9e2b10bb1faa3d9ab452))
+
 ## [0.5.70](https://github.com/d0ugal/github-exporter/compare/v0.5.69...v0.5.70) (2026-10-05)
 
 

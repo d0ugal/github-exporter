@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.72](https://github.com/d0ugal/github-exporter/compare/v0.5.71...v0.5.72) (2026-10-10)
+
+
+### Bug Fixes
+
+* update go toolchain directive to v1.27.2 ([#852](https://github.com/d0ugal/github-exporter/issues/852)) ([3b0356f](https://github.com/d0ugal/github-exporter/commit/3b0356fe64793a8d75a55a59f8a7a8313ab8d871))
+* update module github.com/prometheus/client_golang to v1.25.0 ([#849](https://github.com/d0ugal/github-exporter/issues/849)) ([417547b](https://github.com/d0ugal/github-exporter/commit/417547b5223e88bdd1a56fec201fdcb8aff390b4))
+* update module golang.org/x/arch to v0.32.0 ([#855](https://github.com/d0ugal/github-exporter/issues/855)) ([c7c03b8](https://github.com/d0ugal/github-exporter/commit/c7c03b8d22040d8ae88ea1c969fd214084d98678))
+* update module golang.org/x/crypto to v0.58.0 ([#857](https://github.com/d0ugal/github-exporter/issues/857)) ([1a78ed2](https://github.com/d0ugal/github-exporter/commit/1a78ed2d2d6ced92c69e7efcce8de80584476d4e))
+* update module golang.org/x/net to v0.60.0 ([#853](https://github.com/d0ugal/github-exporter/issues/853)) ([542c54e](https://github.com/d0ugal/github-exporter/commit/542c54ead1a5396ba7c241ce65ae3fa0b73b50fc))
+* update module golang.org/x/net to v0.61.0 ([#858](https://github.com/d0ugal/github-exporter/issues/858)) ([1948475](https://github.com/d0ugal/github-exporter/commit/1948475c38a4cbe6d4eb61172bb889ac3eaf818b))
+* update module golang.org/x/sys to v0.49.0 ([#856](https://github.com/d0ugal/github-exporter/issues/856)) ([60e7c0f](https://github.com/d0ugal/github-exporter/commit/60e7c0f400f437cfb6e9ad1cc8815dcc9c15fa6e))
+
 ## [0.5.71](https://github.com/d0ugal/github-exporter/compare/v0.5.70...v0.5.71) (2026-10-07)
 
 

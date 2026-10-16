@@ -7,7 +7,6 @@ toolchain go1.27.2
 require (
 	github.com/d0ugal/promexporter v1.14.72
 	github.com/google/go-github/v89 v89.0.0
-	github.com/google/go-github/v93 v93.0.0
 	github.com/prometheus/client_golang v1.25.0
 	go.opentelemetry.io/otel v1.47.0
 	golang.org/x/time v0.16.0
@@ -50,7 +49,7 @@ require (
 	github.com/prometheus/common v0.72.1 // indirect
 	github.com/prometheus/procfs v0.22.0 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
-	github.com/quic-go/quic-go v0.63.0 // indirect
+	github.com/quic-go/quic-go v0.64.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.3.2 // indirect
 	go.mongodb.org/mongo-driver/v2 v2.9.2 // indirect

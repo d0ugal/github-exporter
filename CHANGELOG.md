@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.73](https://github.com/d0ugal/github-exporter/compare/v0.5.72...v0.5.73) (2026-10-19)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.72 ([#864](https://github.com/d0ugal/github-exporter/issues/864)) ([2e361d9](https://github.com/d0ugal/github-exporter/commit/2e361d928c23288225e102576d5f845f3346f084))
+* update module github.com/gabriel-vasile/mimetype to v1.4.16 ([#872](https://github.com/d0ugal/github-exporter/issues/872)) ([60538bd](https://github.com/d0ugal/github-exporter/commit/60538bd395b4f7410ec2e9ad5be3aa34dbf5b527))
+* update module github.com/google/go-github/v89 to v93 ([#867](https://github.com/d0ugal/github-exporter/issues/867)) ([cba0ade](https://github.com/d0ugal/github-exporter/commit/cba0ade89e93184240c587e19dcc0d481bf989d2))
+* update module github.com/grpc-ecosystem/grpc-gateway/v2 to v2.32.0 ([#866](https://github.com/d0ugal/github-exporter/issues/866)) ([c0fe4c5](https://github.com/d0ugal/github-exporter/commit/c0fe4c5222b0320b087bd8c2aad8be2b0cee8c3a))
+* update module github.com/klauspost/cpuid/v2 to v2.4.1 ([#870](https://github.com/d0ugal/github-exporter/issues/870)) ([f2e68f6](https://github.com/d0ugal/github-exporter/commit/f2e68f6e48c944f873f5f412c7053e00d45c569c))
+* update module github.com/quic-go/quic-go to v0.64.0 ([#869](https://github.com/d0ugal/github-exporter/issues/869)) ([27b28c7](https://github.com/d0ugal/github-exporter/commit/27b28c72fa6466a839b52bfd4bb5cd7b4524de8d))
+* update module github.com/quic-go/quic-go to v0.64.1 ([#873](https://github.com/d0ugal/github-exporter/issues/873)) ([01d6ecb](https://github.com/d0ugal/github-exporter/commit/01d6ecb90ff886e1c91d96a3143fce5253d4c7de))
+
 ## [0.5.72](https://github.com/d0ugal/github-exporter/compare/v0.5.71...v0.5.72) (2026-10-13)
 
 

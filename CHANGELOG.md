@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.74](https://github.com/d0ugal/github-exporter/compare/v0.5.73...v0.5.74) (2026-10-23)
+
+
+### Bug Fixes
+
+* update go toolchain directive to v1.27.3 ([#878](https://github.com/d0ugal/github-exporter/issues/878)) ([d906fac](https://github.com/d0ugal/github-exporter/commit/d906fac707a93b93c57c0c09e447ef4f9d2966b7))
+* update google.golang.org/genproto/googleapis/api digest to ce908d2 ([#874](https://github.com/d0ugal/github-exporter/issues/874)) ([ee27639](https://github.com/d0ugal/github-exporter/commit/ee276393ee2b7c56e318361cf5c29f3b207d6a36))
+* update google.golang.org/genproto/googleapis/rpc digest to ce908d2 ([#875](https://github.com/d0ugal/github-exporter/issues/875)) ([1380eca](https://github.com/d0ugal/github-exporter/commit/1380eca9b4c9d007826f1e95220d63bfb2b5ed50))
+* update module github.com/bytedance/sonic/loader to v0.5.3 ([#880](https://github.com/d0ugal/github-exporter/issues/880)) ([fc96b09](https://github.com/d0ugal/github-exporter/commit/fc96b09d8906840b0646b0569eb97ebb473c38c5))
+* update module github.com/d0ugal/promexporter to v1.14.73 ([#879](https://github.com/d0ugal/github-exporter/issues/879)) ([e483150](https://github.com/d0ugal/github-exporter/commit/e4831507158bd32cc5fc7c38f680b967046457b6))
+* update module github.com/prometheus/procfs to v0.23.0 ([#886](https://github.com/d0ugal/github-exporter/issues/886)) ([165ad02](https://github.com/d0ugal/github-exporter/commit/165ad020c46c93fa4eb6f977ab1e1cf6e367fbd5))
+
 ## [0.5.73](https://github.com/d0ugal/github-exporter/compare/v0.5.72...v0.5.73) (2026-10-19)
 
 

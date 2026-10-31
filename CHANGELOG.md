@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.5.77](https://github.com/d0ugal/github-exporter/compare/v0.5.76...v0.5.77) (2026-10-31)
+
+
+### Bug Fixes
+
+* update module github.com/gin-contrib/sse to v1.2.0 ([#906](https://github.com/d0ugal/github-exporter/issues/906)) ([6eafdc4](https://github.com/d0ugal/github-exporter/commit/6eafdc42401a81d284b185375e00651e3292c2aa))
+* update module github.com/goccy/go-json to v0.12.0 ([#901](https://github.com/d0ugal/github-exporter/issues/901)) ([92dad13](https://github.com/d0ugal/github-exporter/commit/92dad1375bd2bdc5c47f244711a689a634f65a95))
+* update module github.com/grpc-ecosystem/grpc-gateway/v2 to v2.33.0 ([#895](https://github.com/d0ugal/github-exporter/issues/895)) ([558ddeb](https://github.com/d0ugal/github-exporter/commit/558ddebe3f54cf69aa6a1a7fb55022385eb8e2a4))
+* update module github.com/hashicorp/go-uuid to v1.0.4 ([#900](https://github.com/d0ugal/github-exporter/issues/900)) ([d762705](https://github.com/d0ugal/github-exporter/commit/d7627051f8aef8c751c8d0b4c792f5befc6fede4))
+* update module github.com/pandatix/go-abnf to v0.5.2 ([#902](https://github.com/d0ugal/github-exporter/issues/902)) ([cc93e1f](https://github.com/d0ugal/github-exporter/commit/cc93e1f0487bf99c5c9779680caa3dbbe291dc43))
+* update module github.com/pandatix/go-abnf to v0.5.3 ([#903](https://github.com/d0ugal/github-exporter/issues/903)) ([cf49e16](https://github.com/d0ugal/github-exporter/commit/cf49e16024cca3b41abc972a466d840d90ce1cba))
+* update module github.com/pandatix/go-abnf to v0.5.4 ([#905](https://github.com/d0ugal/github-exporter/issues/905)) ([7db46b4](https://github.com/d0ugal/github-exporter/commit/7db46b4295d2e904de532a89edf19b91e50b15ff))
+* update module github.com/prometheus/common to v0.73.0 ([#899](https://github.com/d0ugal/github-exporter/issues/899)) ([5116ef9](https://github.com/d0ugal/github-exporter/commit/5116ef9bbc1f2fdba14359ebcd85e6220c048d3b))
+* update module github.com/prometheus/common to v0.73.1 ([#904](https://github.com/d0ugal/github-exporter/issues/904)) ([ccef4b1](https://github.com/d0ugal/github-exporter/commit/ccef4b16f1ab8ba91753e9d70a14e0f1b3ecce8b))
+* update module golang.org/x/net to v0.62.0 ([#898](https://github.com/d0ugal/github-exporter/issues/898)) ([430924f](https://github.com/d0ugal/github-exporter/commit/430924f309917ca19a026cba1d2be842d73a7f48))
+* update module google.golang.org/grpc to v1.85.0 ([#896](https://github.com/d0ugal/github-exporter/issues/896)) ([9472f99](https://github.com/d0ugal/github-exporter/commit/9472f996fa41d635663bdb7baa89bf171d293dc6))
+
 ## [0.5.76](https://github.com/d0ugal/github-exporter/compare/v0.5.75...v0.5.76) (2026-10-27)
 
 

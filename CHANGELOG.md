@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.78](https://github.com/d0ugal/github-exporter/compare/v0.5.77...v0.5.78) (2026-11-06)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to d1e00e9 ([#914](https://github.com/d0ugal/github-exporter/issues/914)) ([d42ebee](https://github.com/d0ugal/github-exporter/commit/d42ebee529ff9abb3ea1139997224860b0190912))
+* update google.golang.org/genproto/googleapis/rpc digest to d1e00e9 ([#915](https://github.com/d0ugal/github-exporter/issues/915)) ([39a9ade](https://github.com/d0ugal/github-exporter/commit/39a9ade2197b324d308f766993751c5c12d64268))
+* update module github.com/d0ugal/promexporter to v1.14.75 ([#908](https://github.com/d0ugal/github-exporter/issues/908)) ([8fe7b5a](https://github.com/d0ugal/github-exporter/commit/8fe7b5af60011cb579421ad268b2eb0b8831cc5a))
+* update module github.com/go-playground/validator/v10 to v10.30.6 ([#909](https://github.com/d0ugal/github-exporter/issues/909)) ([63f1acf](https://github.com/d0ugal/github-exporter/commit/63f1acf109e65f951ac482d6f9a717dabecaa40a))
+* update module github.com/klauspost/cpuid/v2 to v2.4.2 ([#911](https://github.com/d0ugal/github-exporter/issues/911)) ([7b66213](https://github.com/d0ugal/github-exporter/commit/7b662136e7662356fdaff49d1244b97078f40d0a))
+* update module github.com/quic-go/quic-go to v0.65.0 ([#912](https://github.com/d0ugal/github-exporter/issues/912)) ([1b1748b](https://github.com/d0ugal/github-exporter/commit/1b1748bde0972d774580ca706678988ec7cb2323))
+* update module go.mongodb.org/mongo-driver/v2 to v2.9.3 ([#913](https://github.com/d0ugal/github-exporter/issues/913)) ([5ab3351](https://github.com/d0ugal/github-exporter/commit/5ab3351010017aaebd075ca121e33573c70fd04a))
+
 ## [0.5.77](https://github.com/d0ugal/github-exporter/compare/v0.5.76...v0.5.77) (2026-10-31)
 
 

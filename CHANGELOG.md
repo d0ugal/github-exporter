@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.79](https://github.com/d0ugal/github-exporter/compare/v0.5.78...v0.5.79) (2026-11-10)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to 09e21b2 ([#929](https://github.com/d0ugal/github-exporter/issues/929)) ([8e80100](https://github.com/d0ugal/github-exporter/commit/8e801001613b80e99c97a6560a4cd06b0dd70a1b))
+* update google.golang.org/genproto/googleapis/rpc digest to 09e21b2 ([#930](https://github.com/d0ugal/github-exporter/issues/930)) ([8f6d814](https://github.com/d0ugal/github-exporter/commit/8f6d8140415e5b4cdb7cf3d00a4397838b411702))
+* update module github.com/gin-contrib/sse to v1.2.1 ([#923](https://github.com/d0ugal/github-exporter/issues/923)) ([79513b6](https://github.com/d0ugal/github-exporter/commit/79513b64b975bf675eaf0bdae2aa139dcc54d54b))
+* update module github.com/klauspost/compress to v1.20.4 ([#925](https://github.com/d0ugal/github-exporter/issues/925)) ([e6c2e2e](https://github.com/d0ugal/github-exporter/commit/e6c2e2e27e3c336dc6f9011c64f7149696848d89))
+* update module go.mongodb.org/mongo-driver/v2 to v2.10.0 ([#921](https://github.com/d0ugal/github-exporter/issues/921)) ([3e76634](https://github.com/d0ugal/github-exporter/commit/3e766340834e11d689727e60fcdf654a97cf7a15))
+* update module golang.org/x/arch to v0.33.0 ([#926](https://github.com/d0ugal/github-exporter/issues/926)) ([82f7a8b](https://github.com/d0ugal/github-exporter/commit/82f7a8b9de72c95b9300097f56aca95b2b68f6b7))
+* update module golang.org/x/sys to v0.50.0 ([#927](https://github.com/d0ugal/github-exporter/issues/927)) ([dd7a911](https://github.com/d0ugal/github-exporter/commit/dd7a91187af478efedcb960a8f005e9ed4965c1e))
+* update module golang.org/x/text to v0.44.0 ([#928](https://github.com/d0ugal/github-exporter/issues/928)) ([f1d8f94](https://github.com/d0ugal/github-exporter/commit/f1d8f94dd18d8921bb4d534f72e34b7a1f809675))
+
 ## [0.5.78](https://github.com/d0ugal/github-exporter/compare/v0.5.77...v0.5.78) (2026-11-06)
 
 

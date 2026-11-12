@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.80](https://github.com/d0ugal/github-exporter/compare/v0.5.79...v0.5.80) (2026-11-12)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.76 ([#932](https://github.com/d0ugal/github-exporter/issues/932)) ([b4eb99f](https://github.com/d0ugal/github-exporter/commit/b4eb99f9a081c50a2d28aca99be64d4e1220c83a))
+* update module github.com/d0ugal/promexporter to v1.14.77 ([#938](https://github.com/d0ugal/github-exporter/issues/938)) ([950f509](https://github.com/d0ugal/github-exporter/commit/950f509b0794b3d2bcf0b7336c294bff8162b533))
+* update module github.com/grafana/pyroscope-go to v1.5.0 ([#934](https://github.com/d0ugal/github-exporter/issues/934)) ([c1c9cef](https://github.com/d0ugal/github-exporter/commit/c1c9ceffee3f09e61f5c3eaaa0c5931d3f2bae87))
+* update module github.com/prometheus/common to v0.74.0 ([#937](https://github.com/d0ugal/github-exporter/issues/937)) ([059b850](https://github.com/d0ugal/github-exporter/commit/059b8500a5f98a4cb3a6b60a04f2e92ba1b44be5))
+* update module golang.org/x/crypto to v0.59.0 ([#936](https://github.com/d0ugal/github-exporter/issues/936)) ([c36408c](https://github.com/d0ugal/github-exporter/commit/c36408ce7e9f2fad412cc5e11236ddb79fa1f0c8))
+
 ## [0.5.79](https://github.com/d0ugal/github-exporter/compare/v0.5.78...v0.5.79) (2026-11-10)
 
 

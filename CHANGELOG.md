@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.81](https://github.com/d0ugal/github-exporter/compare/v0.5.80...v0.5.81) (2026-11-20)
+
+
+### Bug Fixes
+
+* update google.golang.org/genproto/googleapis/api digest to c8830f6 ([#946](https://github.com/d0ugal/github-exporter/issues/946)) ([97f08db](https://github.com/d0ugal/github-exporter/commit/97f08dbf65a40a74d227631e344366843e9a896d))
+* update google.golang.org/genproto/googleapis/rpc digest to c8830f6 ([#947](https://github.com/d0ugal/github-exporter/issues/947)) ([d3b0bbe](https://github.com/d0ugal/github-exporter/commit/d3b0bbe45d031a8981d148ba335bd16a4ccf2963))
+* update module go.mongodb.org/mongo-driver/v2 to v2.10.1 ([#948](https://github.com/d0ugal/github-exporter/issues/948)) ([e61b5a4](https://github.com/d0ugal/github-exporter/commit/e61b5a4cb61fafdaaed55fa498fe4162abeba393))
+* update module golang.org/x/net to v0.63.0 ([#944](https://github.com/d0ugal/github-exporter/issues/944)) ([4c45073](https://github.com/d0ugal/github-exporter/commit/4c45073d45e940d04dc4bf4941eec91b6232a41e))
+
 ## [0.5.80](https://github.com/d0ugal/github-exporter/compare/v0.5.79...v0.5.80) (2026-11-17)
 
 

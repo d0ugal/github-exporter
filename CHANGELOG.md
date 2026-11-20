@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.82](https://github.com/d0ugal/github-exporter/compare/v0.5.81...v0.5.82) (2026-11-20)
+
+
+### Bug Fixes
+
+* update module github.com/d0ugal/promexporter to v1.14.78 ([#951](https://github.com/d0ugal/github-exporter/issues/951)) ([21f36d7](https://github.com/d0ugal/github-exporter/commit/21f36d74d592a601a32b04ad4e2127ffdc3a6aa1))
+* update module github.com/klauspost/compress to v1.20.5 ([#949](https://github.com/d0ugal/github-exporter/issues/949)) ([93d7522](https://github.com/d0ugal/github-exporter/commit/93d7522058a71f6a0ba0ca3c881a0ee85809d8ec))
+* update module go.opentelemetry.io/auto/sdk to v1.2.2 ([#952](https://github.com/d0ugal/github-exporter/issues/952)) ([4a5fbb2](https://github.com/d0ugal/github-exporter/commit/4a5fbb220cfcc2c7127204977a0a03ea30569dc5))
+
 ## [0.5.81](https://github.com/d0ugal/github-exporter/compare/v0.5.80...v0.5.81) (2026-11-20)
 
 
